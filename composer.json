@@ -1,0 +1,25 @@
+{
+	"name": "stolz/assets",
+	"description": "An ultra simple assets management library",
+	"authors": [
+		{
+			"name": "Stolz",
+			"homepage": "https://github.com/Stolz/Assets",
+			"role": "developer"
+		}
+	],
+	"require": {
+		"php": ">=5.3.0",
+		"illuminate/support": "4.0.x"
+	},
+	"autoload": {
+		"classmap": [
+			"src/migrations"
+		],
+		"psr-0": {
+			"Stolz\\Assets": "src/"
+		}
+	},
+	"minimum-stability": "dev",
+	"license": "MIT"
+}
