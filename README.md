@@ -76,7 +76,11 @@ A collection is named group of assets, that is, a set of JavaScript and CSS file
 
 Let me use an example to show you how easy and convenient to use they are.
 
-Set up a few collections inside of `config.php`
+Run
+
+	php artisan config:publish stolz/assets
+
+And set up a few collections inside of `app/config/packages/stolz/config.php`
 
 	'collections' => array(
 		'uno'	=> 'uno.css',
