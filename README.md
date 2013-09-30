@@ -12,7 +12,26 @@ An ultra simple assets management library for Laravel.
 - Sopports secure (https) and protocol agnostic (//) links.
 - Supports **collections** (named groups of assets) that can be nested (aka dependencies).
 - Automatically detects type of asset (CSS, JavaScript or collection).
-- Autoload of preconfigured assets and collections.
+- Allows autoloading of preconfigured assets and collections.
+
+## Installation
+
+Edit `composer.json` and add
+
+	"require": {
+		"stolz/assets": "dev-master"
+	}
+
+Then run
+
+	composer install
+
+Finally, add the service provider to `app/config/app.php`, within the `providers` array.
+
+	'providers' => array(
+		'Stolz\Assets\AssetsServiceProvider'
+
+There is no need to add the Facade. The package will add it for you.
 
 ## Usage
 
@@ -26,7 +45,7 @@ To generate JavaScript links
 
 	echo Assets::js();
 
-### In your controller
+### In your routes/controllers
 
 Add a single local asset
 
@@ -43,18 +62,21 @@ It works also for external assets
 
 If autodetection is not for you just use canonical functions
 
-	Assets::add_css('assets.css');
-	Assets::add_js('assets.js');
+	Assets::addCss('assets.css');
+	Assets::addJs('assets.js');
 
 Methods can be chained
 
-	Assets::add('collection')->add_js('assets.js')->css();
-
+	Assets::add('collection')->addJs('assets.js')->css();
 
 
 ### Collections
 
-Let me use an example to show you how easy and convinient to use they are. Set this inside of `config.php`
+A collection is named group of assets, that is, a set of JavaScript and CSS files.
+
+Let me use an example to show you how easy and convenient to use they are.
+
+Set up a few collections inside of `config.php`
 
 	'collections' => array(
 		'uno'	=> 'uno.css',

@@ -1,0 +1,10 @@
+/vendor
+composer.phar
+composer.lock
+.DS_Store
+*~
+.*~
+*.nfs00*
+*.kate-swp
+*.old
+.inotify

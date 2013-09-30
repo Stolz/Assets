@@ -1,10 +1,12 @@
 <?php
 
 namespace Stolz\Assets;
+
 use Config;
 use Log;
 
-class Assets {
+class Assets
+{
 
 	private $debug = FALSE;
 	private $css_dir = '/css'; // Directory for local CSS assets. (No trailing slash!)
@@ -90,9 +92,9 @@ class Assets {
 			{
 				$ext = strtolower($info['extension']);
 				if($ext == 'css')
-					$this->add_css($asset);
+					$this->addCss($asset);
 				elseif($ext == 'js')
-					$this->add_js($asset);
+					$this->addJs($asset);
 			}
 			//Unknown asset type
 			elseif($this->debug)
@@ -111,16 +113,17 @@ class Assets {
 	 * @param mixed $asset
 	 * @return $this (for method chaining)
 	 */
-	public function add_css($asset)
+	public function addCss($asset)
 	{
 		if(is_array($asset))
 		{
 			foreach($asset as $a)
-				$this->add_css($a);
+				$this->addCss($a);
+
 			return $this;
 		}
 
-		if( ! $this->_is_remote($asset))
+		if( ! $this->_isRemoteLink($asset))
 			$asset = $this->css_dir . '/' . $asset;
 
 		if( ! in_array($asset, $this->css))
@@ -129,7 +132,7 @@ class Assets {
 			$this->debug AND Log::info("ASSETS: Added CSS '$asset'");
 		}
 		elseif($this->debug)
-			Log::info("ASSETS: Skip already loaded CSS '$asset'");
+			Log::info("ASSETS: Skiping already loaded CSS '$asset'");
 
 		return $this;
 	}
@@ -141,19 +144,19 @@ class Assets {
 	 * You may add more than one asset passing an array as argument.
 	 *
 	 * @param mixed $asset
-	 * @param bool $is_remote
 	 * @return $this (for method chaining)
 	 */
-	public function add_js($asset)
+	public function addJs($asset)
 	{
 		if(is_array($asset))
 		{
 			foreach($asset as $a)
-				$this->add_js($a);
+				$this->addJs($a);
+
 			return $this;
 		}
 
-		if( ! $this->_is_remote($asset))
+		if( ! $this->_isRemoteLink($asset))
 			$asset = $this->js_dir . '/' . $asset;
 
 		if( ! in_array($asset, $this->js))
@@ -162,7 +165,7 @@ class Assets {
 			$this->debug AND Log::info("ASSETS: Added JS '$asset'");
 		}
 		elseif($this->debug)
-			Log::info("ASSETS: Skip already loaded JS '$asset'");
+			Log::info("ASSETS: Skiping already loaded JS '$asset'");
 
 		return $this;
 	}
@@ -200,10 +203,10 @@ class Assets {
 	 *
 	 * Undestands both "http://" and "https://" as well as protocol agnostic links "//"
 	 *
-	 * @param  string
+	 * @param string $link
 	 * @return bool
 	 */
-	private function _is_remote($link)
+	private function _isRemoteLink($link)
 	{
 		return ('http://' == substr($link, 0, 7) OR 'https://' == substr($link, 0, 8) OR '//' == substr($link, 0, 2));
 	}
