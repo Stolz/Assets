@@ -89,7 +89,7 @@ This will create  `app/config/packages/stolz/config.php` file.
 
 ### Collections
 
-A collection is named group of assets, that is, a set of JavaScript and CSS files. Any collection may include more collections, allowing dependencies definition and collection nesting.
+A collection is a named group of assets, that is, a set of JavaScript and CSS files. Any collection may include more collections, allowing dependencies definition and collection nesting.
 
 Let me use an example to show you how easy and convenient to use they are.
 
