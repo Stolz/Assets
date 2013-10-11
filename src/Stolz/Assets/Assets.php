@@ -8,12 +8,12 @@ use Log;
 class Assets
 {
 
-	private $debug = FALSE;
-	private $css_dir = '/css'; // Directory for local CSS assets. (No trailing slash!)
-	private $js_dir = '/js'; // Directory for local JavaScript assets. (No trailing slash!)
-	private $collections = array(); //Available collections parsed from config file
-	private $css = array(); //CSS files already added
-	private $js = array(); //JS files already added
+	protected $debug = FALSE;
+	protected $css_dir = '/css'; // Directory for local CSS assets. (No trailing slash!)
+	protected $js_dir = '/js'; // Directory for local JavaScript assets. (No trailing slash!)
+	protected $collections = array(); //Available collections parsed from config file
+	protected $css = array(); //CSS files already added
+	protected $js = array(); //JS files already added
 
 	/**
 	 * Parses config file
@@ -124,7 +124,7 @@ class Assets
 		}
 
 		if( ! $this->_isRemoteLink($asset))
-			$asset = $this->css_dir . '/' . $asset;
+			$asset = $this->_buildLocalLink($asset, $this->css_dir);
 
 		if( ! in_array($asset, $this->css))
 		{
@@ -157,7 +157,7 @@ class Assets
 		}
 
 		if( ! $this->_isRemoteLink($asset))
-			$asset = $this->js_dir . '/' . $asset;
+			$asset = $this->_buildLocalLink($asset, $this->js_dir);
 
 		if( ! in_array($asset, $this->js))
 		{
@@ -171,10 +171,10 @@ class Assets
 	}
 
 	/**
-	* Builds the CSS links
-	*
-	* @return string
-	*/
+	 * Builds the CSS links
+	 *
+	 * @return string
+	 */
 	public function css()
 	{
 		$output = '';
@@ -206,8 +206,25 @@ class Assets
 	 * @param string $link
 	 * @return bool
 	 */
-	private function _isRemoteLink($link)
+	protected function _isRemoteLink($link)
 	{
 		return ('http://' == substr($link, 0, 7) OR 'https://' == substr($link, 0, 8) OR '//' == substr($link, 0, 2));
+	}
+
+	/**
+	 * Builds a link to a local asset
+	 *
+	 * Detects packages links
+	 *
+	 * @param  string $asset
+	 * @param  string $dir
+	 * @return string the link
+	 */
+	protected function _buildLocalLink($asset, $dir)
+	{
+		if(preg_match('{^([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+):(.*)$}', $asset, $package))
+			return '/packages/' . $package[1] . '/' .$package[2] . '/' . ltrim($dir, '/') . '/' .$package[3];
+
+			return $dir . '/' . $asset;
 	}
 }
