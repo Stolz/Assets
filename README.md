@@ -93,12 +93,6 @@ A collection is named group of assets, that is, a set of JavaScript and CSS file
 
 Let me use an example to show you how easy and convenient to use they are.
 
-Run
-
-	php artisan config:publish stolz/assets
-
-And set up a few collections inside of `app/config/packages/stolz/config.php`
-
 	'collections' => array(
 		'uno'	=> 'uno.css',
 		'dos'	=> ['dos.css', 'dos.js'],
@@ -146,8 +140,6 @@ Using `Assets::add('duplicates');` will result in
 	<!-- JS -->
 	<script type="text/javascript" src="/js/dos.js"></script>
 	<script type="text/javascript" src="/js/tres.js"></script>
-
-
 
 ### Other configurable options
 
