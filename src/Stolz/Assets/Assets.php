@@ -7,8 +7,7 @@ use Log;
 
 class Assets
 {
-
-	protected $debug = FALSE;
+	protected $debug = false;
 	protected $css_dir = '/css'; // Directory for local CSS assets. (No trailing slash!)
 	protected $js_dir = '/js'; // Directory for local JavaScript assets. (No trailing slash!)
 	protected $collections = array(); //Available collections parsed from config file
@@ -16,7 +15,7 @@ class Assets
 	protected $js = array(); //JS files already added
 
 	/**
-	 * Parses config file
+	 * Parse config file
 	 */
 	function __construct()
 	{
@@ -62,13 +61,13 @@ class Assets
 	}
 
 	/**
-	 * Adds an asset or a collection of assets
+	 * Add an asset or a collection of assets
 	 *
 	 * It automatically detects the asset type (JavaScript, CSS or collection).
 	 * You may add more than one asset passing an array as argument.
 	 *
 	 * @param mixed $asset
-	 * @return $this (for method chaining)
+	 * @return Assets
 	 */
 	public function add($asset)
 	{
@@ -105,13 +104,13 @@ class Assets
 	}
 
 	/**
-	 * Adds a CSS asset
+	 * Add a CSS asset
 	 *
 	 * It checks for duplicates.
 	 * You may add more than one asset passing an array as argument.
 	 *
 	 * @param mixed $asset
-	 * @return $this (for method chaining)
+	 * @return Assets
 	 */
 	public function addCss($asset)
 	{
@@ -138,13 +137,13 @@ class Assets
 	}
 
 	/**
-	 * Adds a JavaScript asset
+	 * Add a JavaScript asset
 	 *
 	 * It checks for duplicates.
 	 * You may add more than one asset passing an array as argument.
 	 *
 	 * @param mixed $asset
-	 * @return $this (for method chaining)
+	 * @return Assets
 	 */
 	public function addJs($asset)
 	{
@@ -171,7 +170,7 @@ class Assets
 	}
 
 	/**
-	 * Builds the CSS links
+	 * Build the CSS links
 	 *
 	 * @return string
 	 */
@@ -185,7 +184,7 @@ class Assets
 	}
 
 	/**
-	 * Builds the JavaScript links
+	 * Build the JavaScript links
 	 *
 	 * @return string
 	 */
@@ -199,7 +198,7 @@ class Assets
 	}
 
 	/**
-	 * Determines if a link to an asset is local or remote
+	 * Determine if a link to an asset is local or remote
 	 *
 	 * Undestands both "http://" and "https://" as well as protocol agnostic links "//"
 	 *
@@ -212,7 +211,7 @@ class Assets
 	}
 
 	/**
-	 * Builds a link to a local asset
+	 * Build a link to a local asset
 	 *
 	 * Detects packages links
 	 *
@@ -227,4 +226,36 @@ class Assets
 
 			return $dir . '/' . $asset;
 	}
+
+	/**
+	 * Reset all assets
+	 *
+	 * @return void
+	 */
+	public function reset()
+	{
+		$this->resetCss();
+		$this->resetJs();
+	}
+
+	/**
+	 * Reset CSS assets
+	 *
+	 * @return void
+	 */
+	public function resetCss()
+	{
+		$this->css = array();
+	}
+
+	/**
+	 * Reset JS assets
+	 *
+	 * @return void
+	 */
+	public function resetJs()
+	{
+		$this->js = array();
+	}
 }
+// 
