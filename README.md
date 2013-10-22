@@ -57,7 +57,7 @@ Add more than one asset at once
 
 	Assets::add(array('another/assets.js', 'one/more.css'));
 
-Add an assets from a local package
+Add an asset from a local package
 
 	Assets::add('twitter/bootstrap:bootstrap.min.css');
 
@@ -151,6 +151,6 @@ Using `Assets::add('duplicates');` will result in
 
 	Override defaul prefix folder for local assets. Don't use trailing slash!.
 
-- `'debug' => TRUE,`
+- `'debug' => true,`
 
 	When debug mode is enabled information about the process of loading assets will be sent to the log.
