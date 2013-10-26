@@ -2,7 +2,7 @@
 
 use Illuminate\Support\ServiceProvider;
 
-class AssetsServiceProvider extends ServiceProvider {
+class ManagerServiceProvider extends ServiceProvider {
 
 	/**
 	 * Indicates if loading of the provider is deferred.
@@ -28,11 +28,13 @@ class AssetsServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
+		//Bind 'assets' component to the IoC container
 		$this->app['assets'] = $this->app->share(function($app)
 		{
-			return new Assets;
+			return new Manager;
 		});
 
+		//Create the facade alias
 		$this->app->booting(function()
 		{
 			$loader = \Illuminate\Foundation\AliasLoader::getInstance();

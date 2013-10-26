@@ -5,9 +5,8 @@ namespace Stolz\Assets;
 use Config;
 use Log;
 
-class Assets
+class Manager
 {
-
 	protected $debug = FALSE;
 	protected $css_dir = '/css'; // Directory for local CSS assets. (No trailing slash!)
 	protected $js_dir = '/js'; // Directory for local JavaScript assets. (No trailing slash!)
