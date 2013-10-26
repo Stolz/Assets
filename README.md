@@ -84,7 +84,7 @@ To bring up the config file run
 
 	php artisan config:publish stolz/assets
 
-This will create  `app/config/packages/stolz/config.php` file.
+This will create  `app/config/packages/stolz/config.php` file that you may use to configure your application assets.
 
 
 ### Collections
@@ -149,7 +149,7 @@ Using `Assets::add('duplicates');` will result in
 - `'css_dir' => '/css',`
 - `'js_dir' => '/js',`
 
-	Override defaul prefix folder for local assets. Don't use trailing slash!.
+	Override default prefix folder for local assets. Don't use trailing slash!.
 
 - `'debug' => true,`
 
