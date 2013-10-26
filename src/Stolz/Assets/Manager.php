@@ -1,13 +1,11 @@
-<?php
-
-namespace Stolz\Assets;
+<?php namespace Stolz\Assets;
 
 use Config;
 use Log;
 
 class Manager
 {
-	protected $debug = FALSE;
+	protected $debug = false;
 	protected $css_dir = '/css'; // Directory for local CSS assets. (No trailing slash!)
 	protected $js_dir = '/js'; // Directory for local JavaScript assets. (No trailing slash!)
 	protected $collections = array(); //Available collections parsed from config file
@@ -15,26 +13,26 @@ class Manager
 	protected $js = array(); //JS files already added
 
 	/**
-	 * Parses config file
+	 * Parse config file
 	 */
 	function __construct()
 	{
 		//Set debug mode
 		if(Config::has('assets::debug'))
-			$this->debug = intval(Config::get('assets::debug'));
+			$this->debug = (bool) intval(Config::get('assets::debug'));
 
 		//Set custom CSS directory
 		if(Config::has('assets::css_dir'))
 		{
 			$this->css_dir = Config::get('assets::css_dir');
-			$this->debug AND Log::info("ASSETS: CSS dir set to '{$this->css_dir}'");
+			$this->debug and Log::debug("ASSETS: CSS dir set to '{$this->css_dir}'");
 		}
 
 		//Set custom JS directory
 		if(Config::has('assets::js_dir'))
 		{
 			$this->js_dir = Config::get('assets::js_dir');
-			$this->debug AND Log::info("ASSETS: JavaScript dir set to '{$this->js_dir}'");
+			$this->debug and Log::debug("ASSETS: JavaScript dir set to '{$this->js_dir}'");
 		}
 
 		//Read collections from config file
@@ -43,10 +41,10 @@ class Manager
 			if(is_array($conf = Config::get('assets::collections')))
 			{
 				$this->collections = $conf;
-				$this->debug AND Log::info("ASSETS: Defined collections ". implode(', ', array_keys($this->collections)));
+				$this->debug and Log::debug("ASSETS: Defined collections ". implode(', ', array_keys($this->collections)));
 			}
 			elseif($this->debug)
-				$this->debug AND Log::warning('ASSETS: Collections must be an array');
+				Log::warning('ASSETS: Collections must be an array');
 		}
 
 		//Autoload assets
@@ -54,20 +52,20 @@ class Manager
 		{
 			foreach($conf as $a)
 			{
-				$this->debug AND Log::info("ASSETS: Autoloading '$a'");
+				$this->debug and Log::debug("ASSETS: Autoloading '$a'");
 				$this->add($a);
 			}
 		}
 	}
 
 	/**
-	 * Adds an asset or a collection of assets
+	 * Add an asset or a collection of assets
 	 *
 	 * It automatically detects the asset type (JavaScript, CSS or collection).
 	 * You may add more than one asset passing an array as argument.
 	 *
 	 * @param mixed $asset
-	 * @return $this (for method chaining)
+	 * @return Manager
 	 */
 	public function add($asset)
 	{
@@ -80,7 +78,7 @@ class Manager
 		//Collection
 		elseif(isset($this->collections[$asset]))
 		{
-			$this->debug AND Log::info("ASSETS: Adding collection '$asset'");
+			$this->debug and Log::debug("ASSETS: Adding collection '$asset'");
 			$this->add($this->collections[$asset]);
 		}
 		else
@@ -104,13 +102,13 @@ class Manager
 	}
 
 	/**
-	 * Adds a CSS asset
+	 * Add a CSS asset
 	 *
 	 * It checks for duplicates.
 	 * You may add more than one asset passing an array as argument.
 	 *
 	 * @param mixed $asset
-	 * @return $this (for method chaining)
+	 * @return Manager
 	 */
 	public function addCss($asset)
 	{
@@ -128,22 +126,22 @@ class Manager
 		if( ! in_array($asset, $this->css))
 		{
 			$this->css[] = $asset;
-			$this->debug AND Log::info("ASSETS: Added CSS '$asset'");
+			$this->debug and Log::debug("ASSETS: Added CSS '$asset'");
 		}
 		elseif($this->debug)
-			Log::info("ASSETS: Skiping already loaded CSS '$asset'");
+			Log::debug("ASSETS: Skiping already loaded CSS '$asset'");
 
 		return $this;
 	}
 
 	/**
-	 * Adds a JavaScript asset
+	 * Add a JavaScript asset
 	 *
 	 * It checks for duplicates.
 	 * You may add more than one asset passing an array as argument.
 	 *
 	 * @param mixed $asset
-	 * @return $this (for method chaining)
+	 * @return Manager
 	 */
 	public function addJs($asset)
 	{
@@ -161,16 +159,16 @@ class Manager
 		if( ! in_array($asset, $this->js))
 		{
 			$this->js[] = $asset;
-			$this->debug AND Log::info("ASSETS: Added JS '$asset'");
+			$this->debug and Log::debug("ASSETS: Added JS '$asset'");
 		}
 		elseif($this->debug)
-			Log::info("ASSETS: Skiping already loaded JS '$asset'");
+			Log::debug("ASSETS: Skiping already loaded JS '$asset'");
 
 		return $this;
 	}
 
 	/**
-	 * Builds the CSS links
+	 * Build the CSS link tags
 	 *
 	 * @return string
 	 */
@@ -184,7 +182,7 @@ class Manager
 	}
 
 	/**
-	 * Builds the JavaScript links
+	 * Build the JavaScript script tags
 	 *
 	 * @return string
 	 */
@@ -198,7 +196,7 @@ class Manager
 	}
 
 	/**
-	 * Determines if a link to an asset is local or remote
+	 * Determine if a link to an asset is local or remote
 	 *
 	 * Undestands both "http://" and "https://" as well as protocol agnostic links "//"
 	 *
@@ -211,7 +209,7 @@ class Manager
 	}
 
 	/**
-	 * Builds a link to a local asset
+	 * Build a link to a local asset
 	 *
 	 * Detects packages links
 	 *
@@ -225,5 +223,36 @@ class Manager
 			return '/packages/' . $package[1] . '/' .$package[2] . '/' . ltrim($dir, '/') . '/' .$package[3];
 
 			return $dir . '/' . $asset;
+	}
+
+	/**
+	 * Reset all assets
+	 *
+	 * @return void
+	 */
+	public function reset()
+	{
+		$this->resetCss();
+		$this->resetJs();
+	}
+
+	/**
+	 * Reset CSS assets
+	 *
+	 * @return void
+	 */
+	public function resetCss()
+	{
+		$this->css = array();
+	}
+
+	/**
+	 * Reset JS assets
+	 *
+	 * @return void
+	 */
+	public function resetJs()
+	{
+		$this->js = array();
 	}
 }
