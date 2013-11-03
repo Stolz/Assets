@@ -10,9 +10,26 @@ return array(
 	| When debug mode is enabled information about the process of loading
 	| assets will be sent to the log.
 	|
+	| Default: false
 	*/
 
-// 	'debug' => TRUE,
+	//'debug' => true,
+
+	/*
+	|--------------------------------------------------------------------------
+	| Assets pipeline
+	|--------------------------------------------------------------------------
+	|
+	| When enabled, all your assets will be concatenated and minified to a sigle
+	| file, increasing load speed and reducing the number of requests that a
+	| browser makes to render a web page.
+	|
+	| It's a good practice to enable it on production.
+	|
+	| Default: false
+	*/
+
+	//'pipeline' => true,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -22,10 +39,12 @@ return array(
 	| Override defaul prefix folder for local assets.
 	| Don't use trailing slash!.
 	|
+	| Default for CSS: 'css'
+	| Default for JS: 'js'
 	*/
 
-	//'css_dir' => '/css',
-	//'js_dir' => '/js',
+	//'css_dir' => 'css',
+	//'js_dir' => 'js',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -53,7 +72,7 @@ return array(
 	|	),
 	*/
 
-	// 	'collections' => array(),
+	//'collections' => array(),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -61,8 +80,9 @@ return array(
 	|--------------------------------------------------------------------------
 	|
 	| Here you may set which assets (CSS files, JavaScript files or collections)
-	| should be loaded by default.
+	| should be loaded by default even if you don't explicitly add them.
 	|
 	*/
-// 	'autoload' => array(),
+
+	//'autoload' => array(),
 );
