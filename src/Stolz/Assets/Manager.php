@@ -65,7 +65,7 @@ class Manager
 		//Set pipeline mode
 		if(Config::has('assets::pipeline'))
 			$this->pipeline = (bool) Config::get('assets::pipeline');
-		$this->debug and Log::debug('ASSETS: Pipeline '.($this->pipeline) ? 'enabled' : 'disabled' );
+		$this->debug and Log::debug('ASSETS: Pipeline '.($this->pipeline ? 'enabled' : 'disabled'));
 
 		//Set custom CSS directory
 		if(Config::has('assets::css_dir'))
