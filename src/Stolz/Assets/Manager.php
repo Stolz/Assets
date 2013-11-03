@@ -5,15 +5,47 @@ use Log;
 
 class Manager
 {
+	/**
+	 * Write debug info to log
+	 * @var bool
+	 */
 	protected $debug = false;
-	protected $css_dir = '/css'; // Directory for local CSS assets. (No trailing slash!)
-	protected $js_dir = '/js'; // Directory for local JavaScript assets. (No trailing slash!)
-	protected $collections = array(); //Available collections parsed from config file
-	protected $css = array(); //CSS files already added
-	protected $js = array(); //JS files already added
 
 	/**
-	 * Parse config file
+	 * Directory for local CSS assets. (No trailing slash!)
+	 * @var string
+	 */
+	protected $css_dir = '/css';
+
+	/**
+	 * Directory for local JavaScript assets. (No trailing slash!)
+	 * @var string
+	 */
+	protected $js_dir = '/js';
+
+	/**
+	 * Available collections parsed from config file
+	 * @var array
+	 */
+	protected $collections = array();
+
+	/**
+	 * CSS files already added
+	 * @var array
+	 */
+	protected $css = array();
+
+	/**
+	 * JS files already added
+	 * @var array
+	 */
+	protected $js = array();
+
+	/**
+	 * Class constructor
+	 * It parses the config file
+	 *
+	 * @return void
 	 */
 	function __construct()
 	{
@@ -92,6 +124,8 @@ class Manager
 					$this->addCss($asset);
 				elseif($ext == 'js')
 					$this->addJs($asset);
+				elseif($this->debug)
+					Log::warning("ASSETS: Unable to add asset '$asset'. Unknown type");
 			}
 			//Unknown asset type
 			elseif($this->debug)
@@ -228,31 +262,34 @@ class Manager
 	/**
 	 * Reset all assets
 	 *
-	 * @return void
+	 * @return Manager
 	 */
 	public function reset()
 	{
 		$this->resetCss();
 		$this->resetJs();
+		return $this;
 	}
 
 	/**
 	 * Reset CSS assets
 	 *
-	 * @return void
+	 * @return Manager
 	 */
 	public function resetCss()
 	{
 		$this->css = array();
+		return $this;
 	}
 
 	/**
 	 * Reset JS assets
 	 *
-	 * @return void
+	 * @return Manager
 	 */
 	public function resetJs()
 	{
 		$this->js = array();
+		return $this;
 	}
 }
