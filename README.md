@@ -173,7 +173,7 @@ Using `Assets::add('duplicates');` will result in
 	<script type="text/javascript" src="/js/dos.js"></script>
 	<script type="text/javascript" src="/js/tres.js"></script>
 
-Note even this collection had duplicated assets the have been included only once.
+Note even this collection had duplicated assets they have been included only once.
 
 <a id="pipeline"></a>
 ### Pipeline
@@ -182,9 +182,11 @@ To enable pipeline use the config file
 
 	'pipeline' => true,
 
-Once it's enabled all your assets will be concatenated and minified to a single file, increasing load speed and reducing the number of requests that a browser makes to render a web page.
+Once it's enabled all your assets will be concatenated and minified to a single file, improving load speed and reducing the number of requests that a browser makes to render a web page.
 
 This process can take a few seconds depending on the amount of assets and your connection but it's triggered only the first time you load a page whose assets have never been pipelined before. The subsequent times the same page (or any page using the same assets) is loaded, the previously pipelined file will be used giving you much faster loading time and less bandwidth usage.
+
+Using the pipeline is recommended only for production environment.
 
 <a id="options"></a>
 ### Other configurable options

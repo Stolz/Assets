@@ -13,7 +13,7 @@ class Manager
 	protected $debug = false;
 
 	/**
-	 * Set to false to disable assets pipeline (compression and concatenation).
+	 * Set to true to enable assets pipeline (concatenation and minification).
 	 * @var bool
 	 */
 	protected $pipeline = false;
@@ -264,9 +264,7 @@ class Manager
 	 */
 	public function reset()
 	{
-		$this->resetCss();
-		$this->resetJs();
-		return $this;
+		return $this->resetCss()->resetJs();
 	}
 
 	/**
