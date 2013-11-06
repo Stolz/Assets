@@ -34,18 +34,11 @@ An ultra-simple-to-use assets management package for Laravel 4.
 <a id="installation"></a>
 ## Installation
 
-Edit `composer.json` and add `"stolz/assets": "dev-master"` to the `require` section
+In your Laravel base directory run
 
-	"require": {
-		...
-		"stolz/assets": "dev-master"
-	}
+	composer require "stolz/assets:dev-master"
 
-Then run
-
-	composer install
-
-Finally, add the service provider within the `providers` array of `app/config/app.php`
+Then edit `app/config/app.php` and add the service provider within the `providers` array
 
 	'providers' => array(
 		...
