@@ -1,7 +1,7 @@
 {
 	"name": "stolz/assets",
 	"description": "An ultra simple assets management library",
-	"keywords": ["assets", "asset", "laravel"],
+	"keywords": ["assets", "asset", "laravel", "pipeline", "minify", "css", "js"],
 	"authors": [
 		{
 			"name": "Stolz",
