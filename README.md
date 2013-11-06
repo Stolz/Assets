@@ -181,6 +181,10 @@ This process can take a few seconds depending on the amount of assets and your c
 
 Using the pipeline is recommended only for production environment.
 
+If your assets have changed since they were pipelined use the provided artisan command to purge the pipeline cache
+
+	php artisan asset:purge-pipeline
+
 <a id="options"></a>
 ### Other configurable options
 

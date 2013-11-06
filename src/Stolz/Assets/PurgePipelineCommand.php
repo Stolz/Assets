@@ -39,7 +39,15 @@ class PurgePipelineCommand extends Command {
 	 */
 	public function fire()
 	{
-		//
+		$pipe_dir = Config::get('assets::pipe_dir', 'min');
+		$css_dir = Config::get('assets::css_dir', 'css') . DIRECTORY_SEPARATOR . $pipe_dir;
+		$js_dir = Config::get('assets::js_dir', 'js') . DIRECTORY_SEPARATOR . $pipe_dir;
+
+		$purge_css = $this->purgeDir(public_path($css_dir));
+		$purge_js = $this->purgeDir(public_path($js_dir));
+
+		if($purge_css and $purge_js)
+			$this->info('Done!');
 	}
 
 	/**
@@ -64,6 +72,24 @@ class PurgePipelineCommand extends Command {
 		return array(
 			//array('example', null, InputOption::VALUE_OPTIONAL, 'An example option.', null),
 		);
+	}
+
+	/**
+	 * Purge directory
+	 *
+	 * @param  string $directory
+	 * @return boolean
+	 */
+	protected function purgeDir($directory)
+	{
+		if( ! File::isDirectory($directory))
+			return true;
+
+		if(File::isWritable($directory))
+			return File::cleanDirectory($directory);
+
+		$this->error($directory . ' is not writable');
+		return false;
 	}
 
 }

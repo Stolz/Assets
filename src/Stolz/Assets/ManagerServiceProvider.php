@@ -34,7 +34,7 @@ class ManagerServiceProvider extends ServiceProvider {
 			return new Manager;
 		});
 
-		// Create the facade alias
+		// Add Manager facade alias
 		$this->app->booting(function()
 		{
 			$loader = \Illuminate\Foundation\AliasLoader::getInstance();

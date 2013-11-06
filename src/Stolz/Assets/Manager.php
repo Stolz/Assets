@@ -33,6 +33,13 @@ class Manager
 	protected $js_dir = 'js';
 
 	/**
+	 * Directory for storing pipelined assets. (No trailing slash!)
+	 * Relative to your assets directory.
+	 * @var string
+	 */
+	protected $pipe_dir = 'min';
+
+	/**
 	 * Available collections parsed from config file
 	 * @var array
 	 */
@@ -58,26 +65,31 @@ class Manager
 	 */
 	function __construct()
 	{
-		//Set debug mode
+		// Set debug mode
 		if(Config::has('assets::debug'))
 			$this->debug = (bool) Config::get('assets::debug');
 
-		//Set pipeline mode
+		// Set pipeline mode
 		if(Config::has('assets::pipeline'))
 			$this->pipeline = (bool) Config::get('assets::pipeline');
 		$this->debug and Log::debug('ASSETS: Pipeline '.($this->pipeline ? 'enabled' : 'disabled'));
 
-		//Set custom CSS directory
+		// Set custom CSS directory
 		if(Config::has('assets::css_dir'))
 			$this->css_dir = Config::get('assets::css_dir');
 		$this->debug and Log::debug("ASSETS: CSS dir set to '{$this->css_dir}'");
 
-		//Set custom JavaScript directory
+		// Set custom JavaScript directory
 		if(Config::has('assets::js_dir'))
 			$this->js_dir = Config::get('assets::js_dir');
 		$this->debug and Log::debug("ASSETS: JavaScript dir set to '{$this->js_dir}'");
 
-		//Read collections from config file
+		// Set custom Pipeline directory
+		if(Config::has('assets::pipe_dir'))
+			$this->pipe_dir = Config::get('assets::pipe_dir');
+		$this->debug and Log::debug("ASSETS: Pipeline dir set to '{$this->pipe_dir}'");
+
+		// Read collections from config file
 		if(Config::has('assets::collections'))
 		{
 			if(is_array($conf = Config::get('assets::collections')))
@@ -89,7 +101,7 @@ class Manager
 				Log::warning('ASSETS: Collections must be an array');
 		}
 
-		//Autoload assets
+		// Autoload assets
 		if(is_array($conf = Config::get('assets::autoload')))
 		{
 			foreach($conf as $a)
@@ -298,8 +310,8 @@ class Manager
 	{
 
 		$file = md5(implode($this->css)).'.css';
-		$relative_path = "{$this->css_dir}/min/$file";
-		$absolute_path =  public_path($relative_path);
+		$relative_path = "{$this->css_dir}/{$this->pipe_dir}/$file";
+		$absolute_path =  public_path($this->css_dir . DIRECTORY_SEPARATOR . $this->pipe_dir . DIRECTORY_SEPARATOR . $file);
 
 		// If pipeline exist return it
 		if(File::exists($absolute_path))
@@ -307,8 +319,8 @@ class Manager
 
 		$this->debug and Log::debug('ASSETS: Minifying CSS');
 
-		// Create destination dir
-		$directory = public_path($this->css_dir.'/min/');
+		// Create destination directory
+		$directory = public_path($this->css_dir . DIRECTORY_SEPARATOR . $this->pipe_dir);
 		if( ! File::isDirectory($directory))
 			File::makeDirectory($directory);
 
@@ -333,8 +345,8 @@ class Manager
 	protected function jsPipeline()
 	{
 		$file = md5(implode($this->js)).'.js';
-		$relative_path = "{$this->js_dir}/min/$file";
-		$absolute_path =  public_path($relative_path);
+		$relative_path = "{$this->js_dir}/{$this->pipe_dir}/$file";
+		$absolute_path =  public_path($this->js_dir . DIRECTORY_SEPARATOR . $this->pipe_dir . DIRECTORY_SEPARATOR . $file);
 
 		// If pipeline exist return it
 		if(File::exists($absolute_path))
@@ -342,8 +354,8 @@ class Manager
 
 		$this->debug and Log::debug('ASSETS: Minifying JavaScript');
 
-		// Create destination dir
-		$directory = public_path($this->js_dir.'/min/');
+		// Create destination directory
+		$directory = public_path($this->js_dir . DIRECTORY_SEPARATOR . $this->pipe_dir);
 		if( ! File::isDirectory($directory))
 			File::makeDirectory($directory);
 
@@ -415,4 +427,5 @@ class Manager
 	{
 		return ('http://' == substr($link, 0, 7) OR 'https://' == substr($link, 0, 8) OR '//' == substr($link, 0, 2));
 	}
+
 }
