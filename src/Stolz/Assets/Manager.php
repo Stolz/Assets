@@ -316,7 +316,8 @@ class Manager
 		$buffer = $this->buildBuffer($this->css);
 
 		// Minifiy
-		$min = (new \CSSmin)->run($buffer);
+		$min = new \CSSmin();
+		$min = $min->run($buffer);
 
 		// Write file
 		File::put($absolute_path, $min);
