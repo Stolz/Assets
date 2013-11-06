@@ -21,10 +21,10 @@ return array(
 	|--------------------------------------------------------------------------
 	|
 	| When enabled, all your assets will be concatenated and minified to a sigle
-	| file, increasing load speed and reducing the number of requests that a
+	| file, improving load speed and reducing the number of requests that the
 	| browser makes to render a web page.
 	|
-	| It's a good practice to enable it on production.
+	| It's a good practice to enable it only on production environment.
 	|
 	| Default: false
 	*/
@@ -36,8 +36,8 @@ return array(
 	| Local assets directories
 	|--------------------------------------------------------------------------
 	|
-	| Override defaul prefix folder for local assets.
-	| Don't use trailing slash!.
+	| Override defaul prefix folder for local assets. Don't use trailing slash!.
+	| They are relative to your public folder.
 	|
 	| Default for CSS: 'css'
 	| Default for JS: 'js'

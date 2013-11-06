@@ -13,7 +13,7 @@ class Manager
 	protected $debug = false;
 
 	/**
-	 * Set to false to disable assets pipeline (compression and concatenation).
+	 * Set to true to enable assets pipeline (concatenation and minification).
 	 * @var bool
 	 */
 	protected $pipeline = false;
@@ -65,7 +65,7 @@ class Manager
 		//Set pipeline mode
 		if(Config::has('assets::pipeline'))
 			$this->pipeline = (bool) Config::get('assets::pipeline');
-		$this->debug and Log::debug('ASSETS: Pipeline '.($this->pipeline) ? 'enabled' : 'disabled' );
+		$this->debug and Log::debug('ASSETS: Pipeline '.($this->pipeline ? 'enabled' : 'disabled'));
 
 		//Set custom CSS directory
 		if(Config::has('assets::css_dir'))
@@ -264,9 +264,7 @@ class Manager
 	 */
 	public function reset()
 	{
-		$this->resetCss();
-		$this->resetJs();
-		return $this;
+		return $this->resetCss()->resetJs();
 	}
 
 	/**
@@ -318,7 +316,8 @@ class Manager
 		$buffer = $this->buildBuffer($this->css);
 
 		// Minifiy
-		$min = (new \CSSmin)->run($buffer);
+		$min = new \CSSmin();
+		$min = $min->run($buffer);
 
 		// Write file
 		File::put($absolute_path, $min);

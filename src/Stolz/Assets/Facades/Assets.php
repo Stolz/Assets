@@ -9,5 +9,5 @@ class Assets extends Facade {
 	 *
 	 * @return string
 	 */
-	protected static function getFacadeAccessor() { return 'assets'; }
+	protected static function getFacadeAccessor() { return 'stolz.assets'; }
 }

@@ -28,18 +28,27 @@ class ManagerServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//Bind 'assets' component to the IoC container
-		$this->app['assets'] = $this->app->share(function($app)
+		// Bind 'stolz.assets' component to the IoC container
+		$this->app['stolz.assets'] = $this->app->share(function($app)
 		{
 			return new Manager;
 		});
 
-		//Create the facade alias
+		// Create the facade alias
 		$this->app->booting(function()
 		{
 			$loader = \Illuminate\Foundation\AliasLoader::getInstance();
 			$loader->alias('Assets', 'Stolz\Assets\Facades\Assets');
 		});
+
+		// Bind 'stolz.assets.command.purgepipeline' component to the IoC container
+		$this->app['stolz.assets.command.purgepipeline'] = $this->app->share(function($app)
+		{
+			return new PurgePipelineCommand();
+		});
+
+		// Add artisan command
+		$this->commands('stolz.assets.command.purgepipeline');
 	}
 
 	/**
