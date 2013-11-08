@@ -74,6 +74,8 @@ return array(
 	|
 	| It's a good practice to enable it only on production environment.
 	|
+	| Use an integer value greather than 1 to append a timestamp to the URL.
+	|
 	| Default: false
 	*/
 
@@ -90,7 +92,7 @@ return array(
 	| Default: 'min'
 	*/
 
-	'pipe_dir' => 'min',
+	'pipeline_dir' => 'min',
 
 	/*
 	 | -------------------------------------------------------------------------

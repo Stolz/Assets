@@ -1,9 +1,10 @@
 Assets
 ======
 
-An ultra-simple-to-use assets management package for Laravel 4.
+An ultra-simple-to-use assets management PHP library.
 
 1. [Features](#features).
+- [Supported frameworks](#frameworks).
 - [Installation](#installation).
 - [Usage](#usage).
  - [Views](#views).
@@ -12,9 +13,11 @@ An ultra-simple-to-use assets management package for Laravel 4.
  - [Collections](#collections).
  - [Pipeline](#pipeline).
  - [More options](#options).
-- [Collections samples](#samples).
+- [Non static interface usage](#nonstatic).
+- [Sample collections](#samples).
 
 ----
+
 <a id="features"></a>
 ## Features
 
@@ -23,14 +26,21 @@ An ultra-simple-to-use assets management package for Laravel 4.
 - Supports programmatically adding assets on the fly.
 - Supports local (**including packages**) or remote assets.
 - Prevents from loading duplicated assets.
-- Included assets pipeline (*concatenate and minify all your assets to a single file*).
+- Included assets pipeline (*concatenate and minify all your assets to a single file*) with URL timestamps support.
 - Automatically prefixes local assets with a configurable folder name.
 - Supports secure (*https*) and protocol agnostic (*//*) links.
 - Supports **collections** (*named groups of assets*) that can be nested, allowing assets dependencies.
 - Automatically detects type of asset (CSS, JavaScript or collection).
 - Allows autoloading by default preconfigured assets and collections.
 
-----
+
+<a id="frameworks"></a>
+## Supported frameworks
+
+The library is framework agnostic and it should work well with any framework or naked PHP application. Nevertheless, the following instructions have been tailored for Laravel 4 framework. If you want to use the library in any other scenario please read the [non static interface](#nonstatic) instructions.
+
+
+
 <a id="installation"></a>
 ## Installation
 
@@ -46,7 +56,8 @@ Then edit `app/config/app.php` and add the service provider within the `provider
 
 There is no need to add the Facade, the package will add it for you.
 
-----
+
+
 <a id="usage"></a>
 ## Usage
 <a id="views"></a>
@@ -97,11 +108,12 @@ If at some point you decide you added the wrong assets you can reset them and st
 	Assets::resetCss();
 	Assets::resetJs();
 
-All methods that don't generate output can be chained
+All methods that don't generate output accept chaining:
 
 	Assets::reset()->add('collection')->addJs('file.js')->css();
 
-----
+
+
 <a id="configuration"></a>
 ## Configuration
 
@@ -171,7 +183,7 @@ Note even this collection had duplicated assets they have been included only onc
 <a id="pipeline"></a>
 ### Pipeline
 
-To enable pipeline use the config file
+To enable pipeline use the `pipeline` config option
 
 	'pipeline' => true,
 
@@ -179,11 +191,24 @@ Once it's enabled all your assets will be concatenated and minified to a single 
 
 This process can take a few seconds depending on the amount of assets and your connection but it's triggered only the first time you load a page whose assets have never been pipelined before. The subsequent times the same page (or any page using the same assets) is loaded, the previously pipelined file will be used giving you much faster loading time and less bandwidth usage.
 
-Using the pipeline is recommended only for production environment.
+
+**Note:** Using the pipeline is recommended only for production environment.
 
 If your assets have changed since they were pipelined use the provided artisan command to purge the pipeline cache
 
 	php artisan asset:purge-pipeline
+
+A custom timestamp may be appended to the pipelined assets URL by setting `pipeline` config option to an integer value greather than 1:
+
+Example:
+
+	'pipeline' => 12345,
+
+will produce:
+
+	<link type="text/css" rel="stylesheet" href="/css/min/135b1a960b9fed4dd65d1597ff593321.css?12345" />
+	<script type="text/javascript" src="/js/min/5bfed4dd65d1597ff1a960b913593321.js?12345"></script>
+
 
 <a id="options"></a>
 ### Other configurable options
@@ -194,14 +219,41 @@ If your assets have changed since they were pipelined use the provided artisan c
 - `'css_dir' => 'css',`
 - `'js_dir' => 'js',`
 
-	Override default prefix folder for local assets. Don't use trailing slash!.
+	Override default folder for local assets. Don't use trailing slash!.
 
-- `'debug' => true,`
+- `'pipeline_dir' => 'min',`
 
-	When debug mode is enabled information about the process of loading assets will be sent to the log.
+	Override default folder for pipelined assets. Don't use trailing slash!.
+
+----
+
+<a id="nonstatic"></a>
+## Non static interface
+
+You can use the library without using static methods. The signature of all methods is the same described above.
+
+	require '/path/to/Stolz/Assets/Manager.php';
+
+	// Configure options
+	$config = array(
+		'pipeline' => true,
+		'collections' => array(...),
+		...
+	);
+
+	// Load the library
+	$assets = new \Stolz\Assets\Manager($config);
+
+	// Add some assets
+	$assets->add('style.css')->add('script.js');
+
+	// Generate HTML tags
+	echo $assets->css(),$assets->js();
+
+----
 
 <a id="samples"></a>
-## Collections samples
+## Sample collections
 
 	//jQuery (CDN)
 	'jquery-cdn' => ['//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'],

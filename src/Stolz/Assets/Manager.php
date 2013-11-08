@@ -1,46 +1,46 @@
 <?php namespace Stolz\Assets;
 
-use Config;
-use Log;
-use File;
-
 class Manager
 {
 	/**
-	 * Write debug info to log
-	 * @var bool
-	 */
-	protected $debug = false;
-
-	/**
-	 * Set to true to enable assets pipeline (concatenation and minification).
+	 * Enable assets pipeline (concatenation and minification).
 	 * @var bool
 	 */
 	protected $pipeline = false;
 
 	/**
-	 * Directory for local CSS assets. (No trailing slash!).
+	 * Absolute path to the public directory of your App (WEBROOT).
+	 * No trailing slash!.
+	 * @var string
+	 */
+	protected $public_dir;
+
+	/**
+	 * Directory for local CSS assets.
 	 * Relative to your public directory.
+	 * No trailing slash!.
 	 * @var string
 	 */
 	protected $css_dir = 'css';
 
 	/**
-	 * Directory for local JavaScript assets. (No trailing slash!)
+	 * Directory for local JavaScript assets.
 	 * Relative to your public directory.
+	 * No trailing slash!.
 	 * @var string
 	 */
 	protected $js_dir = 'js';
 
 	/**
-	 * Directory for storing pipelined assets. (No trailing slash!)
-	 * Relative to your assets directory.
+	 * Directory for storing pipelined assets.
+	 * Relative to your assets directories.
+	 * No trailing slash!.
 	 * @var string
 	 */
-	protected $pipe_dir = 'min';
+	protected $pipeline_dir = 'min';
 
 	/**
-	 * Available collections parsed from config file
+	 * Available collections
 	 * @var array
 	 */
 	protected $collections = array();
@@ -59,55 +59,58 @@ class Manager
 
 	/**
 	 * Class constructor.
-	 * Parse config file.
 	 *
+	 * @param  array $options
 	 * @return void
 	 */
-	function __construct()
+	function __construct(array $options = array())
 	{
-		// Set debug mode
-		if(Config::has('assets::debug'))
-			$this->debug = (bool) Config::get('assets::debug');
+		if($options)
+			$this->config($options);
+	}
 
+	/**
+	 * Set config options
+	 *
+	 * @param  array $options
+	 * @return void
+	 */
+	public function config(array $config)
+	{
 		// Set pipeline mode
-		if(Config::has('assets::pipeline'))
-			$this->pipeline = (bool) Config::get('assets::pipeline');
-		$this->debug and Log::debug('ASSETS: Pipeline '.($this->pipeline ? 'enabled' : 'disabled'));
+		if(isset($config['pipeline']))
+			$this->pipeline = $config['pipeline'];
 
-		// Set custom CSS directory
-		if(Config::has('assets::css_dir'))
-			$this->css_dir = Config::get('assets::css_dir');
-		$this->debug and Log::debug("ASSETS: CSS dir set to '{$this->css_dir}'");
+		// Set public dir
+		if(isset($config['public_dir']))
+			$this->public_dir = $config['public_dir'];
 
-		// Set custom JavaScript directory
-		if(Config::has('assets::js_dir'))
-			$this->js_dir = Config::get('assets::js_dir');
-		$this->debug and Log::debug("ASSETS: JavaScript dir set to '{$this->js_dir}'");
+		// Pipeline requires public dir
+		if( ! is_dir($this->public_dir))
+			throw new \Exception('stolz/assets: Public dir not found');
 
 		// Set custom Pipeline directory
-		if(Config::has('assets::pipe_dir'))
-			$this->pipe_dir = Config::get('assets::pipe_dir');
-		$this->debug and Log::debug("ASSETS: Pipeline dir set to '{$this->pipe_dir}'");
+		if(isset($config['pipeline_dir']))
+			$this->pipeline_dir = $config['pipeline_dir'];
 
-		// Read collections from config file
-		if(Config::has('assets::collections'))
-		{
-			if(is_array($conf = Config::get('assets::collections')))
-			{
-				$this->collections = $conf;
-				$this->debug and Log::debug("ASSETS: Defined collections ". implode(', ', array_keys($this->collections)));
-			}
-			elseif($this->debug)
-				Log::warning('ASSETS: Collections must be an array');
-		}
+		// Set custom CSS directory
+		if(isset($config['css_dir']))
+			$this->css_dir = $config['css_dir'];
+
+		// Set custom JavaScript directory
+		if(isset($config['js_dir']))
+			$this->js_dir = $config['js_dir'];
+
+		// Set collections
+		if(isset($config['collections']) and is_array($config['collections']))
+			$this->collections = $config['collections'];
 
 		// Autoload assets
-		if(is_array($conf = Config::get('assets::autoload')))
+		if(is_array($config['autoload']))
 		{
-			foreach($conf as $a)
+			foreach($config['autoload'] as $asset)
 			{
-				$this->debug and Log::debug("ASSETS: Autoloading '$a'");
-				$this->add($a);
+				$this->add($asset);
 			}
 		}
 	}
@@ -118,7 +121,7 @@ class Manager
 	 * It automatically detects the asset type (JavaScript, CSS or collection).
 	 * You may add more than one asset passing an array as argument.
 	 *
-	 * @param mixed $asset
+	 * @param  mixed   $asset
 	 * @return Manager
 	 */
 	public function add($asset)
@@ -132,7 +135,6 @@ class Manager
 		//Collection
 		elseif(isset($this->collections[$asset]))
 		{
-			$this->debug and Log::debug("ASSETS: Adding collection '$asset'");
 			$this->add($this->collections[$asset]);
 		}
 		else
@@ -146,12 +148,7 @@ class Manager
 					$this->addCss($asset);
 				elseif($ext == 'js')
 					$this->addJs($asset);
-				elseif($this->debug)
-					Log::warning("ASSETS: Unable to add asset '$asset'. Unknown type");
 			}
-			//Unknown asset type
-			elseif($this->debug)
-				Log::warning("ASSETS: Unable to add asset '$asset'. Unknown type");
 		}
 
 		return $this;
@@ -163,7 +160,7 @@ class Manager
 	 * It checks for duplicates.
 	 * You may add more than one asset passing an array as argument.
 	 *
-	 * @param mixed $asset
+	 * @param  mixed   $asset
 	 * @return Manager
 	 */
 	public function addCss($asset)
@@ -180,12 +177,7 @@ class Manager
 			$asset = $this->buildLocalLink($asset, $this->css_dir);
 
 		if( ! in_array($asset, $this->css))
-		{
 			$this->css[] = $asset;
-			$this->debug and Log::debug("ASSETS: Added CSS '$asset'");
-		}
-		elseif($this->debug)
-			Log::debug("ASSETS: Skiping already loaded CSS '$asset'");
 
 		return $this;
 	}
@@ -196,7 +188,7 @@ class Manager
 	 * It checks for duplicates.
 	 * You may add more than one asset passing an array as argument.
 	 *
-	 * @param mixed $asset
+	 * @param  mixed   $asset
 	 * @return Manager
 	 */
 	public function addJs($asset)
@@ -213,12 +205,7 @@ class Manager
 			$asset = $this->buildLocalLink($asset, $this->js_dir);
 
 		if( ! in_array($asset, $this->js))
-		{
 			$this->js[] = $asset;
-			$this->debug and Log::debug("ASSETS: Added JavaScript '$asset'");
-		}
-		elseif($this->debug)
-			Log::debug("ASSETS: Skiping already loaded JavaScript '$asset'");
 
 		return $this;
 	}
@@ -231,10 +218,7 @@ class Manager
 	public function css()
 	{
 		if( ! $this->css)
-		{
-			$this->debug and Log::debug('ASSETS: No CSS assets have been added');
 			return null;
-		}
 
 		if($this->pipeline)
 			return '<link type="text/css" rel="stylesheet" href="'.$this->cssPipeline().'" />'."\n";
@@ -254,10 +238,7 @@ class Manager
 	public function js()
 	{
 		if( ! $this->js)
-		{
-			$this->debug and Log::debug('ASSETS: No JavaScript assets have been added');
 			return null;
-		}
 
 		if($this->pipeline)
 			return '<script type="text/javascript" src="'.$this->jsPipeline().'"></script>'."\n";
@@ -287,6 +268,7 @@ class Manager
 	public function resetCss()
 	{
 		$this->css = array();
+
 		return $this;
 	}
 
@@ -298,6 +280,7 @@ class Manager
 	public function resetJs()
 	{
 		$this->js = array();
+
 		return $this;
 	}
 
@@ -310,19 +293,18 @@ class Manager
 	{
 
 		$file = md5(implode($this->css)).'.css';
-		$relative_path = "{$this->css_dir}/{$this->pipe_dir}/$file";
-		$absolute_path =  public_path($this->css_dir . DIRECTORY_SEPARATOR . $this->pipe_dir . DIRECTORY_SEPARATOR . $file);
+		$relative_path = "{$this->css_dir}/{$this->pipeline_dir}/$file";
+		$absolute_path =  $this->public_dir . DIRECTORY_SEPARATOR . $this->css_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
+		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
 
 		// If pipeline exist return it
-		if(File::exists($absolute_path))
-			return $relative_path;
-
-		$this->debug and Log::debug('ASSETS: Minifying CSS');
+		if(file_exists($absolute_path))
+			return $relative_path . $timestamp;
 
 		// Create destination directory
-		$directory = public_path($this->css_dir . DIRECTORY_SEPARATOR . $this->pipe_dir);
-		if( ! File::isDirectory($directory))
-			File::makeDirectory($directory);
+		$directory = $this->public_dir . DIRECTORY_SEPARATOR . $this->css_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir;
+		if( ! is_dir($directory))
+			mkdir($directory, 0777, true);
 
 		// Concatenate files
 		$buffer = $this->buildBuffer($this->css);
@@ -332,9 +314,9 @@ class Manager
 		$min = $min->run($buffer);
 
 		// Write file
-		File::put($absolute_path, $min);
+		file_put_contents($absolute_path, $min);
 
-		return $relative_path;
+		return $relative_path . $timestamp;
 	}
 
 	/**
@@ -345,19 +327,18 @@ class Manager
 	protected function jsPipeline()
 	{
 		$file = md5(implode($this->js)).'.js';
-		$relative_path = "{$this->js_dir}/{$this->pipe_dir}/$file";
-		$absolute_path =  public_path($this->js_dir . DIRECTORY_SEPARATOR . $this->pipe_dir . DIRECTORY_SEPARATOR . $file);
+		$relative_path = "{$this->js_dir}/{$this->pipeline_dir}/$file";
+		$absolute_path =  $this->public_dir . DIRECTORY_SEPARATOR . $this->js_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
+		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
 
 		// If pipeline exist return it
-		if(File::exists($absolute_path))
-			return $relative_path;
-
-		$this->debug and Log::debug('ASSETS: Minifying JavaScript');
+		if(file_exists($absolute_path))
+			return $relative_path . $timestamp;
 
 		// Create destination directory
-		$directory = public_path($this->js_dir . DIRECTORY_SEPARATOR . $this->pipe_dir);
-		if( ! File::isDirectory($directory))
-			File::makeDirectory($directory);
+		$directory = $this->public_dir . DIRECTORY_SEPARATOR . $this->js_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir;
+		if( ! is_dir($directory))
+			mkdir($directory, 0777, true);
 
 		// Concatenate files
 		$buffer = $this->buildBuffer($this->js);
@@ -366,15 +347,15 @@ class Manager
 		$min = \JSMin::minify($buffer);
 
 		// Write file
-		File::put($absolute_path, $min);
+		file_put_contents($absolute_path, $min);
 
-		return $relative_path;
+		return $relative_path . $timestamp;
 	}
 
 	/**
 	 * Download and concatenate links
 	 *
-	 * @param  array $links
+	 * @param  array  $links
 	 * @return string
 	 */
 	protected function buildBuffer(array $links)
@@ -384,17 +365,17 @@ class Manager
 		{
 			if($this->isRemoteLink($link))
 			{
-				if(starts_with($link, '//'))
-					$link = 'http:'.$link;
-
-				$this->debug and Log::debug('ASSETS: Downloading '.$link);
-				$buffer .= File::getRemote($link);
+				if('//' == substr($link, 0, 2))
+					$link = 'http:' . $link;
 			}
 			else
 			{
-				$buffer .= File::get(public_path($link));
+				$link = $this->public_dir . DIRECTORY_SEPARATOR . $link;
 			}
+
+			$buffer .= file_get_contents($link);
 		}
+
 		return $buffer;
 	}
 
@@ -416,16 +397,16 @@ class Manager
 	}
 
 	/**
-	 * Determine if a link to an asset is local or remote
+	 * Determine whether a link is local or remote
 	 *
 	 * Undestands both "http://" and "https://" as well as protocol agnostic links "//"
 	 *
-	 * @param string $link
+	 * @param  string $link
 	 * @return bool
 	 */
 	protected function isRemoteLink($link)
 	{
-		return ('http://' == substr($link, 0, 7) OR 'https://' == substr($link, 0, 8) OR '//' == substr($link, 0, 2));
+		return ('http://' == substr($link, 0, 7) or 'https://' == substr($link, 0, 8) or '//' == substr($link, 0, 2));
 	}
 
 }

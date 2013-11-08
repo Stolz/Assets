@@ -31,7 +31,10 @@ class ManagerServiceProvider extends ServiceProvider {
 		// Bind 'stolz.assets' component to the IoC container
 		$this->app['stolz.assets'] = $this->app->share(function($app)
 		{
-			return new Manager;
+			$config = \Config::get('assets::config', array());
+			$config['public_dir'] = public_path();
+
+			return new Manager($config);
 		});
 
 		// Add Manager facade alias
