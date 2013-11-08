@@ -26,10 +26,10 @@ An ultra-simple-to-use assets management PHP library.
 - Supports programmatically adding assets on the fly.
 - Supports local (**including packages**) or remote assets.
 - Prevents from loading duplicated assets.
-- Included assets pipeline (*concatenate and minify all your assets to a single file*) with URL timestamps support.
+- Included assets **pipeline** (*concatenate and minify all your assets to a single file*) with URL **timestamps** support.
 - Automatically prefixes local assets with a configurable folder name.
 - Supports secure (*https*) and protocol agnostic (*//*) links.
-- Supports **collections** (*named groups of assets*) that can be nested, allowing assets dependencies.
+- Supports **collections** (*named groups of assets*) that can be nested, allowing assets dependencies definitions.
 - Automatically detects type of asset (CSS, JavaScript or collection).
 - Allows autoloading by default preconfigured assets and collections.
 
@@ -108,7 +108,7 @@ If at some point you decide you added the wrong assets you can reset them and st
 	Assets::resetCss();
 	Assets::resetJs();
 
-All methods that don't generate output accept chaining:
+All methods that don't generate output will accept chaining:
 
 	Assets::reset()->add('collection')->addJs('file.js')->css();
 
@@ -123,6 +123,8 @@ To bring up the config file run
 
 This will create  `app/config/packages/stolz/config.php` file that you may use to configure your application assets.
 
+If you are using the [non static interface](#nonstatic) just inject to the class constructor an array of config settings.
+
 <a id="collections"></a>
 ### Collections
 
@@ -131,20 +133,20 @@ A collection is a named group of assets, that is, a set of JavaScript and CSS fi
 Let me use an example to show you how easy and convenient to use they are.
 
 	'collections' => array(
-		'uno'	=> 'uno.css',
-		'dos'	=> ['dos.css', 'dos.js'],
+		'one'	=> 'one.css',
+		'two'	=> ['two.css', 'two.js'],
 		'external'	=> ['http://example.com/external.css', 'https://secure.example.com/https.css', '//example.com/protocol/agnostic.js'],
 		'mix'	=> ['internal.css', 'http://example.com/external.js'],
-		'nested' => ['uno', 'dos'],
-		'duplicates' => ['nested', 'uno.css','dos.css', 'tres.js'],
+		'nested' => ['one', 'two'],
+		'duplicates' => ['nested', 'one.css','two.css', 'three.js'],
 	),
 
-Using `Assets::add('dos');` will result in
+Using `Assets::add('two');` will result in
 
 	<!-- CSS -->
-	<link type="text/css" rel="stylesheet" href="/css/dos.css" />
+	<link type="text/css" rel="stylesheet" href="css/two.css" />
 	<!-- JS -->
-	<script type="text/javascript" src="/js/dos.js"></script>
+	<script type="text/javascript" src="js/two.js"></script>
 
 Using `Assets::add('external');` will result in
 
@@ -157,26 +159,26 @@ Using `Assets::add('external');` will result in
 Using `Assets::add('mix');` will result in
 
 	<!-- CSS -->
-	<link type="text/css" rel="stylesheet" href="/css/internal.css" />
+	<link type="text/css" rel="stylesheet" href="css/internal.css" />
 	<!-- JS -->
 	<script type="text/javascript" src="http://example.com/external.js"></script>
 
 Using `Assets::add('nested');` will result in
 
 	<!-- CSS -->
-	<link type="text/css" rel="stylesheet" href="/css/uno.css" />
-	<link type="text/css" rel="stylesheet" href="/css/dos.css" />
+	<link type="text/css" rel="stylesheet" href="css/one.css" />
+	<link type="text/css" rel="stylesheet" href="css/two.css" />
 	<!-- JS -->
-	<script type="text/javascript" src="/js/dos.js"></script>
+	<script type="text/javascript" src="js/two.js"></script>
 
 Using `Assets::add('duplicates');` will result in
 
 	<!-- CSS -->
-	<link type="text/css" rel="stylesheet" href="/css/uno.css" />
-	<link type="text/css" rel="stylesheet" href="/css/dos.css" />
+	<link type="text/css" rel="stylesheet" href="css/one.css" />
+	<link type="text/css" rel="stylesheet" href="css/two.css" />
 	<!-- JS -->
-	<script type="text/javascript" src="/js/dos.js"></script>
-	<script type="text/javascript" src="/js/tres.js"></script>
+	<script type="text/javascript" src="js/two.js"></script>
+	<script type="text/javascript" src="js/three.js"></script>
 
 Note even this collection had duplicated assets they have been included only once.
 
@@ -206,8 +208,8 @@ Example:
 
 will produce:
 
-	<link type="text/css" rel="stylesheet" href="/css/min/135b1a960b9fed4dd65d1597ff593321.css?12345" />
-	<script type="text/javascript" src="/js/min/5bfed4dd65d1597ff1a960b913593321.js?12345"></script>
+	<link type="text/css" rel="stylesheet" href="css/min/135b1a960b9fed4dd65d1597ff593321.css?12345" />
+	<script type="text/javascript" src="js/min/5bfed4dd65d1597ff1a960b913593321.js?12345"></script>
 
 
 <a id="options"></a>
