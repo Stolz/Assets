@@ -106,7 +106,7 @@ class Manager
 			$this->collections = $config['collections'];
 
 		// Autoload assets
-		if(is_array($config['autoload']))
+		if(isset($config['autoload']) and is_array($config['autoload']))
 		{
 			foreach($config['autoload'] as $asset)
 			{
