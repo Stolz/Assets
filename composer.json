@@ -1,11 +1,11 @@
 {
-	"name": "stolz/assets",
-	"description": "An ultra-simple-to-use assets management library",
+	"name": "xees/assets",
+	"description": "A simple laravel assets management library",
 	"keywords": ["assets", "asset", "css", "js", "javascript", "pipeline", "minify", "laravel", "agnostic"],
 	"authors": [
 		{
-			"name": "Stolz",
-			"homepage": "https://github.com/Stolz/Assets",
+			"name": "Xees",
+			"homepage": "https://github.com/Xees/Assets",
 			"role": "developer"
 		}
 	],
@@ -16,7 +16,7 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"Stolz\\Assets": "src/"
+			"Xees\\Assets": "src/"
 		}
 	},
 	"minimum-stability": "dev",

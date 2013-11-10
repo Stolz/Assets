@@ -1,4 +1,4 @@
-<?php namespace Stolz\Assets;
+<?php namespace Xees\Assets;
 
 class Manager
 {
@@ -38,12 +38,6 @@ class Manager
 	 * @var string
 	 */
 	protected $pipeline_dir = 'min';
-
-	/**
-	 * Available collections
-	 * @var array
-	 */
-	protected $collections = array();
 
 	/**
 	 * CSS files already added
@@ -87,7 +81,7 @@ class Manager
 
 		// Pipeline requires public dir
 		if( ! is_dir($this->public_dir))
-			throw new \Exception('stolz/assets: Public dir not found');
+			throw new \Exception('xees/assets: Public dir not found');
 
 		// Set custom Pipeline directory
 		if(isset($config['pipeline_dir']))
@@ -100,58 +94,6 @@ class Manager
 		// Set custom JavaScript directory
 		if(isset($config['js_dir']))
 			$this->js_dir = $config['js_dir'];
-
-		// Set collections
-		if(isset($config['collections']) and is_array($config['collections']))
-			$this->collections = $config['collections'];
-
-		// Autoload assets
-		if(isset($config['autoload']) and is_array($config['autoload']))
-		{
-			foreach($config['autoload'] as $asset)
-			{
-				$this->add($asset);
-			}
-		}
-	}
-
-	/**
-	 * Add an asset or a collection of assets
-	 *
-	 * It automatically detects the asset type (JavaScript, CSS or collection).
-	 * You may add more than one asset passing an array as argument.
-	 *
-	 * @param  mixed   $asset
-	 * @return Manager
-	 */
-	public function add($asset)
-	{
-		//More than one asset
-		if(is_array($asset))
-		{
-			foreach($asset as $a)
-				$this->add($a);
-		}
-		//Collection
-		elseif(isset($this->collections[$asset]))
-		{
-			$this->add($this->collections[$asset]);
-		}
-		else
-		{
-			//JavaScript or CSS
-			$info = pathinfo($asset);
-			if(isset($info['extension']))
-			{
-				$ext = strtolower($info['extension']);
-				if($ext == 'css')
-					$this->addCss($asset);
-				elseif($ext == 'js')
-					$this->addJs($asset);
-			}
-		}
-
-		return $this;
 	}
 
 	/**
@@ -213,12 +155,17 @@ class Manager
 	/**
 	 * Build the CSS link tags
 	 *
+	 * @param mixed $asset
 	 * @return string
 	 */
-	public function css()
+	public function css($asset = null)
 	{
-		if( ! $this->css)
-			return null;
+		if(!$asset){
+			// clear older assets
+			$this->resetCss();
+			// add new items to empty array
+			$this->addCss($asset);
+		}
 
 		if($this->pipeline)
 			return '<link type="text/css" rel="stylesheet" href="'.$this->cssPipeline().'" />'."\n";
@@ -233,12 +180,17 @@ class Manager
 	/**
 	 * Build the JavaScript script tags
 	 *
+	 * @param mixed $asset
 	 * @return string
 	 */
-	public function js()
+	public function js($asset = null)
 	{
-		if( ! $this->js)
-			return null;
+		if(!$asset){
+		// clear older assets
+		$this->resetJs();
+		// add new items to empty array
+		$this->addJs($asset);
+		}
 
 		if($this->pipeline)
 			return '<script type="text/javascript" src="'.$this->jsPipeline().'"></script>'."\n";
@@ -248,16 +200,6 @@ class Manager
 			$output .= '<script type="text/javascript" src="'.$file.'"></script>'."\n";
 
 		return $output;
-	}
-
-	/**
-	 * Reset all assets
-	 *
-	 * @return Manager
-	 */
-	public function reset()
-	{
-		return $this->resetCss()->resetJs();
 	}
 
 	/**
