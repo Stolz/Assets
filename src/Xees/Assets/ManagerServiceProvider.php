@@ -1,4 +1,4 @@
-<?php namespace Stolz\Assets;
+<?php namespace Xees\Assets;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -18,7 +18,7 @@ class ManagerServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('stolz/assets');
+		$this->package('xees/assets');
 	}
 
 	/**
@@ -28,8 +28,8 @@ class ManagerServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		// Bind 'stolz.assets' component to the IoC container
-		$this->app['stolz.assets'] = $this->app->share(function($app)
+		// Bind 'xees.assets' component to the IoC container
+		$this->app['xees.assets'] = $this->app->share(function($app)
 		{
 			$config = \Config::get('assets::config', array());
 			$config['public_dir'] = public_path();
@@ -41,17 +41,17 @@ class ManagerServiceProvider extends ServiceProvider {
 		$this->app->booting(function()
 		{
 			$loader = \Illuminate\Foundation\AliasLoader::getInstance();
-			$loader->alias('Assets', 'Stolz\Assets\Facades\Assets');
+			$loader->alias('Assets', 'xees\Assets\Facades\Assets');
 		});
 
-		// Bind 'stolz.assets.command.purgepipeline' component to the IoC container
-		$this->app['stolz.assets.command.purgepipeline'] = $this->app->share(function($app)
+		// Bind 'xees.assets.command.purgepipeline' component to the IoC container
+		$this->app['xees.assets.command.purgepipeline'] = $this->app->share(function($app)
 		{
 			return new PurgePipelineCommand();
 		});
 
 		// Add artisan command
-		$this->commands('stolz.assets.command.purgepipeline');
+		$this->commands('xees.assets.command.purgepipeline');
 	}
 
 	/**

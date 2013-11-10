@@ -1,4 +1,4 @@
-<?php namespace Stolz\Assets\Facades;
+<?php namespace Xees\Assets\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
@@ -9,5 +9,5 @@ class Assets extends Facade {
 	 *
 	 * @return string
 	 */
-	protected static function getFacadeAccessor() { return 'stolz.assets'; }
+	protected static function getFacadeAccessor() { return 'xees.assets'; }
 }

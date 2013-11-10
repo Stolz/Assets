@@ -1,4 +1,4 @@
-<?php namespace Stolz\Assets;
+<?php namespace Xees\Assets;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
