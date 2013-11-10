@@ -213,12 +213,13 @@ class Manager
 	/**
 	 * Build the CSS link tags
 	 *
+	 * @param mixed $asset
 	 * @return string
 	 */
-	public function css()
+	public function css($asset = null)
 	{
 		if( ! $this->css)
-			return null;
+			$this->addCss($asset);
 
 		if($this->pipeline)
 			return '<link type="text/css" rel="stylesheet" href="'.$this->cssPipeline().'" />'."\n";
@@ -233,12 +234,13 @@ class Manager
 	/**
 	 * Build the JavaScript script tags
 	 *
+	 * @param mixed $asset
 	 * @return string
 	 */
-	public function js()
+	public function js($asset = null)
 	{
 		if( ! $this->js)
-			return null;
+			$this->addJs($asset);
 
 		if($this->pipeline)
 			return '<script type="text/javascript" src="'.$this->jsPipeline().'"></script>'."\n";
