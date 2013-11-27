@@ -1,6 +1,7 @@
 <?php namespace Stolz\Assets;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\AliasLoader;
 
 class ManagerServiceProvider extends ServiceProvider {
 
@@ -18,7 +19,22 @@ class ManagerServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
+		// Register the package namespace
 		$this->package('stolz/assets');
+
+		// Read settings from config file
+		$config = $this->app->config->get('assets::config', array());
+		$config['public_dir'] = public_path();
+
+		// Apply config settings
+		$this->app['stolz.assets']->config($config);
+
+		// Add 'Assets' facade alias
+		AliasLoader::getInstance()->alias('Assets', 'Stolz\Assets\Facades\Assets');
+
+		// Add artisan command
+		$this->commands('stolz.assets.command.purgepipeline');
+
 	}
 
 	/**
@@ -28,30 +44,18 @@ class ManagerServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		// Bind 'stolz.assets' component to the IoC container
-		$this->app['stolz.assets'] = $this->app->share(function($app)
+		// Bind 'stolz.assets' shared component to the IoC container
+		$this->app->singleton('stolz.assets', function($app)
 		{
-			$config = \Config::get('assets::config', array());
-			$config['public_dir'] = public_path();
-
-			return new Manager($config);
-		});
-
-		// Add Manager facade alias
-		$this->app->booting(function()
-		{
-			$loader = \Illuminate\Foundation\AliasLoader::getInstance();
-			$loader->alias('Assets', 'Stolz\Assets\Facades\Assets');
+			return new Manager();
 		});
 
 		// Bind 'stolz.assets.command.purgepipeline' component to the IoC container
-		$this->app['stolz.assets.command.purgepipeline'] = $this->app->share(function($app)
+		$this->app->bind('stolz.assets.command.purgepipeline', function($app)
 		{
 			return new PurgePipelineCommand();
 		});
 
-		// Add artisan command
-		$this->commands('stolz.assets.command.purgepipeline');
 	}
 
 	/**
