@@ -86,7 +86,7 @@ class Manager
 			$this->public_dir = $config['public_dir'];
 
 		// Pipeline requires public dir
-		if( ! is_dir($this->public_dir))
+		if($this->pipeline and ! is_dir($this->public_dir))
 			throw new \Exception('stolz/assets: Public dir not found');
 
 		// Set custom Pipeline directory
@@ -390,10 +390,26 @@ class Manager
 	 */
 	protected function buildLocalLink($asset, $dir)
 	{
-		if(preg_match('{^([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+):(.*)$}', $asset, $package))
-			return '/packages/' . $package[1] . '/' .$package[2] . '/' . ltrim($dir, '/') . '/' .$package[3];
+		$package = $this->assetIsFromPackage($asset);
 
+		if($package === false)
 			return $dir . '/' . $asset;
+
+		return '/packages/' . $package[0] . '/' .$package[1] . '/' . ltrim($dir, '/') . '/' .$package[2];
+	}
+
+	/**
+	 * Determine whether an asset is normal or from a package
+	 *
+	 * @param  string $asset
+	 * @return bool|array
+	 */
+	protected function assetIsFromPackage($asset)
+	{
+		if(preg_match('{^([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+):(.*)$}', $asset, $matches))
+			return array_slice($matches, 1, 3);
+
+		return false;
 	}
 
 	/**
@@ -409,4 +425,23 @@ class Manager
 		return ('http://' == substr($link, 0, 7) or 'https://' == substr($link, 0, 8) or '//' == substr($link, 0, 2));
 	}
 
+	/**
+	 * Get all CSS assets already added.
+	 *
+	 * @return array
+	 */
+	public function getCss()
+	{
+		return $this->css;
+	}
+
+	/**
+	 * Get all JavaScript assets already added.
+	 *
+	 * @return array
+	 */
+	public function getJs()
+	{
+		return $this->js;
+	}
 }
