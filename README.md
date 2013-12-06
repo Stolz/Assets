@@ -3,6 +3,8 @@ Assets
 
 An ultra-simple-to-use assets management PHP library.
 
+[![Build Status](https://travis-ci.org/Stolz/Assets.png?branch=master)](https://travis-ci.org/Stolz/Assets)
+
 1. [Features](#features).
 - [Supported frameworks](#frameworks).
 - [Installation](#installation).
