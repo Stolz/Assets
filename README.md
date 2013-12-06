@@ -123,7 +123,7 @@ To bring up the config file run
 
 This will create  `app/config/packages/stolz/config.php` file that you may use to configure your application assets.
 
-If you are using the [non static interface](#nonstatic) just inject to the class constructor an array of config settings.
+If you are using the [non static interface](#nonstatic) just pass an associative array of config settings to the class constructor.
 
 <a id="collections"></a>
 ### Collections
