@@ -234,18 +234,21 @@ will produce:
 <a id="nonstatic"></a>
 ## Non static interface
 
-You can use the library without using static methods. The signature of all methods is the same described above.
+You can use the library without using static methods. The signature of all methods is the same as described above but using an instance of the class instead.
 
-	require '/path/to/Stolz/Assets/Manager.php';
+	// Load the library
+	require '/path/to/Stolz/Assets/Manager.php'; // Also psr-0 autoloadable
 
-	// Configure options
+	// Set config options
 	$config = array(
-		'pipeline' => true,
 		'collections' => array(...),
+		'autoload' => array(...),
+		'pipeline' => true,
+		'public_dir' => '/absolute/path/to/your/webroot/public/dir' // Required only if you enable pipeline!
 		...
 	);
 
-	// Load the library
+	// Instantiate the library
 	$assets = new \Stolz\Assets\Manager($config);
 
 	// Add some assets
@@ -271,9 +274,9 @@ You can use the library without using static methods. The signature of all metho
 	//Twitter Bootstrap (CDN)
 	'bootstrap-cdn' => [
 		'jquery-cdn',
-		'//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css',
-		'//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css',
-		'//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'
+		'//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css',
+		'//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css',
+		'//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js'
 	],
 
 	// Twitter Bootstrap
@@ -288,9 +291,9 @@ You can use the library without using static methods. The signature of all metho
 	//Zurb Foundation (CDN)
 	'foundation-cdn' => [
 		'jquery-cdn',
-		'//cdn.jsdelivr.net/foundation/4.3.2/css/normalize.css',
-		'//cdn.jsdelivr.net/foundation/4.3.2/css/foundation.min.css',
-		'//cdn.jsdelivr.net/foundation/4.3.2/js/foundation.min.js',
+		'//cdn.jsdelivr.net/foundation/5.0.2/css/normalize.css',
+		'//cdn.jsdelivr.net/foundation/5.0.2/css/foundation.min.css',
+		'//cdn.jsdelivr.net/foundation/5.0.2/js/foundation.min.js',
 		'app.js'
 	],
 
