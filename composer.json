@@ -11,8 +11,10 @@
 	],
 	"require": {
 		"php": ">=5.3.0",
-		"illuminate/support": "4.0.x",
 		"mrclay/minify": "dev-master"
+	},
+	"suggest": {
+		"laravel/laravel": "Included ServiceProvider and Facade to work out of the box with Laravel"
 	},
 	"autoload": {
 		"psr-0": {
