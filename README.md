@@ -1,4 +1,4 @@
-Assets
+<!-- Assets -->
 ======
 
 An ultra-simple-to-use assets management PHP library.
@@ -223,7 +223,7 @@ will produce:
 - `'css_dir' => 'css',`
 - `'js_dir' => 'js',`
 
-	Override default folder for local assets. Don't use trailing slash!.
+	Override default base URL/folder for assets. Don't use trailing slash!. They will be prepended to all your assets. Both relative paths or full URLs are supported.
 
 - `'pipeline_dir' => 'min',`
 
