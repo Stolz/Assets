@@ -251,6 +251,14 @@ class Manager
 	}
 
 	/**
+	 * Register a new collection
+	 */
+	public function registerCollection($collectionName, Array $assets)
+	{
+		$this->collections[$collectionName] = $assets;
+	}
+
+	/**
 	 * Reset all assets
 	 *
 	 * @return Manager
