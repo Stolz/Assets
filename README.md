@@ -1,4 +1,4 @@
-<!-- Assets -->
+Assets
 ======
 
 An ultra-simple-to-use assets management PHP library.
@@ -29,7 +29,7 @@ An ultra-simple-to-use assets management PHP library.
 - Supports local (**including packages**) or remote assets.
 - Prevents from loading duplicated assets.
 - Included assets **pipeline** (*concatenate and minify all your assets to a single file*) with URL **timestamps** support.
-- Automatically prefixes local assets with a configurable folder name.
+- Automatically prefixes local assets with a configurable folder name or url.
 - Supports secure (*https*) and protocol agnostic (*//*) links.
 - Supports **collections** (*named groups of assets*) that can be nested, allowing assets dependencies definitions.
 - Automatically detects type of asset (CSS, JavaScript or collection).
@@ -40,8 +40,6 @@ An ultra-simple-to-use assets management PHP library.
 ## Supported frameworks
 
 The library is framework agnostic and it should work well with any framework or naked PHP application. Nevertheless, the following instructions have been tailored for Laravel 4 framework. If you want to use the library in any other scenario please read the [non static interface](#nonstatic) instructions.
-
-
 
 <a id="installation"></a>
 ## Installation
@@ -57,8 +55,6 @@ Then edit `app/config/app.php` and add the service provider within the `provider
 		'Stolz\Assets\ManagerServiceProvider'
 
 There is no need to add the Facade, the package will add it for you.
-
-
 
 <a id="usage"></a>
 ## Usage
@@ -97,23 +93,20 @@ You may add remote assets in the same fashion
 	Assets::add('//cdn.example.com/jquery.js'));
 	Assets::add('http://example.com/style.css'));
 
-If your assets have no extension and autodetection fails, then just use canonical functions
+If your assets have no extension and autodetection fails, then just use canonical functions *(they accept an array of assets too)*
 
 	Assets::addCss('asset.css');
 	Assets::addJs('asset.js');
 
-*(Canonical functions also accept an array of assets)*
-
 If at some point you decide you added the wrong assets you can reset them and start over
 
-	Assets::reset(); //Both CSS and JS
+	Assets::reset(); //Reset both CSS and JS
 	Assets::resetCss();
 	Assets::resetJs();
 
 All methods that don't generate output will accept chaining:
 
 	Assets::reset()->add('collection')->addJs('file.js')->css();
-
 
 
 <a id="configuration"></a>
@@ -130,18 +123,25 @@ If you are using the [non static interface](#nonstatic) just pass an associative
 <a id="collections"></a>
 ### Collections
 
-A collection is a named group of assets, that is, a set of JavaScript and CSS files. Any collection may include more collections, allowing dependencies definition and collection nesting.
+A collection is a named group of assets, that is, a set of JavaScript and CSS files. Any collection may include more collections, allowing dependencies definition and collection nesting. Collections can be created on run time or via config file.
 
-Let me use an example to show you how easy and convenient to use they are.
+To register a collection on run time for later use:
 
+	Assets::registerCollection($collectionName, ['array', 'of', 'assets']);
+
+To preconfigure collections using the config file:
+
+	// ... config.php ...
 	'collections' => array(
 		'one'	=> 'one.css',
 		'two'	=> ['two.css', 'two.js'],
 		'external'	=> ['http://example.com/external.css', 'https://secure.example.com/https.css', '//example.com/protocol/agnostic.js'],
 		'mix'	=> ['internal.css', 'http://example.com/external.js'],
 		'nested' => ['one', 'two'],
-		'duplicates' => ['nested', 'one.css','two.css', 'three.js'],
+		'duplicated' => ['nested', 'one.css','two.css', 'three.js'],
 	),
+
+Let me use an example to show you how easy and convenient to use the collection defined above are.
 
 Using `Assets::add('two');` will result in
 
@@ -173,7 +173,7 @@ Using `Assets::add('nested');` will result in
 	<!-- JS -->
 	<script type="text/javascript" src="js/two.js"></script>
 
-Using `Assets::add('duplicates');` will result in
+Using `Assets::add('duplicated');` will result in
 
 	<!-- CSS -->
 	<link type="text/css" rel="stylesheet" href="css/one.css" />
@@ -182,7 +182,7 @@ Using `Assets::add('duplicates');` will result in
 	<script type="text/javascript" src="js/two.js"></script>
 	<script type="text/javascript" src="js/three.js"></script>
 
-Note even this collection had duplicated assets they have been included only once.
+Note even this last collection had duplicated assets they have been included only once.
 
 <a id="pipeline"></a>
 ### Pipeline
@@ -274,9 +274,9 @@ You can use the library without using static methods. The signature of all metho
 	//Twitter Bootstrap (CDN)
 	'bootstrap-cdn' => [
 		'jquery-cdn',
-		'//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css',
-		'//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css',
-		'//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js'
+		'//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css',
+		'//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css',
+		'//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js'
 	],
 
 	// Twitter Bootstrap
@@ -291,9 +291,9 @@ You can use the library without using static methods. The signature of all metho
 	//Zurb Foundation (CDN)
 	'foundation-cdn' => [
 		'jquery-cdn',
-		'//cdn.jsdelivr.net/foundation/5.0.2/css/normalize.css',
-		'//cdn.jsdelivr.net/foundation/5.0.2/css/foundation.min.css',
-		'//cdn.jsdelivr.net/foundation/5.0.2/js/foundation.min.js',
+		'//cdn.jsdelivr.net/foundation/5.1.1/css/normalize.css',
+		'//cdn.jsdelivr.net/foundation/5.1.1/css/foundation.min.css',
+		'//cdn.jsdelivr.net/foundation/5.1.1/js/foundation.min.js',
 		'app.js'
 	],
 

@@ -251,11 +251,17 @@ class Manager
 	}
 
 	/**
-	 * Register a new collection
+	 * Add/replace collection
+	 *
+	 * @param  string  $collectionName
+	 * @param  array   $assets
+	 * @return Manager
 	 */
 	public function registerCollection($collectionName, Array $assets)
 	{
 		$this->collections[$collectionName] = $assets;
+
+		return $this;
 	}
 
 	/**
