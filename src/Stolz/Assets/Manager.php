@@ -73,7 +73,7 @@ class Manager
 	 * Set config options
 	 *
 	 * @param  array $options
-	 * @return void
+	 * @return Manager
 	 */
 	public function config(array $config)
 	{
@@ -113,6 +113,8 @@ class Manager
 				$this->add($asset);
 			}
 		}
+
+		return $this;
 	}
 
 	/**
