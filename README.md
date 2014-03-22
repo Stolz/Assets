@@ -24,7 +24,7 @@ An ultra-simple-to-use assets management PHP library.
 ## Features
 
 - **Very easy to use**.
-- Autogenerates tags for including your JavaScript and CSS files.
+- Autogenerates HTML tags for including your JavaScript and CSS files.
 - Supports programmatically adding assets on the fly.
 - Supports local (**including packages**) or remote assets.
 - Prevents from loading duplicated assets.
@@ -86,7 +86,7 @@ Add an asset from a local package
 
 	Assets::add('twitter/bootstrap:bootstrap.min.css');
 
-Note all local assets filenames are considered to be relative to you assets directory so you don't need to provide it every time with `js/file.js` or `css/file.css`, using just `file.js` or `file.css` will be enought.
+Note all local assets filenames are considered to be relative to you assets directory (configurable via `css_dir` and `js_dir` options) so you don't need to provide it every time with `js/file.js` or `css/file.css`, using just `file.js` or `file.css` will be enought.
 
 You may add remote assets in the same fashion
 
@@ -116,7 +116,7 @@ To bring up the config file run
 
 	php artisan config:publish stolz/assets
 
-This will create  `app/config/packages/stolz/config.php` file that you may use to configure your application assets.
+This will create  `app/config/packages/stolz/config.php` file that you may use to configure your application assets. With the provided comments all options should be selfexplanatory.
 
 If you are using the [non static interface](#nonstatic) just pass an associative array of config settings to the class constructor.
 
@@ -127,7 +127,7 @@ A collection is a named group of assets, that is, a set of JavaScript and CSS fi
 
 To register a collection on run time for later use:
 
-	Assets::registerCollection($collectionName, ['array', 'of', 'assets']);
+	Assets::registerCollection($collectionName, array('some', 'awesome', 'assets'));
 
 To preconfigure collections using the config file:
 
@@ -141,7 +141,7 @@ To preconfigure collections using the config file:
 		'duplicated' => ['nested', 'one.css','two.css', 'three.js'],
 	),
 
-Let me use an example to show you how easy and convenient to use the collection defined above are.
+Let me show you how to use the above collection in different scenarios:
 
 Using `Assets::add('two');` will result in
 
