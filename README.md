@@ -229,7 +229,7 @@ will produce:
 
 	Override default folder for pipelined assets. Don't use trailing slash!.
 
-Is it possible to **change config options on the fly** by passing an array of settings to the `config()` method. Usefull if some assets use a different base directory or if you want to pipeline some assets and skip others from the pipeline. i.e:
+It is possible to **change any config options on the fly** by passing an array of settings to the `config()` method. Usefull if some assets use a different base directory or if you want to pipeline some assets and skip others from the pipeline. i.e:
 
 	{{ Assets::reset()->add('do-not-pipeline-this.js')->js() }}
 	{{ Assets::reset()->add('please-pipeline-this.js')->config(array('pipeline' => true))->js() }}
