@@ -409,7 +409,7 @@ class Manager
 		$package = $this->assetIsFromPackage($asset);
 
 		if($package === false)
-			return $dir . '/' . $asset;
+			return asset($dir . '/' . $asset);
 
 		return '/packages/' . $package[0] . '/' .$package[1] . '/' . ltrim($dir, '/') . '/' .$package[2];
 	}
