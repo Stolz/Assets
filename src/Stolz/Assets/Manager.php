@@ -40,6 +40,12 @@ class Manager
 	protected $pipeline_dir = 'min';
 
 	/**
+	 * File open with cURL or file_get_contents for external links
+	 * @var bool
+	 */
+	protected $curl = true;
+
+	/**
 	 * Available collections
 	 * @var array
 	 */
@@ -104,6 +110,11 @@ class Manager
 		// Set collections
 		if(isset($config['collections']) and is_array($config['collections']))
 			$this->collections = $config['collections'];
+
+		// Set curl mode
+		if(isset($config['curl'])) {
+			$this->curl = $config['curl'];
+		}
 
 		// Autoload assets
 		if(isset($config['autoload']) and is_array($config['autoload']))
@@ -389,7 +400,27 @@ class Manager
 				$link = $this->public_dir . DIRECTORY_SEPARATOR . $link;
 			}
 
-			$buffer .= file_get_contents($link);
+			if($this->curl) {
+				$curl = curl_init();
+				curl_setopt ($curl, CURLOPT_URL, $link);
+				curl_setopt ($curl, CURLOPT_CONNECTTIMEOUT, 5);
+				curl_setopt ($curl, CURLOPT_RETURNTRANSFER, true);
+				$contents = curl_exec($curl);
+
+				if (curl_errno($curl)) {
+				  $contents = '';
+				} else {
+				  curl_close($curl);
+				}
+
+				if (!is_string($contents) || !strlen($contents)) {
+					$contents = '';
+				}
+
+				$buffer .= $contents;
+			} else {
+				$buffer .= file_get_contents($link);
+			}
 		}
 
 		return $buffer;
