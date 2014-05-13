@@ -392,35 +392,47 @@ class Manager
 		{
 			if($this->isRemoteLink($link))
 			{
-				if('//' == substr($link, 0, 2))
+				if('//' == substr($link, 0, 2)) {
 					$link = 'http:' . $link;
+				}
+
+				if($this->curl) {
+					$curl = curl_init();
+					curl_setopt ($curl, CURLOPT_URL, $link);
+					curl_setopt ($curl, CURLOPT_CONNECTTIMEOUT, 5);
+					curl_setopt ($curl, CURLOPT_RETURNTRANSFER, true);
+					$contents = curl_exec($curl);
+
+					if (curl_errno($curl)) {
+					  $contents = '';
+					} else {
+					  curl_close($curl);
+					}
+
+					if (!is_string($contents) || !strlen($contents)) {
+						$contents = '';
+					}
+
+					$buffer .= $contents;
+				} else {
+					$buffer .= file_get_contents($link);
+				}
 			}
 			else
 			{
 				$link = $this->public_dir . DIRECTORY_SEPARATOR . $link;
-			}
 
-			if($this->curl) {
-				$curl = curl_init();
-				curl_setopt ($curl, CURLOPT_URL, $link);
-				curl_setopt ($curl, CURLOPT_CONNECTTIMEOUT, 5);
-				curl_setopt ($curl, CURLOPT_RETURNTRANSFER, true);
-				$contents = curl_exec($curl);
-
-				if (curl_errno($curl)) {
-				  $contents = '';
-				} else {
-				  curl_close($curl);
-				}
-
-				if (!is_string($contents) || !strlen($contents)) {
+				$handle = @fopen($link, "r");
+				if (!$handle) {
 					$contents = '';
+				} else {
+					$contents = fread($handle, filesize($link));
+					fclose($handle);
 				}
 
 				$buffer .= $contents;
-			} else {
-				$buffer .= file_get_contents($link);
 			}
+
 		}
 
 		return $buffer;
