@@ -17,6 +17,7 @@ An ultra-simple-to-use assets management PHP library.
  - [More options](#options).
 - [Non static interface usage](#nonstatic).
 - [Sample collections](#samples).
+- [Troubleshooting / F.A.Q.](#troubleshooting).
 
 ----
 
@@ -90,7 +91,7 @@ Add an asset from a local package
 
 	Assets::add('twitter/bootstrap:bootstrap.min.css');
 
-Note all local assets filenames are considered to be relative to you assets directory so you don't need to provide it every time with `js/file.js` or `css/file.css`, using just `file.js` or `file.css` will be enought.
+Note all local assets filenames are considered to be relative to you assets directory so you don't need to provide it every time with `js/file.js` or `css/file.css`, using just `file.js` or `file.css` will be enough.
 
 You may add remote assets in the same fashion
 
@@ -297,3 +298,57 @@ You can use the library without using static methods. The signature of all metho
 		'app.js'
 	],
 
+<a id="troubleshooting"></a>
+## Troubleshooting / F.A.Q.
+
+<a id="faq_folders"></a>
+### Where should I copy my assets files?
+
+They should be copied to the subfolders you specified with the `css_dir` and `js_dir` config options. Both folders are relative to your webroot/public folder. For package assets it's the same but relative to the `packages` folder within your webroot/public folder.
+
+i.e: Using `Assets::add(['foo.css', 'bar.js', 'somevendor/somepackage:lorem.css', 'anothervendor/anotherpackage:ipsum.js']);` with the default settings and assuming `/myproject/public` is your webroot/public folder then you need to copy your files to:
+
+	/myproject/public/css/foo.css
+	/myproject/public/js/bar.js
+	/myproject/public/packages/somevendor/somepackage/css/lorem.css
+	/myproject/public/packages/anothervendor/anotherpackage/js/ipsum.js
+
+<a id="faq_base"></a>
+### Why assets work for the main page but not for subpages?
+
+If your assets seem to work fine for <http://example.com> but not for <http://example.com/some/other/place> your are likely to be using relative links. If you use links relative to your root URI in an URI that is not your root URI for them to work you must use the [`<base>`  HTML tag](http://www.w3.org/TR/html4/struct/links.html#h-12.4) pointing to your root URI. This behavior is not related to the library or the framework but related to the [HTML standard](http://www.w3.org/TR/html401/struct/links.html#h-12.4.1) itself. Please make sure you understand the [semantics of relative links](http://www.ietf.org/rfc/rfc1808.txt) before reporting a bug.
+
+<a id="faq_pipeline"></a>
+### The pipeline is not working
+
+Make sure `public_dir` config option is set and it's pointing to the **absolute** path of your webroot/public folder and the user than is running the library has write permissions for that folder.
+
+If you use a massive amount of assets make sure your connection is fast enough and your computer is powerful enough to download and compress all the assets before the PHP maximum execution time is reached.
+
+<a id="faq_config_on_the_fly"></a>
+### Can I use multiple instances of the library?
+
+Yes you can but there is no need. Read next question.
+
+<a id="faq_instances"></a>
+### Can I change settings on the fly?
+
+Yes you can. There is a `config()` public method to change settings on the fly. This allows you to use same instance of the library with different settings. i.e:
+
+	echo Assets::add('jquery-cdn')->js();
+	echo Assets::reset()->add(array('custom.js', 'main.js'))->config(array('pipeline' => true))->js();
+
+<a id="faq_pull_request_not_merged"></a>
+### Why my pull requests with *some feature* was not merged?
+
+Remember this is a framework agnostic library, if your PR uses code related to your framework it will not get merged. Also, the main reason for the library to exist is to be easy to use, if your PR involves changing this and makes the library cumbersome to use then it will not get merged.
+
+<a id="faq_to_help"></a>
+### How can I help?
+
+Send a pull requests. I really hate writing unit tests, any addition to improving test coverage will be very welcome.
+
+<a id="faq_support"></a>
+### Where can I ask for help/support?
+
+First make sure you read the [F.A.Q.](#troubleshooting) and if you still need help [open an issue on GitHub](https://github.com/Stolz/Assets/issues/new).
