@@ -321,7 +321,7 @@ If your assets seem to work fine for <http://example.com> but not for <http://ex
 <a id="faq_pipeline"></a>
 ### The pipeline is not working
 
-Make sure `public_dir` config option is set and it's pointing to the **absolute** path of your webroot/public folder and the user than is running the library has write permissions for that folder.
+Make sure `public_dir` config option is set and it's pointing to the **absolute** path of your webroot/public folder and the user that is running the library has write permissions for that folder.
 
 If you use a massive amount of assets make sure your connection is fast enough and your computer is powerful enough to download and compress all the assets before the PHP maximum execution time is reached.
 
