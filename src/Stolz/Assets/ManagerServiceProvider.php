@@ -3,7 +3,8 @@
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
 
-class ManagerServiceProvider extends ServiceProvider {
+class ManagerServiceProvider extends ServiceProvider
+{
 
 	/**
 	 * Indicates if loading of the provider is deferred.
@@ -34,7 +35,6 @@ class ManagerServiceProvider extends ServiceProvider {
 
 		// Add artisan command
 		$this->commands('stolz.assets.command.purgepipeline');
-
 	}
 
 	/**
@@ -45,17 +45,14 @@ class ManagerServiceProvider extends ServiceProvider {
 	public function register()
 	{
 		// Bind 'stolz.assets' shared component to the IoC container
-		$this->app->singleton('stolz.assets', function($app)
-		{
+		$this->app->singleton('stolz.assets', function ($app) {
 			return new Manager();
 		});
 
 		// Bind 'stolz.assets.command.purgepipeline' component to the IoC container
-		$this->app->bind('stolz.assets.command.purgepipeline', function($app)
-		{
+		$this->app->bind('stolz.assets.command.purgepipeline', function ($app) {
 			return new PurgePipelineCommand();
 		});
-
 	}
 
 	/**
@@ -67,5 +64,4 @@ class ManagerServiceProvider extends ServiceProvider {
 	{
 		return array();
 	}
-
 }

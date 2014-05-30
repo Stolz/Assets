@@ -13,6 +13,9 @@
 		"php": ">=5.3.0",
 		"mrclay/minify": "~2.1"
 	},
+	"require-dev": {
+		"squizlabs/php_codesniffer": "2.*"
+	},
 	"suggest": {
 		"laravel/laravel": "Included ServiceProvider and Facade to work out of the box with Laravel"
 	},
@@ -20,6 +23,9 @@
 		"psr-0": {
 			"Stolz\\Assets": "src/"
 		}
+	},
+	"config": {
+		"preferred-install": "dist"
 	},
 	"minimum-stability": "dev",
 	"license": "MIT"

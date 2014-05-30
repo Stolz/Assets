@@ -6,7 +6,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use File;
 use Config;
 
-class PurgePipelineCommand extends Command {
+class PurgePipelineCommand extends Command
+{
 
 	/**
 	 * The console command name.
@@ -91,5 +92,4 @@ class PurgePipelineCommand extends Command {
 		$this->error($directory . ' is not writable');
 		return false;
 	}
-
 }
