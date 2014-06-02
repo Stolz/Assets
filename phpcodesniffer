@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd "$( cd "$( dirname "$0" )" && pwd )"
+
+./vendor/bin/phpcs --report-width=100 --tab-width=4 --standard=phpcodesniffer.xml src/ -as
