@@ -106,4 +106,17 @@ return array(
 	 */
 
 	'debug' => false,
+
+	/*
+	 | -------------------------------------------------------------------------
+	 | cURL or file_get_contents
+	 |--------------------------------------------------------------------------
+	 |
+	 | Option for choose file opening method if external link defined for assets.
+	 | Some of shared hosting companies disabled file_get_contents() option.
+	 |
+	 | Default: true
+	 */
+
+	'curl' => true,
 );
