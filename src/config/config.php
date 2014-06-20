@@ -7,8 +7,8 @@ return array(
 	| Local assets directories
 	|--------------------------------------------------------------------------
 	|
-	| Override defaul prefix folder for local assets. Don't use trailing slash!.
-	| They are relative to your public folder.
+	| Override defaul prefix folder for local assets. They are relative to your
+	| public folder. Don't use trailing slash!.
 	|
 	| Default for CSS: 'css'
 	| Default for JS: 'js'
@@ -45,7 +45,17 @@ return array(
 	|			'//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css',
 	|			'//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css',
 	|			'//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'
-	|		]
+	|		],
+	|
+	|		//Zurb Foundation (CDN)
+	|		'foundation-cdn' => [
+	|			'//cdn.jsdelivr.net/foundation/5.3.0/js/vendor/modernizr.js',
+	|			'jquery2-cdn',
+	|			'//cdn.jsdelivr.net/foundation/5.3.0/js/foundation.min.js',
+	|			'app.js',
+	|			'//cdn.jsdelivr.net/foundation/5.3.0/css/normalize.css',
+	|			'//cdn.jsdelivr.net/foundation/5.3.0/css/foundation.min.css',
+	|		],
 	|	),
 	*/
 
@@ -86,24 +96,12 @@ return array(
 	| Pipelined assets directories
 	|--------------------------------------------------------------------------
 	|
-	| Override defaul folder for storing pipelined assets. Don't use trailing slash!.
-	| Relative to your assets folder.
+	| Override defaul folder for storing pipelined assets. Relative to your
+	| assets folder. Don't use trailing slash!.
 	|
 	| Default: 'min'
 	*/
 
 	'pipeline_dir' => 'min',
 
-	/*
-	 | -------------------------------------------------------------------------
-	 | Library Debug Mode
-	 |--------------------------------------------------------------------------
-	 |
-	 | When debug mode is enabled information about the process of loading
-	 | assets will be sent to the log.
-	 |
-	 | Default: false
-	 */
-
-	'debug' => false,
 );

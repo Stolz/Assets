@@ -55,7 +55,7 @@ Then edit `app/config/app.php` and add the service provider within the `provider
 		...
 		'Stolz\Assets\ManagerServiceProvider'
 
-There is no need to add the Facade, the package will add it for you.
+There is no need to add the Facade, the package will bind it to the IoC for you.
 
 <a id="usage"></a>
 ## Usage
@@ -296,9 +296,9 @@ You can use the library without using static methods. The signature of all metho
 	//Zurb Foundation (CDN)
 	'foundation-cdn' => [
 		'jquery-cdn',
-		'//cdn.jsdelivr.net/foundation/5.1.1/css/normalize.css',
-		'//cdn.jsdelivr.net/foundation/5.1.1/css/foundation.min.css',
-		'//cdn.jsdelivr.net/foundation/5.1.1/js/foundation.min.js',
+		'//cdn.jsdelivr.net/foundation/5.3.0/css/normalize.css',
+		'//cdn.jsdelivr.net/foundation/5.3.0/css/foundation.min.css',
+		'//cdn.jsdelivr.net/foundation/5.3.0/js/foundation.min.js',
 		'app.js'
 	],
 
