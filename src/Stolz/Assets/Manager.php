@@ -128,20 +128,20 @@ class Manager
 	 */
 	public function add($asset)
 	{
-		//More than one asset
+		// More than one asset
 		if(is_array($asset))
 		{
 			foreach($asset as $a)
 				$this->add($a);
 		}
-		//Collection
+		// Collection
 		elseif(isset($this->collections[$asset]))
 		{
 			$this->add($this->collections[$asset]);
 		}
 		else
 		{
-			//JavaScript or CSS
+			// JavaScript or CSS
 			$info = pathinfo($asset);
 			if(isset($info['extension']))
 			{

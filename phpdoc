@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd "$( cd "$( dirname "$0" )" && pwd )"
+
+./vendor/bin/phpdoc -f src/Stolz/Assets/Manager.php -t doc

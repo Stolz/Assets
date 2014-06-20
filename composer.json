@@ -14,7 +14,8 @@
 		"mrclay/minify": "~2.1"
 	},
 	"require-dev": {
-		"squizlabs/php_codesniffer": "2.*"
+		"squizlabs/php_codesniffer": "2.*",
+		"phpdocumentor/phpdocumentor": "2.*"
 	},
 	"suggest": {
 		"laravel/laravel": "Included ServiceProvider and Facade to work out of the box with Laravel"
