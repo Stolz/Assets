@@ -11,6 +11,7 @@ An ultra-simple-to-use assets management PHP library.
 - [Usage](#usage).
  - [Views](#views).
  - [Controllers](#controllers).
+ - [API](#api).
 - [Configuration](#configuration).
  - [Collections](#collections).
  - [Pipeline](#pipeline).
@@ -108,6 +109,11 @@ If at some point you decide you added the wrong assets you can reset them and st
 All methods that don't generate output will accept chaining:
 
 	Assets::reset()->add('collection')->addJs('file.js')->css();
+
+<a id="api"></a>
+### API
+
+There are some methods not documented here. For a **full list of all the availabe methods** please read the provided `API.md` file.
 
 <a id="configuration"></a>
 ## Configuration
@@ -228,6 +234,8 @@ will produce:
 - `'pipeline_dir' => 'min',`
 
 	Override default folder for pipelined assets. Don't use trailing slash!.
+
+For a **full list of all the availabe config options** please read the provided `API.md` file.
 
 It is possible to **change any config options on the fly** by passing an array of settings to the `config()` method. Usefull if some assets use a different base directory or if you want to pipeline some assets and skip others from the pipeline. i.e:
 

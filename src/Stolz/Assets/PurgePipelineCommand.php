@@ -52,7 +52,7 @@ class PurgePipelineCommand extends Command
 	}
 
 	/**
-	 * Purge directory
+	 * Purge directory.
 	 *
 	 * @param  string $directory
 	 * @return boolean

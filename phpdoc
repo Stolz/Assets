@@ -2,4 +2,19 @@
 
 cd "$( cd "$( dirname "$0" )" && pwd )"
 
-./vendor/bin/phpdoc -f src/Stolz/Assets/Manager.php -t doc
+OUTPUT_DIR=doc
+
+# templates that generate structure.xml: abstract new-black old-ocean responsive xml zend
+# templates that do not generate structure.xml: checkstyle clean responsive-twig
+
+./vendor/bin/phpdoc  \
+  --filename src/Stolz/Assets/Manager.php \
+  --target $OUTPUT_DIR \
+  --template xml && \
+./vendor/bin/phpdocmd doc/structure.xml $OUTPUT_DIR && \
+sed doc/Stolz-Assets-Manager.md \
+  -e 's/\\Stolz\\Assets\\Manager:://g' \
+  -e 's/Stolz\\Assets\\Manager:://g' \
+  -e 's/\\Stolz\\Assets\\Manager /Assets /g' \
+  -e 's/Stolz\\Assets\\Manager/Assets/g' \
+  > API.md

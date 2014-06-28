@@ -40,19 +40,23 @@ class Manager
 	protected $pipeline_dir = 'min';
 
 	/**
-	 * Available collections
+	 * Available collections.
+	 * Each collection is an array of assets.
+	 * Collections may also contain other collections.
 	 * @var array
 	 */
 	protected $collections = array();
 
 	/**
-	 * CSS files already added
+	 * CSS files already added.
+	 * Not accepted as an option of config() method.
 	 * @var array
 	 */
 	protected $css = array();
 
 	/**
-	 * JavaScript files already added
+	 * JavaScript files already added.
+	 * Not accepted as an option of config() method.
 	 * @var array
 	 */
 	protected $js = array();
@@ -60,7 +64,7 @@ class Manager
 	/**
 	 * Class constructor.
 	 *
-	 * @param  array $options
+	 * @param  array $options See config() method for details.
 	 * @return void
 	 */
 	public function __construct(array $options = array())
@@ -70,9 +74,13 @@ class Manager
 	}
 
 	/**
-	 * Set config options
+	 * Set up configuration options.
 	 *
-	 * @param  array $options
+	 * All the class properties except 'js' and 'css' are accepted here.
+	 * Also, an extra option 'autoload' may be passed containing an array of
+	 * assets and/or collections that will be automatically added on startup.
+	 *
+	 * @param  array $options Configurable options.
 	 * @return Manager
 	 */
 	public function config(array $config)
@@ -118,7 +126,7 @@ class Manager
 	}
 
 	/**
-	 * Add an asset or a collection of assets
+	 * Add an asset or a collection of assets.
 	 *
 	 * It automatically detects the asset type (JavaScript, CSS or collection).
 	 * You may add more than one asset passing an array as argument.
@@ -157,7 +165,7 @@ class Manager
 	}
 
 	/**
-	 * Add a CSS asset
+	 * Add a CSS asset.
 	 *
 	 * It checks for duplicates.
 	 * You may add more than one asset passing an array as argument.
@@ -185,7 +193,7 @@ class Manager
 	}
 
 	/**
-	 * Add a JavaScript asset
+	 * Add a JavaScript asset.
 	 *
 	 * It checks for duplicates.
 	 * You may add more than one asset passing an array as argument.
@@ -213,7 +221,7 @@ class Manager
 	}
 
 	/**
-	 * Build the CSS link tags
+	 * Build the CSS link tags.
 	 *
 	 * @return string
 	 */
@@ -233,7 +241,7 @@ class Manager
 	}
 
 	/**
-	 * Build the JavaScript script tags
+	 * Build the JavaScript script tags.
 	 *
 	 * @return string
 	 */
@@ -253,7 +261,7 @@ class Manager
 	}
 
 	/**
-	 * Add/replace collection
+	 * Add/replace collection.
 	 *
 	 * @param  string  $collectionName
 	 * @param  array   $assets
@@ -267,7 +275,7 @@ class Manager
 	}
 
 	/**
-	 * Reset all assets
+	 * Reset all assets.
 	 *
 	 * @return Manager
 	 */
@@ -277,7 +285,7 @@ class Manager
 	}
 
 	/**
-	 * Reset CSS assets
+	 * Reset CSS assets.
 	 *
 	 * @return Manager
 	 */
@@ -289,7 +297,7 @@ class Manager
 	}
 
 	/**
-	 * Reset JavaScript assets
+	 * Reset JavaScript assets.
 	 *
 	 * @return Manager
 	 */
@@ -301,7 +309,7 @@ class Manager
 	}
 
 	/**
-	 * Minifiy and concatenate CSS files
+	 * Minifiy and concatenate CSS files.
 	 *
 	 * @return string
 	 */
@@ -336,7 +344,7 @@ class Manager
 	}
 
 	/**
-	 * Minifiy and concatenate JavaScript files
+	 * Minifiy and concatenate JavaScript files.
 	 *
 	 * @return string
 	 */
@@ -369,7 +377,7 @@ class Manager
 	}
 
 	/**
-	 * Download and concatenate links
+	 * Download and concatenate links.
 	 *
 	 * @param  array  $links
 	 * @return string
@@ -396,9 +404,9 @@ class Manager
 	}
 
 	/**
-	 * Build link to local asset
+	 * Build link to local asset.
 	 *
-	 * Detects packages links
+	 * Detects packages links.
 	 *
 	 * @param  string $asset
 	 * @param  string $dir
@@ -415,7 +423,7 @@ class Manager
 	}
 
 	/**
-	 * Determine whether an asset is normal or from a package
+	 * Determine whether an asset is normal or from a package.
 	 *
 	 * @param  string $asset
 	 * @return bool|array
@@ -429,7 +437,7 @@ class Manager
 	}
 
 	/**
-	 * Determine whether a link is local or remote
+	 * Determine whether a link is local or remote.
 	 *
 	 * Undestands both "http://" and "https://" as well as protocol agnostic links "//"
 	 *
