@@ -11,6 +11,38 @@ Assets
 
 
 
+Constants
+----------
+
+
+### DEFAULT_REGEX
+
+```
+const DEFAULT_REGEX = '/.\.(css|js)$/i'
+```
+
+
+
+
+
+### CSS_REGEX
+
+```
+const CSS_REGEX = '/.\.css$/i'
+```
+
+
+
+
+
+### JS_REGEX
+
+```
+const JS_REGEX = '/.\.js$/i'
+```
+
+
+
 
 
 Properties
@@ -65,7 +97,7 @@ protected string $js_dir = 'js'
 
 Directory for local JavaScript assets.
 
-Relative to your public directory.
+Relative to your public directory ('public_dir').
 No trailing slash!.
 
 * Visibility: **protected**
@@ -79,8 +111,22 @@ protected string $pipeline_dir = 'min'
 
 Directory for storing pipelined assets.
 
-Relative to your assets directories.
+Relative to your assets directories ('css_dir' and 'js_dir').
 No trailing slash!.
+
+* Visibility: **protected**
+
+
+### $fetch_command
+
+```
+protected \Closure $fetch_command
+```
+
+Closure used by the pipeline to fetch assets.
+
+Useful when file_get_contents() function is not available in your PHP instalation.
+The closure receives as parameter the path/url of the asset it should return the content of the asset file as a string.
 
 * Visibility: **protected**
 
@@ -439,5 +485,80 @@ Get all JavaScript assets already added.
 
 
 * Visibility: **public**
+
+
+
+### addDir()
+
+```
+Assets addDir()(string $directory, string $pattern)
+```
+
+Add all assets matching $pattern within $directory.
+
+
+
+* Visibility: **public**
+
+#### Arguments
+
+* $directory **string** - &lt;p&gt;Relative to $this-&gt;public_dir&lt;/p&gt;
+* $pattern **string** - &lt;p&gt;(regex)&lt;/p&gt;
+
+
+
+### addDirCss()
+
+```
+Assets addDirCss()(string $directory)
+```
+
+Add all CSS assets within $directory (relative to public dir).
+
+
+
+* Visibility: **public**
+
+#### Arguments
+
+* $directory **string** - &lt;p&gt;Relative to $this-&gt;public_dir&lt;/p&gt;
+
+
+
+### addDirJs()
+
+```
+Assets addDirJs()(string $directory)
+```
+
+Add all JavaScript assets within $directory.
+
+
+
+* Visibility: **public**
+
+#### Arguments
+
+* $directory **string** - &lt;p&gt;Relative to $this-&gt;public_dir&lt;/p&gt;
+
+
+
+### rglob()
+
+```
+array rglob()(string $directory, string $pattern, string $ltrim)
+```
+
+Recursively get files matching $pattern within $directory.
+
+
+
+* Visibility: **protected**
+
+#### Arguments
+
+* $directory **string**
+* $pattern **string** - &lt;p&gt;(regex)&lt;/p&gt;
+* $ltrim **string** - &lt;p&gt;Will be trimed from the left of the file path&lt;/p&gt;
 
 

@@ -58,7 +58,7 @@ class Manager
 	/**
 	 * Closure used by the pipeline to fetch assets.
 	 * Useful when file_get_contents() function is not available in your PHP instalation.
-	 * The closure receives as parameter the path/url of the asset and return it's content as a string.
+	 * The closure receives as parameter the path/url of the asset it should return the content of the asset file as a string.
 	 * @var Closure
 	 */
 	protected $fetch_command;
