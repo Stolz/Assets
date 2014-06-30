@@ -1,5 +1,6 @@
 <?php namespace Stolz\Assets;
 
+use Closure;
 use Exception;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
@@ -40,7 +41,7 @@ class Manager
 
 	/**
 	 * Directory for local JavaScript assets.
-	 * Relative to your public directory.
+	 * Relative to your public directory ('public_dir').
 	 * No trailing slash!.
 	 * @var string
 	 */
@@ -48,11 +49,19 @@ class Manager
 
 	/**
 	 * Directory for storing pipelined assets.
-	 * Relative to your assets directories.
+	 * Relative to your assets directories ('css_dir' and 'js_dir').
 	 * No trailing slash!.
 	 * @var string
 	 */
 	protected $pipeline_dir = 'min';
+
+	/**
+	 * Closure used by the pipeline to fetch assets.
+	 * Useful when file_get_contents() function is not available in your PHP instalation.
+	 * The closure receives as parameter the path/url of the asset and return it's content as a string.
+	 * @var Closure
+	 */
+	protected $fetch_command;
 
 	/**
 	 * Available collections.
@@ -84,6 +93,7 @@ class Manager
 	 */
 	public function __construct(array $options = array())
 	{
+		// Forward config options
 		if($options)
 			$this->config($options);
 	}
@@ -113,9 +123,13 @@ class Manager
 		if($this->pipeline and ! is_dir($this->public_dir))
 			throw new Exception('stolz/assets: Public dir not found');
 
-		// Set custom Pipeline directory
+		// Set custom pipeline directory
 		if(isset($config['pipeline_dir']))
 			$this->pipeline_dir = $config['pipeline_dir'];
+
+		// Set custom pipeline fetch command
+		if(isset($config['fetch_command']) and ($config['fetch_command'] instanceof Closure))
+			$this->fetch_command = $config['fetch_command'];
 
 		// Set custom CSS directory
 		if(isset($config['css_dir']))
@@ -413,7 +427,7 @@ class Manager
 				$link = $this->public_dir . DIRECTORY_SEPARATOR . $link;
 			}
 
-			$buffer .= file_get_contents($link);
+			$buffer .= ($this->fetch_command instanceof Closure) ? $this->fetch_command->__invoke($link) : file_get_contents($link);
 		}
 
 		return $buffer;
