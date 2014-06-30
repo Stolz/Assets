@@ -126,7 +126,8 @@ protected \Closure $fetch_command
 Closure used by the pipeline to fetch assets.
 
 Useful when file_get_contents() function is not available in your PHP instalation.
-The closure receives as parameter the path/url of the asset it should return the content of the asset file as a string.
+The closure will receive as the only parameter a string with the path/URL of the asset and
+it should return the content of the asset file as a string.
 
 * Visibility: **protected**
 
