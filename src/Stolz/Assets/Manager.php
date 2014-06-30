@@ -1,7 +1,22 @@
 <?php namespace Stolz\Assets;
 
+use Exception;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RegexIterator;
+
 class Manager
 {
+	/** @const Regex to match CSS and JavaScript files */
+	const DEFAULT_REGEX = '/.\.(css|js)$/i';
+
+	/** @const Regex to match CSS files */
+	const CSS_REGEX = '/.\.css$/i';
+
+	/** @const Regex to match JavaScript files */
+	const JS_REGEX = '/.\.js$/i';
+
 	/**
 	 * Enable assets pipeline (concatenation and minification).
 	 * @var bool
@@ -82,6 +97,7 @@ class Manager
 	 *
 	 * @param  array $options Configurable options.
 	 * @return Manager
+	 * @throws Exception
 	 */
 	public function config(array $config)
 	{
@@ -95,7 +111,7 @@ class Manager
 
 		// Pipeline requires public dir
 		if($this->pipeline and ! is_dir($this->public_dir))
-			throw new \Exception('stolz/assets: Public dir not found');
+			throw new Exception('stolz/assets: Public dir not found');
 
 		// Set custom Pipeline directory
 		if(isset($config['pipeline_dir']))
@@ -154,9 +170,9 @@ class Manager
 			if(isset($info['extension']))
 			{
 				$ext = strtolower($info['extension']);
-				if($ext == 'css')
+				if($ext === 'css')
 					$this->addCss($asset);
-				elseif($ext == 'js')
+				elseif($ext === 'js')
 					$this->addJs($asset);
 			}
 		}
@@ -389,7 +405,7 @@ class Manager
 		{
 			if($this->isRemoteLink($link))
 			{
-				if('//' == substr($link, 0, 2))
+				if('//' === substr($link, 0, 2))
 					$link = 'http:' . $link;
 			}
 			else
@@ -446,7 +462,7 @@ class Manager
 	 */
 	protected function isRemoteLink($link)
 	{
-		return ('http://' == substr($link, 0, 7) or 'https://' == substr($link, 0, 8) or '//' == substr($link, 0, 2));
+		return ('http://' === substr($link, 0, 7) or 'https://' === substr($link, 0, 8) or '//' === substr($link, 0, 2));
 	}
 
 	/**
@@ -467,5 +483,99 @@ class Manager
 	public function getJs()
 	{
 		return $this->js;
+	}
+
+	/**
+	 * Add all assets matching $pattern within $directory.
+	 *
+	 * @param  string $directory Relative to $this->public_dir
+	 * @param  string $pattern (regex)
+	 * @return Manager
+	 * @throws Exception
+	 */
+	public function addDir($directory, $pattern = self::DEFAULT_REGEX)
+	{
+		// Check if public_dir exists
+		if( ! is_dir($this->public_dir))
+			throw new Exception('stolz/assets: Public dir not found');
+
+		// Get files
+		$files = $this->rglob($this->public_dir . DIRECTORY_SEPARATOR . $directory, $pattern, $this->public_dir);
+
+		// No luck? Nothing to do
+		if( ! $files)
+			return $this;
+
+		// Add CSS files
+		if($pattern === self::CSS_REGEX)
+		{
+			$this->css = array_unique(array_merge($this->css, $files));
+			return $this;
+		}
+
+		// Add JavaScript files
+		if($pattern === self::JS_REGEX)
+		{
+			$this->js = array_unique(array_merge($this->js, $files));
+			return $this;
+		}
+
+		// Unknown pattern. We must poll to know the extension :(
+		foreach($files as $asset)
+		{
+			$info = pathinfo($asset);
+			if(isset($info['extension']))
+			{
+				$ext = strtolower($info['extension']);
+				if($ext === 'css' and ! in_array($asset, $this->css))
+					$this->css[] = $asset;
+				elseif($ext === 'js' and ! in_array($asset, $this->js))
+					$this->js[] = $asset;
+			}
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Add all CSS assets within $directory (relative to public dir).
+	 *
+	 * @param  string $directory Relative to $this->public_dir
+	 * @return Manager
+	 */
+	public function addDirCss($directory)
+	{
+		return $this->addDir($directory, self::CSS_REGEX);
+	}
+
+	/**
+	 * Add all JavaScript assets within $directory.
+	 *
+	 * @param  string $directory Relative to $this->public_dir
+	 * @return Manager
+	 */
+	public function addDirJs($directory)
+	{
+		return $this->addDir($directory, self::JS_REGEX);
+	}
+
+	/**
+	 * Recursively get files matching $pattern within $directory.
+	 *
+	 * @param  string $directory
+	 * @param  string $pattern (regex)
+	 * @param  string $ltrim Will be trimed from the left of the file path
+	 * @return array
+	 */
+	protected function rglob($directory, $pattern, $ltrim = null)
+	{
+		$iterator = new RegexIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS)), $pattern);
+		$offset = strlen($ltrim);
+		$files = array();
+
+		foreach($iterator as $file)
+			$files[] = substr($file->getPathname(), $offset);
+
+		return $files;
 	}
 }
