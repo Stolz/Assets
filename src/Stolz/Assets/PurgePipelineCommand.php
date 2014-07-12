@@ -6,7 +6,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use File;
 use Config;
 
-class PurgePipelineCommand extends Command {
+class PurgePipelineCommand extends Command
+{
 
 	/**
 	 * The console command name.
@@ -51,31 +52,7 @@ class PurgePipelineCommand extends Command {
 	}
 
 	/**
-	 * Get the console command arguments.
-	 *
-	 * @return array
-	 */
-	protected function getArguments()
-	{
-		return array(
-			//array('example', InputArgument::REQUIRED, 'An example argument.'),
-		);
-	}
-
-	/**
-	 * Get the console command options.
-	 *
-	 * @return array
-	 */
-	protected function getOptions()
-	{
-		return array(
-			//array('example', null, InputOption::VALUE_OPTIONAL, 'An example option.', null),
-		);
-	}
-
-	/**
-	 * Purge directory
+	 * Purge directory.
 	 *
 	 * @param  string $directory
 	 * @return boolean
@@ -91,5 +68,4 @@ class PurgePipelineCommand extends Command {
 		$this->error($directory . ' is not writable');
 		return false;
 	}
-
 }
