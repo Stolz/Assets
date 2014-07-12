@@ -352,7 +352,7 @@ class Manager
 		$absolute_path = realpath($this->public_dir . DIRECTORY_SEPARATOR . $this->css_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir) . DIRECTORY_SEPARATOR . $file;
 		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
 
-                // make $relativ_path an relative path again as realpath() returns an absolute path
+                // make $relative_path a relative path again as realpath() returns an absolute path
                 $relative_path = substr_replace($relative_path, '', 0, strlen($this->public_dir . DIRECTORY_SEPARATOR));
 
 		// If pipeline exist return it
@@ -389,7 +389,7 @@ class Manager
 		$absolute_path = realpath($this->public_dir . DIRECTORY_SEPARATOR . $this->js_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir) . DIRECTORY_SEPARATOR . $file;
 		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
 
-                // make $relativ_path an relative path again as realpath() returns an absolute path
+                // make $relative_path a relative path again as realpath() returns an absolute path
                 $relative_path = substr_replace($relative_path, '', 0, strlen($this->public_dir . DIRECTORY_SEPARATOR));
 
 		// If pipeline exist return it
