@@ -208,7 +208,7 @@ If your assets have changed since they were pipelined use the provided artisan c
 
 	php artisan asset:purge-pipeline
 
-To deal with chache issues a custom timestamp may be appended to the pipelined assets URL by setting `pipeline` config option to an integer value greather than 1:
+To deal with cache issues a custom timestamp may be appended to the pipelined assets URL by setting `pipeline` config option to an integer value greather than 1:
 
 Example:
 
