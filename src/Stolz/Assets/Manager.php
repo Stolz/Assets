@@ -350,7 +350,6 @@ class Manager
 	 */
 	protected function cssPipeline()
 	{
-
 		$file = md5(implode($this->css)).'.css';
 		$relative_path = "{$this->css_dir}/{$this->pipeline_dir}/$file";
 		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $this->css_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
@@ -366,7 +365,7 @@ class Manager
 			mkdir($directory, 0777, true);
 
 		// Concatenate files
-		$buffer = $this->buildBuffer($this->css);
+		$buffer = $this->gatherLinks($this->css);
 
 		// Minifiy
 		$min = new \CSSmin();
@@ -400,7 +399,7 @@ class Manager
 			mkdir($directory, 0777, true);
 
 		// Concatenate files
-		$buffer = $this->buildBuffer($this->js);
+		$buffer = $this->gatherLinks($this->js);
 
 		// Minifiy
 		$min = \JSMin::minify($buffer);
@@ -412,12 +411,12 @@ class Manager
 	}
 
 	/**
-	 * Download and concatenate links.
+	 * Download and concatenate the content of several links.
 	 *
 	 * @param  array  $links
 	 * @return string
 	 */
-	protected function buildBuffer(array $links)
+	protected function gatherLinks(array $links)
 	{
 		$buffer = '';
 		foreach($links as $link)
