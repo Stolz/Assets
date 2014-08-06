@@ -389,7 +389,7 @@ class Manager
 		{
 			if($this->isRemoteLink($link))
 			{
-				if('//' == substr($link, 0, 2))
+				if('//' === substr($link, 0, 2))
 					$link = 'http:' . $link;
 			}
 			else

@@ -229,7 +229,7 @@ will produce:
 - `'css_dir' => 'css',`
 - `'js_dir' => 'js',`
 
-	Override default base URL/folder for assets. Don't use trailing slash!. They will be prepended to all your assets. Both relative paths or full URLs are supported.
+	Override default base URL/folder for assets. Don't use trailing slash!. They will be prepended to all your local assets. Both relative paths or full URLs are supported.
 
 - `'pipeline_dir' => 'min',`
 
