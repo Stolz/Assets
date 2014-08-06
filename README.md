@@ -277,38 +277,29 @@ You can use the library without using static methods. The signature of all metho
 <a id="samples"></a>
 ## Sample collections
 
-	//jQuery (CDN)
+	// jQuery (CDN)
 	'jquery-cdn' => ['//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'],
 
-	//jQuery UI (CDN)
+	// jQuery UI (CDN)
 	'jquery-ui-cdn' => [
 		'jquery-cdn',
 		'//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js',
 	],
 
-	//Twitter Bootstrap (CDN)
+	// Twitter Bootstrap (CDN)
 	'bootstrap-cdn' => [
 		'jquery-cdn',
-		'//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css',
-		'//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css',
-		'//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js'
+		'//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css',
+		'//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css',
+		'//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'
 	],
 
-	// Twitter Bootstrap
-	// Install with: composer require twitter/bootstrap:3.0.*; artisan asset:publish twitter/bootstrap --path=vendor/twitter/bootstrap/dist/
-	'bootstrap' => [
-		'jquery-cdn',
-		'twitter/bootstrap:bootstrap.min.css',
-		'twitter/bootstrap:bootstrap-theme.min.css',
-		'twitter/bootstrap:bootstrap.min.js'
-	],
-
-	//Zurb Foundation (CDN)
+	// Zurb Foundation (CDN)
 	'foundation-cdn' => [
 		'jquery-cdn',
-		'//cdn.jsdelivr.net/foundation/5.3.0/css/normalize.css',
-		'//cdn.jsdelivr.net/foundation/5.3.0/css/foundation.min.css',
-		'//cdn.jsdelivr.net/foundation/5.3.0/js/foundation.min.js',
+		'//cdn.jsdelivr.net/foundation/5.3.3/css/normalize.css',
+		'//cdn.jsdelivr.net/foundation/5.3.3/css/foundation.min.css',
+		'//cdn.jsdelivr.net/foundation/5.3.3/js/foundation.min.js',
 		'app.js'
 	],
 
