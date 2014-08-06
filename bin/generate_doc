@@ -1,6 +1,8 @@
 #!/bin/sh
 
-cd "$( cd "$( dirname "$0" )" && pwd )"
+# Generate API.md file
+
+cd "$( cd "$( dirname "$0" )" && pwd )/.." || exit 1
 
 OUTPUT_DIR=doc
 

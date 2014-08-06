@@ -1,7 +1,23 @@
 <?php namespace Stolz\Assets;
 
+use Closure;
+use Exception;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RegexIterator;
+
 class Manager
 {
+	/** @const Regex to match CSS and JavaScript files */
+	const DEFAULT_REGEX = '/.\.(css|js)$/i';
+
+	/** @const Regex to match CSS files */
+	const CSS_REGEX = '/.\.css$/i';
+
+	/** @const Regex to match JavaScript files */
+	const JS_REGEX = '/.\.js$/i';
+
 	/**
 	 * Enable assets pipeline (concatenation and minification).
 	 * @var bool
@@ -25,7 +41,7 @@ class Manager
 
 	/**
 	 * Directory for local JavaScript assets.
-	 * Relative to your public directory.
+	 * Relative to your public directory ('public_dir').
 	 * No trailing slash!.
 	 * @var string
 	 */
@@ -33,11 +49,24 @@ class Manager
 
 	/**
 	 * Directory for storing pipelined assets.
-	 * Relative to your assets directories.
+	 * Relative to your assets directories ('css_dir' and 'js_dir').
 	 * No trailing slash!.
 	 * @var string
 	 */
 	protected $pipeline_dir = 'min';
+
+	/**
+	 * Closure used by the pipeline to fetch assets.
+	 *
+	 * Useful when file_get_contents() function is not available in your PHP
+	 * instalation or when you want to apply any kind of preprocessing to
+	 * your assets before they get pipelined.
+	 *
+	 * The closure will receive as the only parameter a string with the path/URL of the asset and
+	 * it should return the content of the asset file as a string.
+	 * @var Closure
+	 */
+	protected $fetch_command;
 
 	/**
 	 * Available collections.
@@ -69,6 +98,7 @@ class Manager
 	 */
 	public function __construct(array $options = array())
 	{
+		// Forward config options
 		if($options)
 			$this->config($options);
 	}
@@ -82,6 +112,7 @@ class Manager
 	 *
 	 * @param  array $options Configurable options.
 	 * @return Manager
+	 * @throws Exception
 	 */
 	public function config(array $config)
 	{
@@ -95,11 +126,15 @@ class Manager
 
 		// Pipeline requires public dir
 		if($this->pipeline and ! is_dir($this->public_dir))
-			throw new \Exception('stolz/assets: Public dir not found');
+			throw new Exception('stolz/assets: Public dir not found');
 
-		// Set custom Pipeline directory
+		// Set custom pipeline directory
 		if(isset($config['pipeline_dir']))
 			$this->pipeline_dir = $config['pipeline_dir'];
+
+		// Set custom pipeline fetch command
+		if(isset($config['fetch_command']) and ($config['fetch_command'] instanceof Closure))
+			$this->fetch_command = $config['fetch_command'];
 
 		// Set custom CSS directory
 		if(isset($config['css_dir']))
@@ -154,9 +189,9 @@ class Manager
 			if(isset($info['extension']))
 			{
 				$ext = strtolower($info['extension']);
-				if($ext == 'css')
+				if($ext === 'css')
 					$this->addCss($asset);
-				elseif($ext == 'js')
+				elseif($ext === 'js')
 					$this->addJs($asset);
 			}
 		}
@@ -315,7 +350,6 @@ class Manager
 	 */
 	protected function cssPipeline()
 	{
-
 		$file = md5(implode($this->css)).'.css';
 		$relative_path = "{$this->css_dir}/{$this->pipeline_dir}/$file";
 		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $this->css_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
@@ -331,7 +365,7 @@ class Manager
 			mkdir($directory, 0777, true);
 
 		// Concatenate files
-		$buffer = $this->buildBuffer($this->css);
+		$buffer = $this->gatherLinks($this->css);
 
 		// Minifiy
 		$min = new \CSSmin();
@@ -365,7 +399,7 @@ class Manager
 			mkdir($directory, 0777, true);
 
 		// Concatenate files
-		$buffer = $this->buildBuffer($this->js);
+		$buffer = $this->gatherLinks($this->js);
 
 		// Minifiy
 		$min = \JSMin::minify($buffer);
@@ -377,12 +411,12 @@ class Manager
 	}
 
 	/**
-	 * Download and concatenate links.
+	 * Download and concatenate the content of several links.
 	 *
 	 * @param  array  $links
 	 * @return string
 	 */
-	protected function buildBuffer(array $links)
+	protected function gatherLinks(array $links)
 	{
 		$buffer = '';
 		foreach($links as $link)
@@ -397,7 +431,7 @@ class Manager
 				$link = $this->public_dir . DIRECTORY_SEPARATOR . $link;
 			}
 
-			$buffer .= file_get_contents($link);
+			$buffer .= ($this->fetch_command instanceof Closure) ? $this->fetch_command->__invoke($link) : file_get_contents($link);
 		}
 
 		return $buffer;
@@ -446,7 +480,7 @@ class Manager
 	 */
 	protected function isRemoteLink($link)
 	{
-		return ('http://' == substr($link, 0, 7) or 'https://' == substr($link, 0, 8) or '//' == substr($link, 0, 2));
+		return ('http://' === substr($link, 0, 7) or 'https://' === substr($link, 0, 8) or '//' === substr($link, 0, 2));
 	}
 
 	/**
@@ -467,5 +501,99 @@ class Manager
 	public function getJs()
 	{
 		return $this->js;
+	}
+
+	/**
+	 * Add all assets matching $pattern within $directory.
+	 *
+	 * @param  string $directory Relative to $this->public_dir
+	 * @param  string $pattern (regex)
+	 * @return Manager
+	 * @throws Exception
+	 */
+	public function addDir($directory, $pattern = self::DEFAULT_REGEX)
+	{
+		// Check if public_dir exists
+		if( ! is_dir($this->public_dir))
+			throw new Exception('stolz/assets: Public dir not found');
+
+		// Get files
+		$files = $this->rglob($this->public_dir . DIRECTORY_SEPARATOR . $directory, $pattern, $this->public_dir);
+
+		// No luck? Nothing to do
+		if( ! $files)
+			return $this;
+
+		// Add CSS files
+		if($pattern === self::CSS_REGEX)
+		{
+			$this->css = array_unique(array_merge($this->css, $files));
+			return $this;
+		}
+
+		// Add JavaScript files
+		if($pattern === self::JS_REGEX)
+		{
+			$this->js = array_unique(array_merge($this->js, $files));
+			return $this;
+		}
+
+		// Unknown pattern. We must poll to know the extension :(
+		foreach($files as $asset)
+		{
+			$info = pathinfo($asset);
+			if(isset($info['extension']))
+			{
+				$ext = strtolower($info['extension']);
+				if($ext === 'css' and ! in_array($asset, $this->css))
+					$this->css[] = $asset;
+				elseif($ext === 'js' and ! in_array($asset, $this->js))
+					$this->js[] = $asset;
+			}
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Add all CSS assets within $directory (relative to public dir).
+	 *
+	 * @param  string $directory Relative to $this->public_dir
+	 * @return Manager
+	 */
+	public function addDirCss($directory)
+	{
+		return $this->addDir($directory, self::CSS_REGEX);
+	}
+
+	/**
+	 * Add all JavaScript assets within $directory.
+	 *
+	 * @param  string $directory Relative to $this->public_dir
+	 * @return Manager
+	 */
+	public function addDirJs($directory)
+	{
+		return $this->addDir($directory, self::JS_REGEX);
+	}
+
+	/**
+	 * Recursively get files matching $pattern within $directory.
+	 *
+	 * @param  string $directory
+	 * @param  string $pattern (regex)
+	 * @param  string $ltrim Will be trimed from the left of the file path
+	 * @return array
+	 */
+	protected function rglob($directory, $pattern, $ltrim = null)
+	{
+		$iterator = new RegexIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS)), $pattern);
+		$offset = strlen($ltrim);
+		$files = array();
+
+		foreach($iterator as $file)
+			$files[] = substr($file->getPathname(), $offset);
+
+		return $files;
 	}
 }
