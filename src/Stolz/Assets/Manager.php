@@ -350,10 +350,10 @@ class Manager
 	 */
 	protected function cssPipeline()
 	{
-		$file = md5(implode($this->css)).'.css';
+		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
+		$file = md5($timestamp . implode($this->css)).'.css';
 		$relative_path = "{$this->css_dir}/{$this->pipeline_dir}/$file";
 		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $this->css_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
-		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
 
 		// If pipeline exist return it
 		if(file_exists($absolute_path))
@@ -384,10 +384,10 @@ class Manager
 	 */
 	protected function jsPipeline()
 	{
-		$file = md5(implode($this->js)).'.js';
+		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
+		$file = md5($timestamp . implode($this->js)).'.js';
 		$relative_path = "{$this->js_dir}/{$this->pipeline_dir}/$file";
 		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $this->js_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
-		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
 
 		// If pipeline exist return it
 		if(file_exists($absolute_path))
