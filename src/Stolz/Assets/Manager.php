@@ -98,6 +98,8 @@ class Manager
 	 */
 	public function __construct(array $options = array())
 	{
+		$this->js['header'] = array();
+
 		// Forward config options
 		if($options)
 			$this->config($options);
@@ -338,7 +340,7 @@ class Manager
 	 */
 	public function resetJs()
 	{
-		$this->js = array();
+		$this->js = array('header');
 
 		return $this;
 	}
@@ -498,12 +500,9 @@ class Manager
 	 *
 	 * @return array
 	 */
-	public function getJs($location = false)
+	public function getJs($location = "header")
 	{
-		if ($location)
-			return $this->js($location);
-
-		return $this->js;
+		return $this->js[$location];
 	}
 
 	/**
