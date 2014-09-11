@@ -166,14 +166,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertStringEndsWith($asset1, array_pop($assets1));
 		$this->assertStringEndsWith($asset2, array_pop($assets2));
 	}
-
-	protected static function getMethod($name) {
-		$class = new ReflectionClass('Stolz\Assets\Manager');
-		$method = $class->getMethod($name);
-		$method->setAccessible(true);
-		return $method;
-	}
-
+	
 	public function testAddOneJsToHeader()
 	{
 		$this->assertCount(0, $this->manager->getJs('header'));
@@ -243,10 +236,13 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertCount(1, $css);
 	}
 
-	// Add testPrintJs
-	// Add testPrintCss
-	// Add testPrintJsHeader
-	// Add testPrintJsFooter
+	protected static function getMethod($name) {
+		$class = new ReflectionClass('Stolz\Assets\Manager');
+		$method = $class->getMethod($name);
+		$method->setAccessible(true);
+		return $method;
+	}
+
 }
 
 
