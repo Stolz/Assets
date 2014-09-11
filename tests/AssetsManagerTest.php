@@ -100,7 +100,6 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 
 		$asset1 = uniqid('asset1');
 		$asset2 = uniqid('asset2');
-
 		$this->manager->addCss(array($asset1, $asset2));
 		$assets = $this->manager->getCss();
 
@@ -116,7 +115,6 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 
 		$asset1 = uniqid('asset1');
 		$asset2 = uniqid('asset2');
-
 		$this->manager->addJs(array($asset1, $asset2));
 		$assets = $this->manager->getJs();
 
