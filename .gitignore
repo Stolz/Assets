@@ -9,4 +9,3 @@ composer.lock
 *.old
 .inotify
 /doc
-index.php
