@@ -13,9 +13,9 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 	{
 		$config = array(
 			'public_dir'	=> __DIR__,
-			'css_dir'		=> uniqid('test1'),
-			'js_dir'		=> uniqid('test2'),
-			'pipeline_dir'	=> uniqid('test3'),
+			'css_dir'		=> uniqid('css'),
+			'js_dir'		=> uniqid('js'),
+			'pipeline_dir'	=> uniqid('pipe'),
 		);
 
 		$this->manager->config($config);
@@ -41,6 +41,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($method->invokeArgs($this->manager, array('http://foo')));
 		$this->assertTrue($method->invokeArgs($this->manager, array('https://foo')));
 		$this->assertTrue($method->invokeArgs($this->manager, array('//foo')));
+
 		$this->assertFalse($method->invokeArgs($this->manager, array('/')));
 		$this->assertFalse($method->invokeArgs($this->manager, array('/foo')));
 		$this->assertFalse($method->invokeArgs($this->manager, array('foo')));
@@ -55,6 +56,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 
 		$method = self::getMethod('assetIsFromPackage');
 		$package = $method->invokeArgs($this->manager, array("$vendor/$name:$asset"));
+
 		$this->assertCount(3, $package);
 		$this->assertEquals($vendor, $package[0]);
 		$this->assertEquals($name, $package[1]);
@@ -70,7 +72,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 	{
 		$this->assertCount(0, $this->manager->getCss());
 
-		$asset = uniqid('test');
+		$asset = uniqid('asset');
 		$this->manager->addCss($asset);
 		$assets = $this->manager->getCss();
 
@@ -83,7 +85,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 	{
 		$this->assertCount(0, $this->manager->getJs('header'));
 
-		$asset = uniqid('test');
+		$asset = uniqid('asset');
 		$this->manager->addJs($asset);
 		$assets = $this->manager->getJs();
 
@@ -96,8 +98,9 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 	{
 		$this->assertCount(0, $this->manager->getCss());
 
-		$asset1 = uniqid('test1');
-		$asset2 = uniqid('test2');
+		$asset1 = uniqid('asset1');
+		$asset2 = uniqid('asset2');
+
 		$this->manager->addCss(array($asset1, $asset2));
 		$assets = $this->manager->getCss();
 
@@ -111,8 +114,9 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 	{
 		$this->assertCount(0, $this->manager->getJs());
 
-		$asset1 = uniqid('test1');
-		$asset2 = uniqid('test2');
+		$asset1 = uniqid('asset1');
+		$asset2 = uniqid('asset2');
+
 		$this->manager->addJs(array($asset1, $asset2));
 		$assets = $this->manager->getJs();
 
