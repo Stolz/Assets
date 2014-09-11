@@ -178,7 +178,7 @@ class Manager
 		if(is_array($asset))
 		{
 			foreach($asset as $a)
-				$this->add($a);
+				$this->add($a, $location);
 		}
 		// Collection
 		elseif(isset($this->collections[$asset]))
@@ -244,7 +244,16 @@ class Manager
 		if(is_array($asset))
 		{
 			foreach($asset as $a)
-				$this->addJs($a);
+			{
+				if (is_array($a))
+				{
+					$this->addJs($a[0], $a[1]);
+				}
+				else
+				{
+					$this->addJs($a, $location);
+				}
+			}
 
 			return $this;
 		}
@@ -516,6 +525,11 @@ class Manager
 
 		// Then, we don't have any javascript
 		return array();
+	}
+
+	public function getFullJs()
+	{
+		return $this->js;
 	}
 
 	/**
