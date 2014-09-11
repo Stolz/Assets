@@ -181,10 +181,12 @@ class Manager
 			{
 				if (is_array($a))
 				{
+					// Add a javascript to a location
 					$this->add($a[0], $a[1]);
 				}
 				else
 				{
+					// Add an asset as normal
 					$this->add($a, $location);
 				}
 			}
@@ -256,10 +258,12 @@ class Manager
 			{
 				if (is_array($a))
 				{
+					// Add a javascript to a location
 					$this->addJs($a[0], $a[1]);
 				}
 				else
 				{
+					// Add as normal
 					$this->addJs($a, $location);
 				}
 			}
@@ -359,7 +363,10 @@ class Manager
 	 */
 	public function resetJs()
 	{
-		$this->js = array('header');
+		$this->js = array(
+			'header' => array(),
+			'footer' => array()
+		);
 
 		return $this;
 	}

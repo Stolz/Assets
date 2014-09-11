@@ -175,7 +175,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 	{
 		$this->assertCount(0, $this->manager->getJs('header'));
 
-		$asset = uniqid('test');
+		$asset = uniqid('asset');
 		$this->manager->addJs($asset, 'header');
 		$assets = $this->manager->getJs('header');
 
@@ -188,7 +188,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 	{
 		$this->assertCount(0, $this->manager->getJs('footer'));
 
-		$asset = uniqid('test');
+		$asset = uniqid('asset');
 		$this->manager->addJs($asset, 'footer');
 		$assets = $this->manager->getJs('footer');
 
@@ -202,11 +202,11 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertCount(0, $this->manager->getJs());
 
 		$assets = array(
-			array(uniqid('test1'), 'header'),
-			array(uniqid('test2'), 'footer'),
-			array(uniqid('test3'), 'header'),
-			array(uniqid('test4'), 'footer'),
-			uniqid('test5'), // By default, the header
+			array(uniqid('asset1'), 'header'),
+			array(uniqid('asset2'), 'footer'),
+			array(uniqid('asset3'), 'header'),
+			array(uniqid('asset4'), 'footer'),
+			uniqid('asset5'), // By default, the header
 		);
 
 		$this->manager->addJs($assets);
@@ -222,12 +222,12 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertCount(0, $this->manager->getJs());
 
 		$assets = array(
-			array('test1.js', 'header'),
-			array('test2.js', 'footer'),
-			array('test3.js', 'header'),
-			array('test4.js', 'footer'),
-			'test5.js',
-			'test6.css',
+			array('asset1.js', 'header'),
+			array('asset2.js', 'footer'),
+			array('asset3.js', 'header'),
+			array('asset4.js', 'footer'),
+			'asset5.js',
+			'asset6.css',
 		);
 
 		$this->manager->add($assets);
