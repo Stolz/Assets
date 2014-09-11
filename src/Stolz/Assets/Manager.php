@@ -385,10 +385,10 @@ class Manager
 	 *
 	 * @return string
 	 */
-	protected function jsPipeline()
+	protected function jsPipeline($location = 'header')
 	{
 		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
-		$file = md5($timestamp . implode($this->js)).'.js';
+		$file = md5($timestamp . implode($this->js[$location])).'.js';
 		$relative_path = "{$this->js_dir}/{$this->pipeline_dir}/$file";
 		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $this->js_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
 
@@ -402,7 +402,7 @@ class Manager
 			mkdir($directory, 0777, true);
 
 		// Concatenate files
-		$buffer = $this->gatherLinks($this->js);
+		$buffer = $this->gatherLinks($this->js[$location]);
 
 		// Minifiy
 		$min = \JSMin::minify($buffer);
