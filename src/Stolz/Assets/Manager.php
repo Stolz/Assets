@@ -88,7 +88,10 @@ class Manager
 	 * Not accepted as an option of config() method.
 	 * @var array
 	 */
-	protected $js = array();
+	protected $js = array(
+		'header' => array(),
+		'footer' => array(),
+	);
 
 	/**
 	 * Class constructor.
@@ -98,8 +101,6 @@ class Manager
 	 */
 	public function __construct(array $options = array())
 	{
-		$this->js['header'] = array();
-
 		// Forward config options
 		if($options)
 			$this->config($options);
@@ -252,7 +253,7 @@ class Manager
 			$asset = $this->buildLocalLink($asset, $this->js_dir);
 
 		if( ! in_array($asset, $this->js[$location]))
-			$this->js[$location] = $asset;
+			$this->js[$location][] = $asset;
 
 		return $this;
 	}
@@ -500,9 +501,21 @@ class Manager
 	 *
 	 * @return array
 	 */
-	public function getJs($location = "header")
+	public function getJs($location = false)
 	{
-		return $this->js[$location];
+		// Did we ask for a specific location?
+		if (FALSE === $location)
+		{
+			$js = array_merge($this->js['header'], $this->js['footer']);
+			return $js;
+		}
+
+		// Does that location exist?
+		if ( isset($this->js[$location]) )
+			return $this->js[$location];
+
+		// Then, we don't have any javascript
+		return array();
 	}
 
 	/**
