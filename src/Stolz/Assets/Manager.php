@@ -177,8 +177,17 @@ class Manager
 		// More than one asset
 		if(is_array($asset))
 		{
-			foreach($asset as $a)
-				$this->add($a);
+			foreach ($asset as $a)
+			{
+				if (is_array($a))
+				{
+					$this->add($a[0], $a[1]);
+				}
+				else
+				{
+					$this->add($a, $location);
+				}
+			}
 		}
 		// Collection
 		elseif(isset($this->collections[$asset]))
@@ -244,7 +253,16 @@ class Manager
 		if(is_array($asset))
 		{
 			foreach($asset as $a)
-				$this->addJs($a);
+			{
+				if (is_array($a))
+				{
+					$this->addJs($a[0], $a[1]);
+				}
+				else
+				{
+					$this->addJs($a, $location);
+				}
+			}
 
 			return $this;
 		}
@@ -385,10 +403,10 @@ class Manager
 	 *
 	 * @return string
 	 */
-	protected function jsPipeline()
+	protected function jsPipeline($location = 'header')
 	{
 		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
-		$file = md5($timestamp . implode($this->js)).'.js';
+		$file = md5($timestamp . implode($this->js[$location])).'.js';
 		$relative_path = "{$this->js_dir}/{$this->pipeline_dir}/$file";
 		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $this->js_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
 
@@ -402,7 +420,7 @@ class Manager
 			mkdir($directory, 0777, true);
 
 		// Concatenate files
-		$buffer = $this->gatherLinks($this->js);
+		$buffer = $this->gatherLinks($this->js[$location]);
 
 		// Minifiy
 		$min = \JSMin::minify($buffer);
@@ -516,6 +534,11 @@ class Manager
 
 		// Then, we don't have any javascript
 		return array();
+	}
+
+	public function getFullJs()
+	{
+		return $this->js;
 	}
 
 	/**
