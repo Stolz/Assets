@@ -92,35 +92,35 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertCount(0, $assets);
 	}
 
-	// public function testAddMultipleCss()
-	// {
-	// 	$this->assertCount(0, $this->manager->getCss());
+	public function testAddMultipleCss()
+	{
+		$this->assertCount(0, $this->manager->getCss());
 
-	// 	$asset1 = uniqid('test');
-	// 	$asset2 = uniqid('test');
-	// 	$this->manager->addCss(array($asset1, $asset2));
-	// 	$assets = $this->manager->getCss();
+		$asset1 = uniqid('test');
+		$asset2 = uniqid('test');
+		$this->manager->addCss(array($asset1, $asset2));
+		$assets = $this->manager->getCss();
 
-	// 	$this->assertCount(2, $assets);
-	// 	$this->assertStringEndsWith($asset2, array_pop($assets));
-	// 	$this->assertStringEndsWith($asset1, array_pop($assets));
-	// 	$this->assertCount(0, $assets);
-	// }
+		$this->assertCount(2, $assets);
+		$this->assertStringEndsWith($asset2, array_pop($assets));
+		$this->assertStringEndsWith($asset1, array_pop($assets));
+		$this->assertCount(0, $assets);
+	}
 
-	// public function testAddMultipleJs()
-	// {
-	// 	$this->assertCount(0, $this->manager->getJs());
+	public function testAddMultipleJs()
+	{
+		$this->assertCount(0, $this->manager->getJs());
 
-	// 	$asset1 = uniqid('test');
-	// 	$asset2 = uniqid('test');
-	// 	$this->manager->addJs(array($asset1, $asset2));
-	// 	$assets = $this->manager->getJs();
+		$asset1 = uniqid('test');
+		$asset2 = uniqid('test');
+		$this->manager->addJs(array($asset1, $asset2));
+		$assets = $this->manager->getJs();
 
-	// 	$this->assertCount(2, $assets);
-	// 	$this->assertStringEndsWith($asset2, array_pop($assets));
-	// 	$this->assertStringEndsWith($asset1, array_pop($assets));
-	// 	$this->assertCount(0, $assets);
-	// }
+		$this->assertCount(2, $assets);
+		$this->assertStringEndsWith($asset2, array_pop($assets));
+		$this->assertStringEndsWith($asset1, array_pop($assets));
+		$this->assertCount(0, $assets);
+	}
 
 	public function testDetectAndAddCss()
 	{
@@ -220,7 +220,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertCount(2, $footer);
 	}
 
-	public function testDetectAndAddMultipleJsToMixedLocations()
+	public function testDetectAndAddMultipleFilesToMixedLocations()
 	{
 		$this->assertCount(0, $this->manager->getJs());
 
