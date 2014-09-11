@@ -220,6 +220,31 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertCount(2, $footer);
 	}
 
+	public function testDetectAndAddMultipleJsToMixedLocations()
+	{
+		$this->assertCount(0, $this->manager->getJs());
+
+		$assets = array(
+			array('test1.js', 'header'),
+			array('test2.js', 'footer'),
+			array('test3.js', 'header'),
+			array('test4.js', 'footer'),
+			'test5.js',
+			'test6.css',
+		);
+
+		$this->manager->add($assets);
+		$header = $this->manager->getJs('header');
+		$footer = $this->manager->getJs('footer');
+		$css = $this->manager->getCss();
+
+		$this->assertCount(3, $header);
+		$this->assertCount(2, $footer);
+		$this->assertCount(1, $css);
+	}
+
+	// Add testPrintJs
+	// Add testPrintCss
 	// Add testPrintJsHeader
 	// Add testPrintJsFooter
 }

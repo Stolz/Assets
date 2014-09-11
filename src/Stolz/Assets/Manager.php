@@ -177,8 +177,17 @@ class Manager
 		// More than one asset
 		if(is_array($asset))
 		{
-			foreach($asset as $a)
-				$this->add($a, $location);
+			foreach ($asset as $a)
+			{
+				if (is_array($a))
+				{
+					$this->add($a[0], $a[1]);
+				}
+				else
+				{
+					$this->add($a, $location);
+				}
+			}
 		}
 		// Collection
 		elseif(isset($this->collections[$asset]))
