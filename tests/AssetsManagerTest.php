@@ -81,7 +81,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 
 	public function testAddOneJs()
 	{
-		$this->assertCount(0, $this->manager->getJs());
+		$this->assertCount(0, $this->manager->getJs('header'));
 
 		$asset = uniqid('test');
 		$this->manager->addJs($asset);

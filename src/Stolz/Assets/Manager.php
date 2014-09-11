@@ -88,7 +88,10 @@ class Manager
 	 * Not accepted as an option of config() method.
 	 * @var array
 	 */
-	protected $js = array();
+	protected $js = array(
+		'header' => array(),
+		'footer' => array(),
+	);
 
 	/**
 	 * Class constructor.
@@ -169,7 +172,7 @@ class Manager
 	 * @param  mixed   $asset
 	 * @return Manager
 	 */
-	public function add($asset)
+	public function add($asset, $location = 'header')
 	{
 		// More than one asset
 		if(is_array($asset))
@@ -192,7 +195,7 @@ class Manager
 				if($ext === 'css')
 					$this->addCss($asset);
 				elseif($ext === 'js')
-					$this->addJs($asset);
+					$this->addJs($asset, $location);
 			}
 		}
 
@@ -236,7 +239,7 @@ class Manager
 	 * @param  mixed   $asset
 	 * @return Manager
 	 */
-	public function addJs($asset)
+	public function addJs($asset, $location = 'header')
 	{
 		if(is_array($asset))
 		{
@@ -249,8 +252,8 @@ class Manager
 		if( ! $this->isRemoteLink($asset))
 			$asset = $this->buildLocalLink($asset, $this->js_dir);
 
-		if( ! in_array($asset, $this->js))
-			$this->js[] = $asset;
+		if( ! in_array($asset, $this->js[$location]))
+			$this->js[$location][] = $asset;
 
 		return $this;
 	}
@@ -280,16 +283,16 @@ class Manager
 	 *
 	 * @return string
 	 */
-	public function js()
+	public function js($location = 'header')
 	{
-		if( ! $this->js)
+		if( ! $this->js[$location])
 			return null;
 
 		if($this->pipeline)
 			return '<script type="text/javascript" src="'.$this->jsPipeline().'"></script>'."\n";
 
 		$output = '';
-		foreach($this->js as $file)
+		foreach($this->js[$location] as $file)
 			$output .= '<script type="text/javascript" src="'.$file.'"></script>'."\n";
 
 		return $output;
@@ -338,7 +341,7 @@ class Manager
 	 */
 	public function resetJs()
 	{
-		$this->js = array();
+		$this->js = array('header');
 
 		return $this;
 	}
@@ -498,9 +501,21 @@ class Manager
 	 *
 	 * @return array
 	 */
-	public function getJs()
+	public function getJs($location = false)
 	{
-		return $this->js;
+		// Did we ask for a specific location?
+		if (FALSE === $location)
+		{
+			$js = array_merge($this->js['header'], $this->js['footer']);
+			return $js;
+		}
+
+		// Does that location exist?
+		if ( isset($this->js[$location]) )
+			return $this->js[$location];
+
+		// Then, we don't have any javascript
+		return array();
 	}
 
 	/**
