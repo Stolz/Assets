@@ -50,7 +50,7 @@ In your Laravel base directory run
 
 	composer require "stolz/assets:dev-master"
 
-Then edit `app/config/app.php` and add the service provider within the `providers` array
+Then edit `config/app.php` and add the service provider within the `providers` array
 
 	'providers' => array(
 		...
@@ -120,9 +120,9 @@ There are some methods not documented here. For a **full list of all the availab
 
 To bring up the config file run
 
-	php artisan config:publish stolz/assets
+	php artisan publish:config stolz/assets
 
-This will create  `app/config/packages/stolz/config.php` file that you may use to configure your application assets. With the provided comments all options should be selfexplanatory.
+This will create  `config/packages/stolz/config.php` file that you may use to configure your application assets. With the provided comments all options should be selfexplanatory.
 
 If you are using the [non static interface](#nonstatic) just pass an associative array of config settings to the class constructor.
 
