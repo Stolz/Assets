@@ -11,6 +11,7 @@ An ultra-simple-to-use assets management PHP library.
 - [Usage](#usage).
  - [Views](#views).
  - [Controllers](#controllers).
+ - [Javascript Locations](#locations).
  - [API](#api).
 - [Configuration](#configuration).
  - [Collections](#collections).
@@ -36,6 +37,7 @@ An ultra-simple-to-use assets management PHP library.
 - Supports **collections** (*named groups of assets*) that can be nested, allowing assets dependencies definitions.
 - Automatically detects type of asset (CSS, JavaScript or collection).
 - Allows autoloading by default preconfigured assets and collections.
+- Can group javascript by header and footer.
 
 
 <a id="frameworks"></a>
@@ -109,6 +111,36 @@ If at some point you decide you added the wrong assets you can reset them and st
 All methods that don't generate output will accept chaining:
 
 	Assets::reset()->add('collection')->addJs('file.js')->css();
+
+<a id="locations"></a>
+### Javascript Locations
+
+By default, all javascript is placed into a single group that you may render anywhere you like (such as the header). However, you may add javascript files to one of two locations: header and footer, making it possible to load a library like jQuery in the footer and Modernizer in the header.
+
+	Assets::add('js-header-asset.js', 'header');
+	Assets::add('js-footer-asse.jst', 'footer');
+	
+	Assets::js('header'); // Prints tag for js-header-asset.js
+	Assets::js('footer'); // Prints tag for js-footer-asset.js
+	
+When adding multiple files, or in a collection:
+
+	Assets::add( array(
+	
+	    'app.css', // All CSS goes into the header
+	    
+	    'vendor/modernizr.js', // This goes to header by default
+	    
+	    array('vendor/jquery.js', 'footer'), // Into the footer
+	    
+	    array('app.js', 'header'), // Into the header
+	));
+	
+If you ever need to pull the array of javascript data:
+
+	Assets::getJs(); // A flattened array of all javascript, both in header and footer
+	Assets::getJs('header|footer'); // Which location do you want?
+	Assets::getFullJs(); // Returns a multi-dimensional array
 
 <a id="api"></a>
 ### API
