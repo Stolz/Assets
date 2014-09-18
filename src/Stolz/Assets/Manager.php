@@ -311,7 +311,7 @@ class Manager
 			return null;
 
 		if($this->pipeline)
-			return '<script type="text/javascript" src="'.$this->jsPipeline().'"></script>'."\n";
+			return '<script type="text/javascript" src="'.$this->jsPipeline($location).'"></script>'."\n";
 
 		$output = '';
 		foreach($this->js[$location] as $file)
@@ -413,7 +413,7 @@ class Manager
 	protected function jsPipeline($location = 'header')
 	{
 		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
-		$file = md5($timestamp . implode($this->js[$location])).'.js';
+		$file = $location.md5($timestamp . implode($this->js[$location])).'.js';
 		$relative_path = "{$this->js_dir}/{$this->pipeline_dir}/$file";
 		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $this->js_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
 
