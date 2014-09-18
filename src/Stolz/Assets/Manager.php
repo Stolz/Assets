@@ -311,7 +311,7 @@ class Manager
             return null;
 
         if($this->pipeline)
-            return '<script type="text/javascript" src="'.$this->jsPipeline().'"></script>'."\n";
+            return '<script type="text/javascript" src="'.$this->jsPipeline($location).'"></script>'."\n";
 
         $output = '';
         foreach($this->js[$location] as $file)
