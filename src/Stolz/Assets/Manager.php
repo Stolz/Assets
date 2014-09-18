@@ -179,6 +179,7 @@ class Manager
         {
             foreach ($asset as $a)
             {
+				// Specified location?
                 if (is_array($a))
                 {
                     // Add a javascript to a location
@@ -256,6 +257,7 @@ class Manager
         {
             foreach($asset as $a)
             {
+				// Specify location?
                 if (is_array($a))
                 {
                     // Add a javascript to a location
