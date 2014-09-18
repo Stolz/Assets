@@ -117,8 +117,8 @@ All methods that don't generate output will accept chaining:
 
 By default, all javascript is placed into a single group that you may render anywhere you like (such as the header). However, you may add javascript files to one of two locations: header and footer, making it possible to load a library like jQuery in the footer and Modernizer in the header.
 
-	Assets::add('js-header-asset', 'header');
-	Assets::add('js-footer-asset', 'footer');
+	Assets::add('js-header-asset.js', 'header');
+	Assets::add('js-footer-asse.jst', 'footer');
 	
 	Assets::js('header'); // Prints tag for js-header-asset.js
 	Assets::js('footer'); // Prints tag for js-footer-asset.js
@@ -126,9 +126,13 @@ By default, all javascript is placed into a single group that you may render any
 When adding multiple files, or in a collection:
 
 	Assets::add( array(
+	
 	    'app.css', // All CSS goes into the header
+	    
 	    'vendor/modernizr.js', // This goes to header by default
+	    
 	    array('vendor/jquery.js', 'footer'), // Into the footer
+	    
 	    array('app.js', 'header'), // Into the header
 	));
 	
