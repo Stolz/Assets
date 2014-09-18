@@ -83,7 +83,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 
 	public function testAddOneJs()
 	{
-		$this->assertCount(0, $this->manager->getJs());
+		$this->assertCount(0, $this->manager->getJs('header'));
 
 		$asset = uniqid('asset');
 		$this->manager->addJs($asset);
@@ -168,6 +168,75 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertStringEndsWith($asset1, array_pop($assets1));
 		$this->assertStringEndsWith($asset2, array_pop($assets2));
 	}
+	
+	public function testAddOneJsToHeader()
+	{
+		$this->assertCount(0, $this->manager->getJs('header'));
+
+		$asset = uniqid('asset');
+		$this->manager->addJs($asset, 'header');
+		$assets = $this->manager->getJs('header');
+
+		$this->assertCount(1, $assets);
+		$this->assertStringEndsWith($asset, array_pop($assets));
+		$this->assertCount(0, $assets);
+	}
+
+	public function testAddOneJsToFooter()
+	{
+		$this->assertCount(0, $this->manager->getJs('footer'));
+
+		$asset = uniqid('asset');
+		$this->manager->addJs($asset, 'footer');
+		$assets = $this->manager->getJs('footer');
+
+		$this->assertCount(1, $assets);
+		$this->assertStringEndsWith($asset, array_pop($assets));
+		$this->assertCount(0, $assets);
+	}
+
+	public function testAddMultipleJsToMixedLocations()
+	{
+		$this->assertCount(0, $this->manager->getJs());
+
+		$assets = array(
+			array(uniqid('asset1'), 'header'),
+			array(uniqid('asset2'), 'footer'),
+			array(uniqid('asset3'), 'header'),
+			array(uniqid('asset4'), 'footer'),
+			uniqid('asset5'), // By default, the header
+		);
+
+		$this->manager->addJs($assets);
+		$header = $this->manager->getJs('header');
+		$footer = $this->manager->getJs('footer');
+
+		$this->assertCount(3, $header);
+		$this->assertCount(2, $footer);
+	}
+
+	public function testDetectAndAddMultipleFilesToMixedLocations()
+	{
+		$this->assertCount(0, $this->manager->getJs());
+
+		$assets = array(
+			array('asset1.js', 'header'),
+			array('asset2.js', 'footer'),
+			array('asset3.js', 'header'),
+			array('asset4.js', 'footer'),
+			'asset5.js',
+			'asset6.css',
+		);
+
+		$this->manager->add($assets);
+		$header = $this->manager->getJs('header');
+		$footer = $this->manager->getJs('footer');
+		$css = $this->manager->getCss();
+
+		$this->assertCount(3, $header);
+		$this->assertCount(2, $footer);
+		$this->assertCount(1, $css);
+	}
 
 	protected static function getMethod($name) {
 		$class = new ReflectionClass('Stolz\Assets\Manager');
@@ -175,6 +244,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$method->setAccessible(true);
 		return $method;
 	}
+
 }
 
 
