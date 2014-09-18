@@ -170,6 +170,7 @@ class Manager
      * You may add more than one asset passing an array as argument.
      *
      * @param  mixed   $asset
+	 * @param  string  $location  for javascript only (header|footer)
      * @return Manager
      */
     public function add($asset, $location = 'header')
@@ -249,6 +250,7 @@ class Manager
      * You may add more than one asset passing an array as argument.
      *
      * @param  mixed   $asset
+	 * @param  string  $location  header|footer
      * @return Manager
      */
     public function addJs($asset, $location = 'header')
@@ -305,6 +307,7 @@ class Manager
     /**
      * Build the JavaScript script tags.
      *
+	 * @param  string  $location  header|footer
      * @return string
      */
     public function js($location = 'header')
@@ -410,6 +413,7 @@ class Manager
     /**
      * Minifiy and concatenate JavaScript files.
      *
+	 * @param  string  $location  header|footer
      * @return string
      */
     protected function jsPipeline($location = 'header')
@@ -524,7 +528,8 @@ class Manager
     }
 
     /**
-     * Get all JavaScript assets already added.
+     * Get JavaScript assets already added to either header
+	 * or footer or both.
      *
      * @return array
      */
@@ -545,6 +550,11 @@ class Manager
         return array();
     }
 
+	/**
+     * Get all JavaScript assets already added.
+     *
+     * @return array
+     */
     public function getFullJs()
     {
         return $this->js;
