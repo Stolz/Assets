@@ -423,8 +423,12 @@ class Manager
 		{
 			if($this->isRemoteLink($link))
 			{
+				// Add current protocol to agnostic links
 				if('//' === substr($link, 0, 2))
-					$link = 'http:' . $link;
+				{
+					$protocol = (isset($_SERVER['HTTPS']) and ! empty($_SERVER['HTTPS']) and $_SERVER['HTTPS'] !== 'off') ? 'https:' : 'http:';
+					$link = $protocol . $link;
+				}
 			}
 			else
 			{
