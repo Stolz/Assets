@@ -424,7 +424,9 @@ class Manager
 			if($this->isRemoteLink($link))
 			{
 				if('//' === substr($link, 0, 2))
-					$link = 'http:' . $link;
+					(isset($_SERVER["HTTPS"]) && !empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== 'off') ?
+                        			$link = 'https:' . $link :
+                        			$link = 'http:' . $link;
 			}
 			else
 			{
