@@ -10,10 +10,7 @@
 	<rule ref="Generic.Formatting.SpaceAfterCast"/>
 
 	<!--Function name in camelCase-->
-	<rule ref="Generic.NamingConventions.CamelCapsFunctionName">
-		<!--Allow helpers with snake_case-->
-		<exclude-pattern>helpers.php</exclude-pattern>
-	</rule>
+	<rule ref="Generic.NamingConventions.CamelCapsFunctionName"/>
 
 	<!--PHP5 constructor syntax "function __construct()"-->
 	<rule ref="Generic.NamingConventions.ConstructorName"/>
@@ -24,10 +21,7 @@
 	<!--Force tabs identation-->
 	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
 
-	<!--Suppress warning for some files without PHP code-->
-	<rule ref="Internal.NoCodeFound">
-		<exclude-pattern>/views/</exclude-pattern>
-	</rule>
+	<rule ref="Internal.NoCodeFound"/>
 
 	<rule ref="PSR2">
 		<!--Allow one line control structures to have no curly braces-->
@@ -71,5 +65,3 @@
 	<rule ref="Squiz.WhiteSpace.SemicolonSpacing"/>
 
 </ruleset>
-
-

@@ -110,7 +110,7 @@ class Manager
 	 * Also, an extra option 'autoload' may be passed containing an array of
 	 * assets and/or collections that will be automatically added on startup.
 	 *
-	 * @param  array $options Configurable options.
+	 * @param  array   $config Configurable options.
 	 * @return Manager
 	 * @throws Exception
 	 */
@@ -256,41 +256,78 @@ class Manager
 	}
 
 	/**
-	 * Build the CSS link tags.
+	 * Build the CSS `<link>` tags.
 	 *
+	 * Accepts an array of $attributes for the HTML tag.
+	 * You can take control of the tag rendering by
+	 * providing a closure that will receive an array of assets.
+	 *
+	 * @param  array|Closure $attributes
 	 * @return string
 	 */
-	public function css()
+	public function css($attributes = null)
 	{
 		if( ! $this->css)
-			return null;
+			return '';
 
-		if($this->pipeline)
-			return '<link type="text/css" rel="stylesheet" href="'.$this->cssPipeline().'" />'."\n";
+		$assets = ($this->pipeline) ? array($this->cssPipeline()) : $this->css;
 
+		if($attributes instanceof Closure)
+			return $attributes($assets);
+
+		// Build attributes
+		$attributes = (array) $attributes;
+		unset($attributes['href']);
+
+		if( ! array_key_exists('type', $attributes))
+			$attributes['type'] = 'text/css';
+
+		if( ! array_key_exists('rel', $attributes))
+			$attributes['rel'] = 'stylesheet';
+
+		$attributes = $this->buildTagAttributes($attributes);
+
+		// Build tags
 		$output = '';
-		foreach($this->css as $file)
-			$output .= '<link type="text/css" rel="stylesheet" href="'.$file.'" />'."\n";
+		foreach($assets as $asset)
+			$output .= '<link href="' . $asset . '"' . $attributes . " />\n";
 
 		return $output;
 	}
 
 	/**
-	 * Build the JavaScript script tags.
+	 * Build the JavaScript `<script>` tags.
 	 *
+	 * Accepts an array of $attributes for the HTML tag.
+	 * You can take control of the tag rendering by
+	 * providing a closure that will receive an array of assets.
+	 *
+	 * @param  array|Closure $attributes
 	 * @return string
 	 */
-	public function js()
+	public function js($attributes = null)
 	{
 		if( ! $this->js)
-			return null;
+			return '';
 
-		if($this->pipeline)
-			return '<script type="text/javascript" src="'.$this->jsPipeline().'"></script>'."\n";
+		$assets = ($this->pipeline) ? array($this->jsPipeline()) : $this->js;
 
+		if($attributes instanceof Closure)
+			return $attributes($assets);
+
+		// Build attributes
+		$attributes = (array) $attributes;
+		unset($attributes['src']);
+
+		if( ! array_key_exists('type', $attributes))
+			$attributes['type'] = 'text/javascript';
+
+		$attributes = $this->buildTagAttributes($attributes);
+
+		// Build tags
 		$output = '';
-		foreach($this->js as $file)
-			$output .= '<script type="text/javascript" src="'.$file.'"></script>'."\n";
+		foreach($assets as $asset)
+			$output .= '<script src="' . $asset . '"' . $attributes . "></script>\n";
 
 		return $output;
 	}
@@ -302,7 +339,7 @@ class Manager
 	 * @param  array   $assets
 	 * @return Manager
 	 */
-	public function registerCollection($collectionName, Array $assets)
+	public function registerCollection($collectionName, array $assets)
 	{
 		$this->collections[$collectionName] = $assets;
 
@@ -458,6 +495,30 @@ class Manager
 			return $dir . '/' . $asset;
 
 		return '/packages/' . $package[0] . '/' .$package[1] . '/' . ltrim($dir, '/') . '/' .$package[2];
+	}
+
+	/**
+	 * Build an HTML attribute string from an array.
+	 *
+	 * @param  array  $attributes
+	 * @return string
+	 */
+	public function buildTagAttributes(array $attributes)
+	{
+		$html = array();
+
+		foreach ($attributes as $key => $value)
+		{
+			if (is_null($value))
+				continue;
+
+			if (is_numeric($key))
+				$key = $value;
+
+			$html[] = $key . '="' . htmlentities($value, ENT_QUOTES, 'UTF-8', false) . '"';
+		}
+
+		return (count($html) > 0) ? ' ' . implode(' ', $html) : '';
 	}
 
 	/**
