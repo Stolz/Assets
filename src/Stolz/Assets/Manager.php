@@ -48,6 +48,14 @@ class Manager
 	protected $js_dir = 'js';
 
 	/**
+	 * Directory for package assets.
+	 * Relative to your public directory ('public_dir').
+	 * No trailing slash!.
+	 * @var string
+	 */
+	protected $packages_dir = 'packages';
+
+	/**
 	 * Directory for storing pipelined assets.
 	 * Relative to your assets directories ('css_dir' and 'js_dir').
 	 * No trailing slash!.
@@ -143,6 +151,10 @@ class Manager
 		// Set custom JavaScript directory
 		if(isset($config['js_dir']))
 			$this->js_dir = $config['js_dir'];
+
+		// Set custom packages directory
+		if(isset($config['packages_dir']))
+			$this->packages_dir = $config['packages_dir'];
 
 		// Set collections
 		if(isset($config['collections']) and is_array($config['collections']))
@@ -494,7 +506,7 @@ class Manager
 		if($package === false)
 			return $dir . '/' . $asset;
 
-		return '/packages/' . $package[0] . '/' .$package[1] . '/' . ltrim($dir, '/') . '/' .$package[2];
+		return $this->packages_dir . '/' . $package[0] . '/' .$package[1] . '/' . ltrim($dir, '/') . '/' . $package[2];
 	}
 
 	/**

@@ -103,6 +103,20 @@ No trailing slash!.
 * Visibility: **protected**
 
 
+### $packages_dir
+
+```
+protected string $packages_dir = 'packages'
+```
+
+Directory for package assets.
+
+Relative to your public directory ('public_dir').
+No trailing slash!.
+
+* Visibility: **protected**
+
+
 ### $pipeline_dir
 
 ```
