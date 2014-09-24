@@ -37,7 +37,7 @@ class PurgePipelineCommand extends Command
 	 */
 	public function fire()
 	{
-		$pipeDir = Config::get('assets::pipe_dir', 'min');
+		$pipeDir = Config::get('assets::pipeline_dir', 'min');
 		$cssDir = Config::get('assets::css_dir', 'css') . DIRECTORY_SEPARATOR . $pipeDir;
 		$jsDir = Config::get('assets::js_dir', 'js') . DIRECTORY_SEPARATOR . $pipeDir;
 

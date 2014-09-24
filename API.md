@@ -49,19 +49,6 @@ Properties
 ----------
 
 
-### $pipeline
-
-```
-protected boolean $pipeline = false
-```
-
-Enable assets pipeline (concatenation and minification).
-
-
-
-* Visibility: **protected**
-
-
 ### $public_dir
 
 ```
@@ -70,6 +57,7 @@ protected string $public_dir
 
 Absolute path to the public directory of your App (WEBROOT).
 
+Required if you enable the pipeline.
 No trailing slash!.
 
 * Visibility: **protected**
@@ -83,7 +71,7 @@ protected string $css_dir = 'css'
 
 Directory for local CSS assets.
 
-Relative to your public directory.
+Relative to your public directory ('public_dir').
 No trailing slash!.
 
 * Visibility: **protected**
@@ -117,6 +105,19 @@ No trailing slash!.
 * Visibility: **protected**
 
 
+### $pipeline
+
+```
+protected boolean $pipeline = false
+```
+
+Enable assets pipeline (concatenation and minification).
+
+If you set an integer value greather than 1 it will be used as pipeline timestamp.
+
+* Visibility: **protected**
+
+
 ### $pipeline_dir
 
 ```
@@ -127,6 +128,21 @@ Directory for storing pipelined assets.
 
 Relative to your assets directories ('css_dir' and 'js_dir').
 No trailing slash!.
+
+* Visibility: **protected**
+
+
+### $pipeline_gzip
+
+```
+protected boolean $pipeline_gzip = false
+```
+
+Enable pipelined assets compression with Gzip. Do not enable unless you know what you are doing!.
+
+Useful only if your webserver supports Gzip HTTP_ACCEPT_ENCODING.
+Set to true to use the default compression level.
+Set an integer between 0 (no compression) and 9 (maximum compression) to choose compression level.
 
 * Visibility: **protected**
 
@@ -414,6 +430,27 @@ Minifiy and concatenate JavaScript files.
 
 
 * Visibility: **protected**
+
+
+
+### pipeline()
+
+```
+string pipeline()(array $assets, string $extension, string $subdirectory, \Closure $minifier)
+```
+
+Minifiy and concatenate files.
+
+
+
+* Visibility: **protected**
+
+#### Arguments
+
+* $assets **array**
+* $extension **string**
+* $subdirectory **string**
+* $minifier **Closure**
 
 
 

@@ -30,7 +30,7 @@ An ultra-simple-to-use assets management PHP library.
 - Supports programmatically adding assets on the fly.
 - Supports local (**including packages**) or remote assets.
 - Prevents from loading duplicated assets.
-- Included assets **pipeline** (*concatenate and minify all your assets to a single file*) with URL **timestamps** support.
+- Included assets **pipeline** (*concatenate and minify all your assets to a single file*) with URL **timestamps** and **gzip** support.
 - Automatically prefixes local assets with a configurable folder name or url.
 - Supports secure (*https*) and protocol agnostic (*//*) links.
 - Supports **collections** (*named groups of assets*) that can be nested, allowing assets dependencies definitions.

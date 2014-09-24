@@ -19,13 +19,8 @@ class Manager
 	const JS_REGEX = '/.\.js$/i';
 
 	/**
-	 * Enable assets pipeline (concatenation and minification).
-	 * @var bool
-	 */
-	protected $pipeline = false;
-
-	/**
 	 * Absolute path to the public directory of your App (WEBROOT).
+	 * Required if you enable the pipeline.
 	 * No trailing slash!.
 	 * @var string
 	 */
@@ -33,7 +28,7 @@ class Manager
 
 	/**
 	 * Directory for local CSS assets.
-	 * Relative to your public directory.
+	 * Relative to your public directory ('public_dir').
 	 * No trailing slash!.
 	 * @var string
 	 */
@@ -56,12 +51,28 @@ class Manager
 	protected $packages_dir = 'packages';
 
 	/**
+	 * Enable assets pipeline (concatenation and minification).
+	 * If you set an integer value greather than 1 it will be used as pipeline timestamp.
+	 * @var bool|integer
+	 */
+	protected $pipeline = false;
+
+	/**
 	 * Directory for storing pipelined assets.
 	 * Relative to your assets directories ('css_dir' and 'js_dir').
 	 * No trailing slash!.
 	 * @var string
 	 */
 	protected $pipeline_dir = 'min';
+
+	/**
+	 * Enable pipelined assets compression with Gzip. Do not enable unless you know what you are doing!.
+	 * Useful only if your webserver supports Gzip HTTP_ACCEPT_ENCODING.
+	 * Set to true to use the default compression level.
+	 * Set an integer between 0 (no compression) and 9 (maximum compression) to choose compression level.
+	 * @var bool|integer
+	 */
+	protected $pipeline_gzip = false;
 
 	/**
 	 * Closure used by the pipeline to fetch assets.
@@ -139,6 +150,10 @@ class Manager
 		// Set custom pipeline directory
 		if(isset($config['pipeline_dir']))
 			$this->pipeline_dir = $config['pipeline_dir'];
+
+		// Set pipeline gzip compression
+		if(isset($config['pipeline_gzip']))
+			$this->pipeline_gzip = $config['pipeline_gzip'];
 
 		// Set custom pipeline fetch command
 		if(isset($config['fetch_command']) and ($config['fetch_command'] instanceof Closure))
@@ -399,31 +414,10 @@ class Manager
 	 */
 	protected function cssPipeline()
 	{
-		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
-		$file = md5($timestamp . implode($this->css)).'.css';
-		$relative_path = "{$this->css_dir}/{$this->pipeline_dir}/$file";
-		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $this->css_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
-
-		// If pipeline exist return it
-		if(file_exists($absolute_path))
-			return $relative_path . $timestamp;
-
-		// Create destination directory
-		$directory = $this->public_dir . DIRECTORY_SEPARATOR . $this->css_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir;
-		if( ! is_dir($directory))
-			mkdir($directory, 0777, true);
-
-		// Concatenate files
-		$buffer = $this->gatherLinks($this->css);
-
-		// Minifiy
-		$min = new \CSSmin();
-		$min = $min->run($buffer);
-
-		// Write file
-		file_put_contents($absolute_path, $min);
-
-		return $relative_path . $timestamp;
+		return $this->pipeline($this->css, '.css', $this->css_dir, function ($buffer) {
+			$min = new \CSSmin();
+			return $min->run($buffer);
+		});
 	}
 
 	/**
@@ -433,28 +427,51 @@ class Manager
 	 */
 	protected function jsPipeline()
 	{
+		return $this->pipeline($this->js, '.js', $this->js_dir, function ($buffer) {
+			return \JSMin::minify($buffer);
+		});
+	}
+
+	/**
+	 * Minifiy and concatenate files.
+	 *
+	 * @param array   $assets
+	 * @param string  $extension
+	 * @param string  $subdirectory
+	 * @param Closure $minifier
+	 *
+	 * @return string
+	 */
+	protected function pipeline(array $assets, $extension, $subdirectory, Closure $minifier)
+	{
 		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
-		$file = md5($timestamp . implode($this->js)).'.js';
-		$relative_path = "{$this->js_dir}/{$this->pipeline_dir}/$file";
-		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $this->js_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
+		$file = md5($timestamp . implode($assets)) . $extension;
+		$relative_path = "$subdirectory/{$this->pipeline_dir}/$file";
+		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $subdirectory . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
 
 		// If pipeline exist return it
 		if(file_exists($absolute_path))
 			return $relative_path . $timestamp;
 
 		// Create destination directory
-		$directory = $this->public_dir . DIRECTORY_SEPARATOR . $this->js_dir . DIRECTORY_SEPARATOR . $this->pipeline_dir;
-		if( ! is_dir($directory))
+		if( ! is_dir($directory = dirname($absolute_path)))
 			mkdir($directory, 0777, true);
 
 		// Concatenate files
-		$buffer = $this->gatherLinks($this->js);
+		$buffer = $this->gatherLinks($assets);
 
 		// Minifiy
-		$min = \JSMin::minify($buffer);
+		$min = $minifier->__invoke($buffer);
 
-		// Write file
+		// Write minified file
 		file_put_contents($absolute_path, $min);
+
+		// Write gziped file
+		if(function_exists('gzencode') and $this->pipeline_gzip !== false)
+		{
+			$level = ($this->pipeline_gzip === true) ? -1 : intval($this->pipeline_gzip);
+			file_put_contents("$absolute_path.gz", gzencode($min, $level));
+		}
 
 		return $relative_path . $timestamp;
 	}
