@@ -239,8 +239,8 @@ For a **full list of all the availabe config options** please read the provided 
 
 It is possible to **change any config options on the fly** by passing an array of settings to the `config()` method. Usefull if some assets use a different base directory or if you want to pipeline some assets and skip others from the pipeline. i.e:
 
-	{{ Assets::reset()->add('do-not-pipeline-this.js')->js() }}
-	{{ Assets::reset()->add('please-pipeline-this.js')->config(array('pipeline' => true))->js() }}
+	echo Assets::reset()->add('do-not-pipeline-this.js')->js(),
+	     Assets::reset()->add('please-pipeline-this.js')->config(array('pipeline' => true))->js();
 
 ----
 
