@@ -41,7 +41,7 @@ An ultra-simple-to-use assets management PHP library.
 <a id="frameworks"></a>
 ## Supported frameworks
 
-The library is framework agnostic and it should work well with any framework or naked PHP application. Nevertheless, the following instructions have been tailored for Laravel 4 framework. If you want to use the library in any other scenario please read the [non static interface](#nonstatic) instructions.
+The library is framework agnostic and it should work well with any framework or naked PHP application. Nevertheless, the following instructions have been tailored for Laravel framework. If you want to use the library in any other scenario please read the [non static interface](#nonstatic) instructions.
 
 <a id="installation"></a>
 ## Installation
