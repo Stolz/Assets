@@ -69,7 +69,10 @@ class Manager
 	protected $fetch_command;
 
 	/**
-	 * Closure used to wrap output when serve assets.
+	 * Closure used to wrap output when serving assets.
+	 *
+	 * The closure will recieve as the only parameter a string with the URL of the asset and
+	 * it should return a way to get the full URL as a string
 	 * @var Closure
 	 */
 	protected $wrap_command;
