@@ -69,6 +69,12 @@ class Manager
 	protected $fetch_command;
 
 	/**
+	 * Closure used to wrap output when serve assets.
+	 * @var Closure
+	 */
+	protected $wrap_command;
+
+	/**
 	 * Available collections.
 	 * Each collection is an array of assets.
 	 * Collections may also contain other collections.
@@ -135,6 +141,10 @@ class Manager
 		// Set custom pipeline fetch command
 		if(isset($config['fetch_command']) and ($config['fetch_command'] instanceof Closure))
 			$this->fetch_command = $config['fetch_command'];
+
+		// Set custom wrap command
+		if(isset($config['wrap_command']) and ($config['wrap_command'] instanceof Closure))
+			$this->wrap_command = $config['wrap_command'];
 
 		// Set custom CSS directory
 		if(isset($config['css_dir']))
@@ -266,11 +276,11 @@ class Manager
 			return null;
 
 		if($this->pipeline)
-			return '<link type="text/css" rel="stylesheet" href="'.$this->cssPipeline().'" />'."\n";
+			return '<link type="text/css" rel="stylesheet" href="'.$this->wrap($this->cssPipeline()).'" />'."\n";
 
 		$output = '';
 		foreach($this->css as $file)
-			$output .= '<link type="text/css" rel="stylesheet" href="'.$file.'" />'."\n";
+			$output .= '<link type="text/css" rel="stylesheet" href="'.$this->wrap($file).'" />'."\n";
 
 		return $output;
 	}
@@ -286,11 +296,11 @@ class Manager
 			return null;
 
 		if($this->pipeline)
-			return '<script type="text/javascript" src="'.$this->jsPipeline().'"></script>'."\n";
+			return '<script type="text/javascript" src="'.$this->wrap($this->jsPipeline()).'"></script>'."\n";
 
 		$output = '';
 		foreach($this->js as $file)
-			$output .= '<script type="text/javascript" src="'.$file.'"></script>'."\n";
+			$output .= '<script type="text/javascript" src="'.$this->wrap($file).'"></script>'."\n";
 
 		return $output;
 	}
@@ -597,5 +607,15 @@ class Manager
 			$files[] = substr($file->getPathname(), $offset);
 
 		return $files;
+	}
+
+	/**
+	 * Wrap a link
+	 * @param  string $link
+	 * @return string
+	 */
+	protected function wrap($link)
+	{
+		return ($this->wrap_command instanceof Closure) ? $this->wrap_command->__invoke($link) : $link;
 	}
 }
