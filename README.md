@@ -92,8 +92,8 @@ Note all local assets filenames are considered to be relative to you assets dire
 
 You may add remote assets in the same fashion
 
-	Assets::add('//cdn.example.com/jquery.js'));
-	Assets::add('http://example.com/style.css'));
+	Assets::add('//cdn.example.com/jquery.js');
+	Assets::add('http://example.com/style.css');
 
 If your assets have no extension and autodetection fails, then just use canonical functions *(they accept an array of assets too)*
 
