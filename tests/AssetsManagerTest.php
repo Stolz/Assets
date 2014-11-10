@@ -12,10 +12,11 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 	public function testConfigSetsDirs()
 	{
 		$config = array(
-			'public_dir'	=> __DIR__,
-			'css_dir'		=> uniqid('css'),
-			'js_dir'		=> uniqid('js'),
-			'pipeline_dir'	=> uniqid('pipe'),
+			'public_dir'   => __DIR__,
+			'css_dir'      => uniqid('css'),
+			'js_dir'       => uniqid('js'),
+			'packages_dir' => uniqid('packages'),
+			'pipeline_dir' => uniqid('pipe'),
 		);
 
 		$this->manager->config($config);
@@ -176,5 +177,3 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		return $method;
 	}
 }
-
-

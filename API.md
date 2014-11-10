@@ -49,19 +49,6 @@ Properties
 ----------
 
 
-### $pipeline
-
-```
-protected boolean $pipeline = false
-```
-
-Enable assets pipeline (concatenation and minification).
-
-
-
-* Visibility: **protected**
-
-
 ### $public_dir
 
 ```
@@ -70,6 +57,7 @@ protected string $public_dir
 
 Absolute path to the public directory of your App (WEBROOT).
 
+Required if you enable the pipeline.
 No trailing slash!.
 
 * Visibility: **protected**
@@ -83,7 +71,7 @@ protected string $css_dir = 'css'
 
 Directory for local CSS assets.
 
-Relative to your public directory.
+Relative to your public directory ('public_dir').
 No trailing slash!.
 
 * Visibility: **protected**
@@ -103,6 +91,33 @@ No trailing slash!.
 * Visibility: **protected**
 
 
+### $packages_dir
+
+```
+protected string $packages_dir = 'packages'
+```
+
+Directory for package assets.
+
+Relative to your public directory ('public_dir').
+No trailing slash!.
+
+* Visibility: **protected**
+
+
+### $pipeline
+
+```
+protected boolean $pipeline = false
+```
+
+Enable assets pipeline (concatenation and minification).
+
+If you set an integer value greather than 1 it will be used as pipeline timestamp.
+
+* Visibility: **protected**
+
+
 ### $pipeline_dir
 
 ```
@@ -113,6 +128,21 @@ Directory for storing pipelined assets.
 
 Relative to your assets directories ('css_dir' and 'js_dir').
 No trailing slash!.
+
+* Visibility: **protected**
+
+
+### $pipeline_gzip
+
+```
+protected boolean $pipeline_gzip = false
+```
+
+Enable pipelined assets compression with Gzip. Do not enable unless you know what you are doing!.
+
+Useful only if your webserver supports Gzip HTTP_ACCEPT_ENCODING.
+Set to true to use the default compression level.
+Set an integer between 0 (no compression) and 9 (maximum compression) to choose compression level.
 
 * Visibility: **protected**
 
@@ -213,7 +243,7 @@ assets and/or collections that will be automatically added on startup.
 
 #### Arguments
 
-* $config **array**
+* $config **array** - &lt;p&gt;Configurable options.&lt;/p&gt;
 
 
 
@@ -277,28 +307,40 @@ You may add more than one asset passing an array as argument.
 ### css()
 
 ```
-string css()()
+string css()(array|\Closure $attributes)
 ```
 
-Build the CSS link tags.
+Build the CSS `<link>` tags.
 
-
+Accepts an array of $attributes for the HTML tag.
+You can take control of the tag rendering by
+providing a closure that will receive an array of assets.
 
 * Visibility: **public**
+
+#### Arguments
+
+* $attributes **array|Closure**
 
 
 
 ### js()
 
 ```
-string js()()
+string js()(array|\Closure $attributes)
 ```
 
-Build the JavaScript script tags.
+Build the JavaScript `<script>` tags.
 
-
+Accepts an array of $attributes for the HTML tag.
+You can take control of the tag rendering by
+providing a closure that will receive an array of assets.
 
 * Visibility: **public**
+
+#### Arguments
+
+* $attributes **array|Closure**
 
 
 
@@ -391,6 +433,27 @@ Minifiy and concatenate JavaScript files.
 
 
 
+### pipeline()
+
+```
+string pipeline()(array $assets, string $extension, string $subdirectory, \Closure $minifier)
+```
+
+Minifiy and concatenate files.
+
+
+
+* Visibility: **protected**
+
+#### Arguments
+
+* $assets **array**
+* $extension **string**
+* $subdirectory **string**
+* $minifier **Closure**
+
+
+
 ### gatherLinks()
 
 ```
@@ -425,6 +488,24 @@ Detects packages links.
 
 * $asset **string**
 * $dir **string**
+
+
+
+### buildTagAttributes()
+
+```
+string buildTagAttributes()(array $attributes)
+```
+
+Build an HTML attribute string from an array.
+
+
+
+* Visibility: **public**
+
+#### Arguments
+
+* $attributes **array**
 
 
 

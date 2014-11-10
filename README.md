@@ -30,7 +30,7 @@ An ultra-simple-to-use assets management PHP library.
 - Supports programmatically adding assets on the fly.
 - Supports local (**including packages**) or remote assets.
 - Prevents from loading duplicated assets.
-- Included assets **pipeline** (*concatenate and minify all your assets to a single file*) with URL **timestamps** support.
+- Included assets **pipeline** (*concatenate and minify all your assets to a single file*) with URL **timestamps** and **gzip** support.
 - Automatically prefixes local assets with a configurable folder name or url.
 - Supports secure (*https*) and protocol agnostic (*//*) links.
 - Supports **collections** (*named groups of assets*) that can be nested, allowing assets dependencies definitions.
@@ -41,7 +41,7 @@ An ultra-simple-to-use assets management PHP library.
 <a id="frameworks"></a>
 ## Supported frameworks
 
-The library is framework agnostic and it should work well with any framework or naked PHP application. Nevertheless, the following instructions have been tailored for Laravel 4 framework. If you want to use the library in any other scenario please read the [non static interface](#nonstatic) instructions.
+The library is framework agnostic and it should work well with any framework or naked PHP application. Nevertheless, the following instructions have been tailored for Laravel framework. If you want to use the library in any other scenario please read the [non static interface](#nonstatic) instructions.
 
 <a id="installation"></a>
 ## Installation
@@ -239,8 +239,8 @@ For a **full list of all the availabe config options** please read the provided 
 
 It is possible to **change any config options on the fly** by passing an array of settings to the `config()` method. Usefull if some assets use a different base directory or if you want to pipeline some assets and skip others from the pipeline. i.e:
 
-	{{ Assets::reset()->add('do-not-pipeline-this.js')->js() }}
-	{{ Assets::reset()->add('please-pipeline-this.js')->config(array('pipeline' => true))->js() }}
+	echo Assets::reset()->add('do-not-pipeline-this.js')->js(),
+	     Assets::reset()->add('please-pipeline-this.js')->config(array('pipeline' => true))->js();
 
 ----
 

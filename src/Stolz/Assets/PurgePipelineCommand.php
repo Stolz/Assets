@@ -1,14 +1,11 @@
 <?php namespace Stolz\Assets;
 
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
-use File;
 use Config;
+use File;
 
 class PurgePipelineCommand extends Command
 {
-
 	/**
 	 * The console command name.
 	 *
@@ -40,14 +37,14 @@ class PurgePipelineCommand extends Command
 	 */
 	public function fire()
 	{
-		$pipe_dir = Config::get('assets::pipe_dir', 'min');
-		$css_dir = Config::get('assets::css_dir', 'css') . DIRECTORY_SEPARATOR . $pipe_dir;
-		$js_dir = Config::get('assets::js_dir', 'js') . DIRECTORY_SEPARATOR . $pipe_dir;
+		$pipeDir = Config::get('assets::pipeline_dir', 'min');
+		$cssDir = Config::get('assets::css_dir', 'css') . DIRECTORY_SEPARATOR . $pipeDir;
+		$jsDir = Config::get('assets::js_dir', 'js') . DIRECTORY_SEPARATOR . $pipeDir;
 
-		$purge_css = $this->purgeDir(public_path($css_dir));
-		$purge_js = $this->purgeDir(public_path($js_dir));
+		$purgeCss = $this->purgeDir(public_path($cssDir));
+		$purgeJs = $this->purgeDir(public_path($jsDir));
 
-		if($purge_css and $purge_js)
+		if($purgeCss and $purgeJs)
 			$this->info('Done!');
 	}
 
