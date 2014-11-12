@@ -138,14 +138,14 @@ To register a collection on run time for later use:
 To preconfigure collections using the config file:
 
 	// ... config.php ...
-	'collections' => array(
+	'collections' => [
 		'one'	=> 'one.css',
 		'two'	=> ['two.css', 'two.js'],
 		'external'	=> ['http://example.com/external.css', 'https://secure.example.com/https.css', '//example.com/protocol/agnostic.js'],
 		'mix'	=> ['internal.css', 'http://example.com/external.js'],
 		'nested' => ['one', 'two'],
 		'duplicated' => ['nested', 'one.css','two.css', 'three.js'],
-	),
+	],
 
 Let me show you how to use the above collection in different scenarios:
 
@@ -201,7 +201,6 @@ Once it's enabled all your assets will be concatenated and minified to a single 
 
 This process can take a few seconds depending on the amount of assets and your connection but it's triggered only the first time you load a page whose assets have never been pipelined before. The subsequent times the same page (or any page using the same assets) is loaded, the previously pipelined file will be used giving you much faster loading time and less bandwidth usage.
 
-
 **Note:** For obvious reasons, using the pipeline is recommended only for production environment.
 
 If your assets have changed since they were pipelined use the provided artisan command to purge the pipeline cache
@@ -219,6 +218,9 @@ will produce:
 	<link type="text/css" rel="stylesheet" href="css/min/135b1a960b9fed4dd65d1597ff593321.css?12345" />
 	<script type="text/javascript" src="js/min/5bfed4dd65d1597ff1a960b913593321.js?12345"></script>
 
+If you happend to use NGINX with the [gzip_static](http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html) feature enabled, add the following config option to automatically create a suitable gziped version of the pipelined assets:
+
+	'pipeline_gzip' => 12345,
 
 <a id="options"></a>
 ### Other configurable options
