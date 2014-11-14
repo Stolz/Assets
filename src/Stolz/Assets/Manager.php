@@ -192,17 +192,26 @@ class Manager
 	 *
 	 * It automatically detects the asset type (JavaScript, CSS or collection).
 	 * You may add more than one asset passing an array as argument.
+	 * You may add a path to an array as a way of reducing repetition.
 	 *
 	 * @param  mixed   $asset
+	 * @param  mixed   $path
 	 * @return Manager
 	 */
-	public function add($asset)
+	public function add($asset, $path = "")
 	{
 		// More than one asset
 		if(is_array($asset))
 		{
+			// Append path to existing path variable
+			if(isset($asset['path']))
+			{
+				$path .= "$asset[path]/";
+				unset($asset['path']);
+			}
+
 			foreach($asset as $a)
-				$this->add($a);
+				$this->add($a, $path);
 		}
 		// Collection
 		elseif(isset($this->collections[$asset]))
@@ -211,6 +220,8 @@ class Manager
 		}
 		else
 		{
+			// Add path to asset
+			$asset = $path . $asset;
 			// JavaScript or CSS
 			$info = pathinfo($asset);
 			if(isset($info['extension']))
