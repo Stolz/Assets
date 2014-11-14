@@ -308,6 +308,11 @@ You can use the library without using static methods. The signature of all metho
 <a id="troubleshooting"></a>
 ## Troubleshooting / F.A.Q.
 
+<a id="faq_support"></a>
+### Where can I ask for help/support?
+
+First make sure you read this [F.A.Q.](#troubleshooting) and if you still need help [open an issue on GitHub](https://github.com/Stolz/Assets/issues/new) or use your GitHub account to [ask for support here](http://laravel.io/forum/02-17-2014-package-an-ultra-simple-to-use-assets-managementpipeline-package).
+
 <a id="faq_folders"></a>
 ### Where should I copy my assets files?
 
@@ -343,7 +348,7 @@ If you use a massive amount of assets make sure your connection is fast enough a
 <a id="faq_config_on_the_fly"></a>
 ### Can I use multiple instances of the library?
 
-Yes you can but there is no need. Read next question.
+Yes you can but there is no need. Read next question. If you still want to use multiple instances, [read how](https://github.com/Stolz/Assets/issues/37#issuecomment-57676554).
 
 <a id="faq_instances"></a>
 ### Can I change settings on the fly?
@@ -353,17 +358,18 @@ Yes you can. There is a `config()` public method to change settings on the fly. 
 	echo Assets::add('jquery-cdn')->js();
 	echo Assets::reset()->add(array('custom.js', 'main.js'))->config(array('pipeline' => true))->js();
 
-<a id="faq_pull_request_not_merged"></a>
-### Why my pull requests with *some feature* was not merged?
-
-Remember this is a framework agnostic library, if your PR uses code related to your framework it will not get merged. Also, the main reason for the library to exist is to be easy to use, if your PR involves changing this and makes the library cumbersome to use then it will not get merged.
-
 <a id="faq_to_help"></a>
-### How can I help?
+### How can I contribute?
 
-Send a pull requests to the `develop` branch. I really hate writing unit tests, any addition to improving test coverage will be very welcome.
+Send a pull requests to the **develop** branch. Read next question for your PR to have more chances to be accepted.
 
-<a id="faq_support"></a>
-### Where can I ask for help/support?
+<a id="faq_pull_request_not_merged"></a>
+### Why my pull requests was not accepted?
 
-First make sure you read the [F.A.Q.](#troubleshooting) and if you still need help [open an issue on GitHub](https://github.com/Stolz/Assets/issues/new).
+Remember, the main reason for the library to exist is to be easy to use. If your PR involves changing this and makes the library cumbersome to use then it will not be accepted.
+
+This is a framework agnostic library, if your PR uses code related to your framework it will not be accepted.
+
+If your contribution adds new features make sure to include a proper PHPUnit test for it.
+
+Please use PHP_CodeSniffer to make sure your code follows the project coding standards (which is a slightly variation of [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)).
