@@ -65,7 +65,7 @@ class ManagerServiceProvider extends ServiceProvider
 	protected function addBladeDirectives()
 	{
 		// Adds @asset tag to blade templates
-		Blade::extend(function($view, $compiler)
+		\Blade::extend(function($view, $compiler)
 		{
 			$pattern = $compiler->createMatcher('asset');
 
@@ -73,7 +73,7 @@ class ManagerServiceProvider extends ServiceProvider
 		});
 
 		// Adds @assetjs tag to blade templates
-		Blade::extend(function($view, $compiler)
+		\Blade::extend(function($view, $compiler)
 		{
 			$pattern = $compiler->createMatcher('assetjs');
 
@@ -81,7 +81,7 @@ class ManagerServiceProvider extends ServiceProvider
 		});
 
 		// Adds @assetcss tag to blade templates
-		Blade::extend(function($view, $compiler)
+		\Blade::extend(function($view, $compiler)
 		{
 			$pattern = $compiler->createMatcher('assetcss');
 
