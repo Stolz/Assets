@@ -11,6 +11,7 @@ An ultra-simple-to-use assets management PHP library.
 - [Usage](#usage).
  - [Views](#views).
  - [Controllers](#controllers).
+ - [Blade Templating Support](#blade).
  - [API](#api).
 - [Configuration](#configuration).
  - [Collections](#collections).
@@ -109,6 +110,21 @@ If at some point you decide you added the wrong assets you can reset them and st
 All methods that don't generate output will accept chaining:
 
 	Assets::reset()->add('collection')->addJs('file.js')->css();
+	
+<a id="blade"></a>
+### Blade Templating Support
+ 
+The following directives are added to Blade if using Laravel
+
+- `@asset` - Maps to Assets::add
+- `@assetjs` - Maps to Assets::addJs
+- `@assetcss` - Maps to Assets::addCss
+
+Put these directives in your Blade Template:
+
+	@asset('path/to/assets.css|js')
+	@assetjs('//external-resource.com/cdn-hosted.js')
+	@assetcss(['/path/to/first/style.css', 'path/to/second/style.css'])
 
 <a id="api"></a>
 ### API
