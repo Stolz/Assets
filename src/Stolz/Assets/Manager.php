@@ -146,12 +146,12 @@ class Manager
 	public function config(array $config)
 	{
 		// Set regex options
-		foreach(['asset_regex', 'css_regex', 'js_regex'] as $option)
+		foreach(array('asset_regex', 'css_regex', 'js_regex') as $option)
 			if(isset($config[$option]) and (@preg_match($config[$option], null) !== false))
 				$this->$option = $config[$option];
 
 		// Set common options
-		foreach(['public_dir', 'css_dir', 'js_dir', 'packages_dir', 'pipeline',  'pipeline_dir', 'pipeline_gzip'] as $option)
+		foreach(array('public_dir', 'css_dir', 'js_dir', 'packages_dir', 'pipeline',  'pipeline_dir', 'pipeline_gzip') as $option)
 			if(isset($config[$option]))
 				$this->$option = $config[$option];
 
