@@ -139,12 +139,12 @@ To preconfigure collections using the config file:
 
 	// ... config.php ...
 	'collections' => array(
-		'one'	=> 'one.css',
-		'two'	=> ['two.css', 'two.js'],
-		'external'	=> ['http://example.com/external.css', 'https://secure.example.com/https.css', '//example.com/protocol/agnostic.js'],
-		'mix'	=> ['internal.css', 'http://example.com/external.js'],
-		'nested' => ['one', 'two'],
-		'duplicated' => ['nested', 'one.css','two.css', 'three.js'],
+		'one'        => 'one.css',
+		'two'        => array('two.css', 'two.js'),
+		'external'   => array('http://example.com/external.css', 'https://secure.example.com/https.css', '//example.com/protocol/agnostic.js'),
+		'mix'        => array('internal.css', 'http://example.com/external.js'],
+		'nested'     => array('one', 'two'),
+		'duplicated' => array('nested', 'one.css','two.css', 'three.js'),
 	),
 
 Let me show you how to use the above collection in different scenarios:
@@ -201,7 +201,6 @@ Once it's enabled all your assets will be concatenated and minified to a single 
 
 This process can take a few seconds depending on the amount of assets and your connection but it's triggered only the first time you load a page whose assets have never been pipelined before. The subsequent times the same page (or any page using the same assets) is loaded, the previously pipelined file will be used giving you much faster loading time and less bandwidth usage.
 
-
 **Note:** For obvious reasons, using the pipeline is recommended only for production environment.
 
 If your assets have changed since they were pipelined use the provided artisan command to purge the pipeline cache
@@ -219,6 +218,9 @@ will produce:
 	<link type="text/css" rel="stylesheet" href="css/min/135b1a960b9fed4dd65d1597ff593321.css?12345" />
 	<script type="text/javascript" src="js/min/5bfed4dd65d1597ff1a960b913593321.js?12345"></script>
 
+If you happend to use NGINX with the [gzip_static](http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html) feature enabled, add the following config option to automatically create a suitable gziped version of the pipelined assets:
+
+	'pipeline_gzip' => 12345,
 
 <a id="options"></a>
 ### Other configurable options
@@ -278,33 +280,38 @@ You can use the library without using static methods. The signature of all metho
 ## Sample collections
 
 	// jQuery (CDN)
-	'jquery-cdn' => ['//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'],
+	'jquery-cdn' => array('//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'),
 
 	// jQuery UI (CDN)
-	'jquery-ui-cdn' => [
+	'jquery-ui-cdn' => array(
 		'jquery-cdn',
-		'//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js',
-	],
+		'//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js',
+	),
 
 	// Twitter Bootstrap (CDN)
-	'bootstrap-cdn' => [
+	'bootstrap-cdn' => array(
 		'jquery-cdn',
 		'//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css',
 		'//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css',
 		'//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'
-	],
+	),
 
 	// Zurb Foundation (CDN)
-	'foundation-cdn' => [
+	'foundation-cdn' => array(
 		'jquery-cdn',
-		'//cdn.jsdelivr.net/foundation/5.3.3/css/normalize.css',
-		'//cdn.jsdelivr.net/foundation/5.3.3/css/foundation.min.css',
-		'//cdn.jsdelivr.net/foundation/5.3.3/js/foundation.min.js',
+		'//cdn.jsdelivr.net/foundation/5.4.7/css/normalize.css',
+		'//cdn.jsdelivr.net/foundation/5.4.7/css/foundation.min.css',
+		'//cdn.jsdelivr.net/foundation/5.4.7/js/foundation.min.js',
 		'app.js'
-	],
+	),
 
 <a id="troubleshooting"></a>
 ## Troubleshooting / F.A.Q.
+
+<a id="faq_support"></a>
+### Where can I ask for help/support?
+
+First make sure you read this [F.A.Q.](#troubleshooting) and if you still need help [open an issue on GitHub](https://github.com/Stolz/Assets/issues/new) or use your GitHub account to [ask for support here](http://laravel.io/forum/02-17-2014-package-an-ultra-simple-to-use-assets-managementpipeline-package).
 
 <a id="faq_folders"></a>
 ### Where should I copy my assets files?
@@ -341,7 +348,7 @@ If you use a massive amount of assets make sure your connection is fast enough a
 <a id="faq_config_on_the_fly"></a>
 ### Can I use multiple instances of the library?
 
-Yes you can but there is no need. Read next question.
+Yes you can but there is no need. Read next question. If you still want to use multiple instances, [read how](https://github.com/Stolz/Assets/issues/37#issuecomment-57676554).
 
 <a id="faq_instances"></a>
 ### Can I change settings on the fly?
@@ -351,17 +358,18 @@ Yes you can. There is a `config()` public method to change settings on the fly. 
 	echo Assets::add('jquery-cdn')->js();
 	echo Assets::reset()->add(array('custom.js', 'main.js'))->config(array('pipeline' => true))->js();
 
-<a id="faq_pull_request_not_merged"></a>
-### Why my pull requests with *some feature* was not merged?
-
-Remember this is a framework agnostic library, if your PR uses code related to your framework it will not get merged. Also, the main reason for the library to exist is to be easy to use, if your PR involves changing this and makes the library cumbersome to use then it will not get merged.
-
 <a id="faq_to_help"></a>
-### How can I help?
+### How can I contribute?
 
-Send a pull requests to the `develop` branch. I really hate writing unit tests, any addition to improving test coverage will be very welcome.
+Send a pull requests to the **develop** branch. Read next question for your PR to have more chances to be accepted.
 
-<a id="faq_support"></a>
-### Where can I ask for help/support?
+<a id="faq_pull_request_not_merged"></a>
+### Why my pull requests was not accepted?
 
-First make sure you read the [F.A.Q.](#troubleshooting) and if you still need help [open an issue on GitHub](https://github.com/Stolz/Assets/issues/new).
+Remember, the main reason for the library to exist is to be easy to use. If your PR involves changing this and makes the library cumbersome to use then it will not be accepted.
+
+This is a framework agnostic library, if your PR uses code related to your framework it will not be accepted.
+
+If your contribution adds new features make sure to include a proper PHPUnit test for it.
+
+Please use PHP_CodeSniffer to make sure your code follows the project coding standards (which is a slightly variation of [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)).

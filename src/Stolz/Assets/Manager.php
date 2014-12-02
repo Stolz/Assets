@@ -9,14 +9,24 @@ use RegexIterator;
 
 class Manager
 {
-	/** @const Regex to match CSS and JavaScript files */
-	const DEFAULT_REGEX = '/.\.(css|js)$/i';
+	/**
+	 * Regex to match against a filename/url to determine if it is an asset.
+	 * @var string
+	 */
+	protected $asset_regex = '/.\.(css|js)$/i';
 
-	/** @const Regex to match CSS files */
-	const CSS_REGEX = '/.\.css$/i';
+	/**
+	 * Regex to match against a filename/url to determine if it is a CSS asset.
+	 * @var string
+	 */
 
-	/** @const Regex to match JavaScript files */
-	const JS_REGEX = '/.\.js$/i';
+	protected $css_regex = '/.\.css$/i';
+
+	/**
+	 * Regex to match against a filename/url to determine if it is a JavaScript asset.
+	 * @var string
+	 */
+	protected $js_regex = '/.\.js$/i';
 
 	/**
 	 * Absolute path to the public directory of your App (WEBROOT).
@@ -43,7 +53,7 @@ class Manager
 	protected $js_dir = 'js';
 
 	/**
-	 * Directory for package assets.
+	 * Directory for local package assets.
 	 * Relative to your public directory ('public_dir').
 	 * No trailing slash!.
 	 * @var string
@@ -52,7 +62,7 @@ class Manager
 
 	/**
 	 * Enable assets pipeline (concatenation and minification).
-	 * If you set an integer value greather than 1 it will be used as pipeline timestamp.
+	 * If you set an integer value greather than 1 it will be used as pipeline timestamp taht will be added to the URL.
 	 * @var bool|integer
 	 */
 	protected $pipeline = false;
@@ -135,41 +145,23 @@ class Manager
 	 */
 	public function config(array $config)
 	{
-		// Set pipeline mode
-		if(isset($config['pipeline']))
-			$this->pipeline = $config['pipeline'];
+		// Set regex options
+		foreach(array('asset_regex', 'css_regex', 'js_regex') as $option)
+			if(isset($config[$option]) and (@preg_match($config[$option], null) !== false))
+				$this->$option = $config[$option];
 
-		// Set public dir
-		if(isset($config['public_dir']))
-			$this->public_dir = $config['public_dir'];
+		// Set common options
+		foreach(array('public_dir', 'css_dir', 'js_dir', 'packages_dir', 'pipeline',  'pipeline_dir', 'pipeline_gzip') as $option)
+			if(isset($config[$option]))
+				$this->$option = $config[$option];
 
 		// Pipeline requires public dir
 		if($this->pipeline and ! is_dir($this->public_dir))
 			throw new Exception('stolz/assets: Public dir not found');
 
-		// Set custom pipeline directory
-		if(isset($config['pipeline_dir']))
-			$this->pipeline_dir = $config['pipeline_dir'];
-
-		// Set pipeline gzip compression
-		if(isset($config['pipeline_gzip']))
-			$this->pipeline_gzip = $config['pipeline_gzip'];
-
 		// Set custom pipeline fetch command
 		if(isset($config['fetch_command']) and ($config['fetch_command'] instanceof Closure))
 			$this->fetch_command = $config['fetch_command'];
-
-		// Set custom CSS directory
-		if(isset($config['css_dir']))
-			$this->css_dir = $config['css_dir'];
-
-		// Set custom JavaScript directory
-		if(isset($config['js_dir']))
-			$this->js_dir = $config['js_dir'];
-
-		// Set custom packages directory
-		if(isset($config['packages_dir']))
-			$this->packages_dir = $config['packages_dir'];
 
 		// Set collections
 		if(isset($config['collections']) and is_array($config['collections']))
@@ -177,12 +169,8 @@ class Manager
 
 		// Autoload assets
 		if(isset($config['autoload']) and is_array($config['autoload']))
-		{
 			foreach($config['autoload'] as $asset)
-			{
 				$this->add($asset);
-			}
-		}
 
 		return $this;
 	}
@@ -204,24 +192,18 @@ class Manager
 			foreach($asset as $a)
 				$this->add($a);
 		}
+
 		// Collection
 		elseif(isset($this->collections[$asset]))
-		{
 			$this->add($this->collections[$asset]);
-		}
-		else
-		{
-			// JavaScript or CSS
-			$info = pathinfo($asset);
-			if(isset($info['extension']))
-			{
-				$ext = strtolower($info['extension']);
-				if($ext === 'css')
-					$this->addCss($asset);
-				elseif($ext === 'js')
-					$this->addJs($asset);
-			}
-		}
+
+		// JavaScript asset
+		elseif(preg_match($this->js_regex, $asset))
+			$this->addJs($asset);
+
+		// CSS asset
+		elseif(preg_match($this->css_regex, $asset))
+			$this->addCss($asset);
 
 		return $this;
 	}
@@ -605,46 +587,34 @@ class Manager
 	 * @return Manager
 	 * @throws Exception
 	 */
-	public function addDir($directory, $pattern = self::DEFAULT_REGEX)
+	public function addDir($directory, $pattern = null)
 	{
 		// Check if public_dir exists
 		if( ! is_dir($this->public_dir))
 			throw new Exception('stolz/assets: Public dir not found');
 
-		// Get files
+		// By default match all assets
+		if(is_null($pattern))
+			$pattern = $this->asset_regex;
+
+		// Get assets files
 		$files = $this->rglob($this->public_dir . DIRECTORY_SEPARATOR . $directory, $pattern, $this->public_dir);
 
 		// No luck? Nothing to do
 		if( ! $files)
 			return $this;
 
-		// Add CSS files
-		if($pattern === self::CSS_REGEX)
-		{
-			$this->css = array_unique(array_merge($this->css, $files));
-			return $this;
-		}
-
-		// Add JavaScript files
-		if($pattern === self::JS_REGEX)
-		{
+		// Avoid polling if the pattern is our old friend JavaScript
+		if($pattern === $this->js_regex)
 			$this->js = array_unique(array_merge($this->js, $files));
-			return $this;
-		}
 
-		// Unknown pattern. We must poll to know the extension :(
-		foreach($files as $asset)
-		{
-			$info = pathinfo($asset);
-			if(isset($info['extension']))
-			{
-				$ext = strtolower($info['extension']);
-				if($ext === 'css' and ! in_array($asset, $this->css))
-					$this->css[] = $asset;
-				elseif($ext === 'js' and ! in_array($asset, $this->js))
-					$this->js[] = $asset;
-			}
-		}
+		// Avoid polling if the pattern is our old friend CSS
+		elseif($pattern === $this->css_regex)
+			$this->css = array_unique(array_merge($this->css, $files));
+
+		// Unknown pattern. We must poll to know the asset type :(
+		else foreach($files as $asset)
+			$this->add($asset);
 
 		return $this;
 	}
@@ -657,7 +627,7 @@ class Manager
 	 */
 	public function addDirCss($directory)
 	{
-		return $this->addDir($directory, self::CSS_REGEX);
+		return $this->addDir($directory, $this->css_regex);
 	}
 
 	/**
@@ -668,7 +638,7 @@ class Manager
 	 */
 	public function addDirJs($directory)
 	{
-		return $this->addDir($directory, self::JS_REGEX);
+		return $this->addDir($directory, $this->js_regex);
 	}
 
 	/**
