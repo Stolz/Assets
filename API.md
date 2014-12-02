@@ -11,42 +11,49 @@ Assets
 
 
 
-Constants
-----------
-
-
-### DEFAULT_REGEX
-
-```
-const DEFAULT_REGEX = '/.\.(css|js)$/i'
-```
-
-
-
-
-
-### CSS_REGEX
-
-```
-const CSS_REGEX = '/.\.css$/i'
-```
-
-
-
-
-
-### JS_REGEX
-
-```
-const JS_REGEX = '/.\.js$/i'
-```
-
-
-
 
 
 Properties
 ----------
+
+
+### $asset_regex
+
+```
+protected string $asset_regex = '/.\.(css|js)$/i'
+```
+
+Regex to match against a filename/url to determine if it is an asset.
+
+
+
+* Visibility: **protected**
+
+
+### $css_regex
+
+```
+protected string $css_regex = '/.\.css$/i'
+```
+
+Regex to match against a filename/url to determine if it is a CSS asset.
+
+
+
+* Visibility: **protected**
+
+
+### $js_regex
+
+```
+protected string $js_regex = '/.\.js$/i'
+```
+
+Regex to match against a filename/url to determine if it is a JavaScript asset.
+
+
+
+* Visibility: **protected**
 
 
 ### $public_dir
