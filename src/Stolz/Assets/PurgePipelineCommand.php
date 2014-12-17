@@ -1,8 +1,9 @@
 <?php namespace Stolz\Assets;
 
-use Illuminate\Console\Command;
 use Config;
 use File;
+use Illuminate\Console\Command;
+use Symfony\Component\Console\Input\InputOption;
 
 class PurgePipelineCommand extends Command
 {
@@ -11,7 +12,7 @@ class PurgePipelineCommand extends Command
 	 *
 	 * @var string
 	 */
-	protected $name = 'asset:purge-pipeline';
+	protected $name = 'asset:flush';
 
 	/**
 	 * The console command description.
@@ -21,31 +22,33 @@ class PurgePipelineCommand extends Command
 	protected $description = 'Flush assets pipeline files.';
 
 	/**
-	 * Create a new command instance.
-	 *
-	 * @return void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
-
-	/**
 	 * Execute the console command.
 	 *
 	 * @return void
 	 */
 	public function fire()
 	{
+		// Get directory paths
 		$pipeDir = Config::get('assets::pipeline_dir', 'min');
-		$cssDir = Config::get('assets::css_dir', 'css') . DIRECTORY_SEPARATOR . $pipeDir;
-		$jsDir = Config::get('assets::js_dir', 'js') . DIRECTORY_SEPARATOR . $pipeDir;
+		$cssDir = public_path(Config::get('assets::css_dir', 'css') . DIRECTORY_SEPARATOR . $pipeDir);
+		$jsDir = public_path(Config::get('assets::js_dir', 'js') . DIRECTORY_SEPARATOR . $pipeDir);
 
-		$purgeCss = $this->purgeDir(public_path($cssDir));
-		$purgeJs = $this->purgeDir(public_path($jsDir));
+		// Ask for confirmation
+		if( ! $this->option('force'))
+		{
+			$this->info(sprintf('All content of %s and %s will be deleted.', $cssDir, $jsDir));
+			if( ! $this->confirm('Do you wish to continue? [yes|no]'))
+				return;
+		}
 
-		if($purgeCss and $purgeJs)
-			$this->info('Done!');
+		// Purge assets
+		$purgeCss = $this->purgeDir($cssDir);
+		$purgeJs = $this->purgeDir($jsDir);
+
+		if( ! $purgeCss or ! $purgeJs)
+			return $this->error('Something went wrong');
+
+		$this->info('Done!');
 	}
 
 	/**
@@ -64,5 +67,17 @@ class PurgePipelineCommand extends Command
 
 		$this->error($directory . ' is not writable');
 		return false;
+	}
+
+	/**
+	 * Get the console command options.
+	 *
+	 * @return array
+	 */
+	protected function getOptions()
+	{
+		return array(
+			array('force', 'f', InputOption::VALUE_NONE, 'Do not prompt for confirmation'),
+		);
 	}
 }

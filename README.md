@@ -102,9 +102,9 @@ If your assets have no extension and autodetection fails, then just use canonica
 
 If at some point you decide you added the wrong assets you can reset them and start over
 
-	Assets::reset(); //Reset both CSS and JS
-	Assets::resetCss();
-	Assets::resetJs();
+	Assets::reset();    //Reset both CSS and JS
+	Assets::resetCss(); //Reset only CSS
+	Assets::resetJs();  //Reset only JS
 
 All methods that don't generate output will accept chaining:
 
@@ -205,7 +205,7 @@ This process can take a few seconds depending on the amount of assets and your c
 
 If your assets have changed since they were pipelined use the provided artisan command to purge the pipeline cache
 
-	php artisan asset:purge-pipeline
+	php artisan asset:flush
 
 To deal with cache issues a custom timestamp may be appended to the pipelined assets URL by setting `pipeline` config option to an integer value greather than 1:
 
@@ -220,7 +220,7 @@ will produce:
 
 If you happend to use NGINX with the [gzip_static](http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html) feature enabled, add the following config option to automatically create a suitable gziped version of the pipelined assets:
 
-	'pipeline_gzip' => 12345,
+	'pipeline_gzip' => true,
 
 <a id="options"></a>
 ### Other configurable options

@@ -33,7 +33,7 @@ class ManagerServiceProvider extends ServiceProvider
 		AliasLoader::getInstance()->alias('Assets', 'Stolz\Assets\Facades\Assets');
 
 		// Add artisan command
-		$this->commands('stolz.assets.command.purgepipeline');
+		$this->commands('stolz.assets.command.flush');
 	}
 
 	/**
@@ -48,9 +48,19 @@ class ManagerServiceProvider extends ServiceProvider
 			return new Manager();
 		});
 
-		// Bind 'stolz.assets.command.purgepipeline' component to the IoC container
-		$this->app->bind('stolz.assets.command.purgepipeline', function ($app) {
+		// Bind 'stolz.assets.command.flush' component to the IoC container
+		$this->app->bind('stolz.assets.command.flush', function ($app) {
 			return new PurgePipelineCommand();
 		});
+	}
+
+	/**
+	 * Get the services provided by the provider.
+	 *
+	 * @return array
+	 */
+	public function provides()
+	{
+		return array();
 	}
 }
