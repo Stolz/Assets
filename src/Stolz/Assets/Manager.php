@@ -426,14 +426,18 @@ class Manager
 	 */
 	protected function pipeline(array $assets, $extension, $subdirectory, Closure $minifier)
 	{
-		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
-		$file = md5($timestamp . implode($assets)) . $extension;
-		$relative_path = "$subdirectory/{$this->pipeline_dir}/$file";
-		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $subdirectory . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
+		// Add timestamp to extension
+		if(intval($this->pipeline) > 1)
+			$extension = '.' . $this->pipeline . $extension;
 
-		// If pipeline exist return it
+		// Generate paths
+		$filename = md5(implode($assets)) . $extension;
+		$relative_path = "$subdirectory/{$this->pipeline_dir}/$filename";
+		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $subdirectory . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $filename;
+
+		// If pipeline already exist return it
 		if(file_exists($absolute_path))
-			return $relative_path . $timestamp;
+			return $relative_path;
 
 		// Create destination directory
 		if( ! is_dir($directory = dirname($absolute_path)))
@@ -455,7 +459,7 @@ class Manager
 			file_put_contents("$absolute_path.gz", gzencode($min, $level));
 		}
 
-		return $relative_path . $timestamp;
+		return $relative_path;
 	}
 
 	/**

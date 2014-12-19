@@ -207,7 +207,7 @@ If your assets have changed since they were pipelined use the provided artisan c
 
 	php artisan asset:flush
 
-To deal with cache issues a custom timestamp may be appended to the pipelined assets URL by setting `pipeline` config option to an integer value greather than 1:
+To deal with cache issues a custom timestamp may be appended to the pipelined assets filename by setting `pipeline` config option to an integer value greather than 1:
 
 Example:
 
@@ -215,8 +215,8 @@ Example:
 
 will produce:
 
-	<link type="text/css" rel="stylesheet" href="css/min/135b1a960b9fed4dd65d1597ff593321.css?12345" />
-	<script type="text/javascript" src="js/min/5bfed4dd65d1597ff1a960b913593321.js?12345"></script>
+	<link type="text/css" rel="stylesheet" href="css/min/pipelineHash.12345.css" />
+	<script type="text/javascript" src="js/min/pipelineHash.12345.js"></script>
 
 If you happend to use NGINX with the [gzip_static](http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html) feature enabled, add the following config option to automatically create a suitable gziped version of the pipelined assets:
 
