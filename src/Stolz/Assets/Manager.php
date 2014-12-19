@@ -62,7 +62,7 @@ class Manager
 
 	/**
 	 * Enable assets pipeline (concatenation and minification).
-	 * If you set an integer value greather than 1 it will be used as pipeline timestamp taht will be added to the URL.
+	 * If you set an integer value greather than 1 it will be used as pipeline timestamp that will be added to the URL.
 	 * @var bool|integer
 	 */
 	protected $pipeline = false;
@@ -631,7 +631,7 @@ class Manager
 	}
 
 	/**
-	 * Add all JavaScript assets within $directory.
+	 * Add all JavaScript assets within $directory (relative to public dir).
 	 *
 	 * @param  string $directory Relative to $this->public_dir
 	 * @return Manager

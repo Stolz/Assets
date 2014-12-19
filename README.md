@@ -358,6 +358,11 @@ Yes you can. There is a `config()` public method to change settings on the fly. 
 	echo Assets::add('jquery-cdn')->js();
 	echo Assets::reset()->add(array('custom.js', 'main.js'))->config(array('pipeline' => true))->js();
 
+<a id="faq_filter"></a>
+### Can I filter/preprocess my assets?
+
+The library does not include any built in filter/preprocessor functionality but it offers a way to provide your custom one when pipeline is enabled. Simply use the [fetch_command](https://github.com/Stolz/Assets/blob/master/API.md#fetch_command) config option to apply a custom [filter](https://github.com/Stolz/Assets/issues/23).
+
 <a id="faq_to_help"></a>
 ### How can I contribute?
 

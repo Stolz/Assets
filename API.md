@@ -104,7 +104,7 @@ No trailing slash!.
 protected string $packages_dir = 'packages'
 ```
 
-Directory for package assets.
+Directory for local package assets.
 
 Relative to your public directory ('public_dir').
 No trailing slash!.
@@ -120,7 +120,7 @@ protected boolean $pipeline = false
 
 Enable assets pipeline (concatenation and minification).
 
-If you set an integer value greather than 1 it will be used as pipeline timestamp.
+If you set an integer value greather than 1 it will be used as pipeline timestamp that will be added to the URL.
 
 * Visibility: **protected**
 
@@ -623,7 +623,7 @@ Add all CSS assets within $directory (relative to public dir).
 Assets addDirJs()(string $directory)
 ```
 
-Add all JavaScript assets within $directory.
+Add all JavaScript assets within $directory (relative to public dir).
 
 
 
