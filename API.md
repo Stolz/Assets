@@ -19,9 +19,7 @@ Properties
 
 ### $asset_regex
 
-```
-protected string $asset_regex = '/.\.(css|js)$/i'
-```
+    protected string $asset_regex = '/.\.(css|js)$/i'
 
 Regex to match against a filename/url to determine if it is an asset.
 
@@ -32,9 +30,7 @@ Regex to match against a filename/url to determine if it is an asset.
 
 ### $css_regex
 
-```
-protected string $css_regex = '/.\.css$/i'
-```
+    protected string $css_regex = '/.\.css$/i'
 
 Regex to match against a filename/url to determine if it is a CSS asset.
 
@@ -45,9 +41,7 @@ Regex to match against a filename/url to determine if it is a CSS asset.
 
 ### $js_regex
 
-```
-protected string $js_regex = '/.\.js$/i'
-```
+    protected string $js_regex = '/.\.js$/i'
 
 Regex to match against a filename/url to determine if it is a JavaScript asset.
 
@@ -58,9 +52,7 @@ Regex to match against a filename/url to determine if it is a JavaScript asset.
 
 ### $public_dir
 
-```
-protected string $public_dir
-```
+    protected string $public_dir
 
 Absolute path to the public directory of your App (WEBROOT).
 
@@ -72,9 +64,7 @@ No trailing slash!.
 
 ### $css_dir
 
-```
-protected string $css_dir = 'css'
-```
+    protected string $css_dir = 'css'
 
 Directory for local CSS assets.
 
@@ -86,9 +76,7 @@ No trailing slash!.
 
 ### $js_dir
 
-```
-protected string $js_dir = 'js'
-```
+    protected string $js_dir = 'js'
 
 Directory for local JavaScript assets.
 
@@ -100,9 +88,7 @@ No trailing slash!.
 
 ### $packages_dir
 
-```
-protected string $packages_dir = 'packages'
-```
+    protected string $packages_dir = 'packages'
 
 Directory for local package assets.
 
@@ -114,9 +100,7 @@ No trailing slash!.
 
 ### $pipeline
 
-```
-protected boolean $pipeline = false
-```
+    protected boolean $pipeline = false
 
 Enable assets pipeline (concatenation and minification).
 
@@ -127,9 +111,7 @@ If you set an integer value greather than 1 it will be used as pipeline timestam
 
 ### $pipeline_dir
 
-```
-protected string $pipeline_dir = 'min'
-```
+    protected string $pipeline_dir = 'min'
 
 Directory for storing pipelined assets.
 
@@ -141,9 +123,7 @@ No trailing slash!.
 
 ### $pipeline_gzip
 
-```
-protected boolean $pipeline_gzip = false
-```
+    protected boolean $pipeline_gzip = false
 
 Enable pipelined assets compression with Gzip. Do not enable unless you know what you are doing!.
 
@@ -156,9 +136,7 @@ Set an integer between 0 (no compression) and 9 (maximum compression) to choose 
 
 ### $fetch_command
 
-```
-protected \Closure $fetch_command
-```
+    protected \Closure $fetch_command
 
 Closure used by the pipeline to fetch assets.
 
@@ -172,11 +150,28 @@ it should return the content of the asset file as a string.
 * Visibility: **protected**
 
 
+### $notify_command
+
+    protected \Closure $notify_command
+
+Closure invoked by the pipeline whenever new assets are pipelined for the first time.
+
+Useful if you need to hook to the pipeline event for things such syncing your pipelined
+assets with an external server or CDN.
+
+The closure will receive five parameters:
+- String containing the name of the file that has been created.
+- String containing the relative URL of the file.
+- String containing the absolute path (filesystem) of the file.
+- Array containing the assets included in the file.
+- Boolean indicating whether or not a gziped version of the file was also created.
+
+* Visibility: **protected**
+
+
 ### $collections
 
-```
-protected array $collections = array()
-```
+    protected array $collections = array()
 
 Available collections.
 
@@ -188,9 +183,7 @@ Collections may also contain other collections.
 
 ### $css
 
-```
-protected array $css = array()
-```
+    protected array $css = array()
 
 CSS files already added.
 
@@ -201,9 +194,7 @@ Not accepted as an option of config() method.
 
 ### $js
 
-```
-protected array $js = array()
-```
+    protected array $js = array()
 
 JavaScript files already added.
 
@@ -216,11 +207,9 @@ Methods
 -------
 
 
-### __construct()
+### __construct
 
-```
-void __construct()(array $options)
-```
+    void __construct(array $options)
 
 Class constructor.
 
@@ -228,17 +217,15 @@ Class constructor.
 
 * Visibility: **public**
 
-#### Arguments
 
+#### Arguments
 * $options **array** - &lt;p&gt;See config() method for details.&lt;/p&gt;
 
 
 
-### config()
+### config
 
-```
-Assets config()(array $config)
-```
+    Assets config(array $config)
 
 Set up configuration options.
 
@@ -248,17 +235,15 @@ assets and/or collections that will be automatically added on startup.
 
 * Visibility: **public**
 
-#### Arguments
 
+#### Arguments
 * $config **array** - &lt;p&gt;Configurable options.&lt;/p&gt;
 
 
 
-### add()
+### add
 
-```
-Assets add()(mixed $asset)
-```
+    Assets add(mixed $asset)
 
 Add an asset or a collection of assets.
 
@@ -267,17 +252,15 @@ You may add more than one asset passing an array as argument.
 
 * Visibility: **public**
 
-#### Arguments
 
+#### Arguments
 * $asset **mixed**
 
 
 
-### addCss()
+### addCss
 
-```
-Assets addCss()(mixed $asset)
-```
+    Assets addCss(mixed $asset)
 
 Add a CSS asset.
 
@@ -286,17 +269,15 @@ You may add more than one asset passing an array as argument.
 
 * Visibility: **public**
 
-#### Arguments
 
+#### Arguments
 * $asset **mixed**
 
 
 
-### addJs()
+### addJs
 
-```
-Assets addJs()(mixed $asset)
-```
+    Assets addJs(mixed $asset)
 
 Add a JavaScript asset.
 
@@ -305,17 +286,15 @@ You may add more than one asset passing an array as argument.
 
 * Visibility: **public**
 
-#### Arguments
 
+#### Arguments
 * $asset **mixed**
 
 
 
-### css()
+### css
 
-```
-string css()(array|\Closure $attributes)
-```
+    string css(array|\Closure $attributes)
 
 Build the CSS `<link>` tags.
 
@@ -325,17 +304,15 @@ providing a closure that will receive an array of assets.
 
 * Visibility: **public**
 
-#### Arguments
 
+#### Arguments
 * $attributes **array|Closure**
 
 
 
-### js()
+### js
 
-```
-string js()(array|\Closure $attributes)
-```
+    string js(array|\Closure $attributes)
 
 Build the JavaScript `<script>` tags.
 
@@ -345,17 +322,15 @@ providing a closure that will receive an array of assets.
 
 * Visibility: **public**
 
-#### Arguments
 
+#### Arguments
 * $attributes **array|Closure**
 
 
 
-### registerCollection()
+### registerCollection
 
-```
-Assets registerCollection()(string $collectionName, array $assets)
-```
+    Assets registerCollection(string $collectionName, array $assets)
 
 Add/replace collection.
 
@@ -363,18 +338,16 @@ Add/replace collection.
 
 * Visibility: **public**
 
-#### Arguments
 
+#### Arguments
 * $collectionName **string**
 * $assets **array**
 
 
 
-### reset()
+### reset
 
-```
-Assets reset()()
-```
+    Assets reset()
 
 Reset all assets.
 
@@ -384,11 +357,10 @@ Reset all assets.
 
 
 
-### resetCss()
 
-```
-Assets resetCss()()
-```
+### resetCss
+
+    Assets resetCss()
 
 Reset CSS assets.
 
@@ -398,11 +370,10 @@ Reset CSS assets.
 
 
 
-### resetJs()
 
-```
-Assets resetJs()()
-```
+### resetJs
+
+    Assets resetJs()
 
 Reset JavaScript assets.
 
@@ -412,11 +383,10 @@ Reset JavaScript assets.
 
 
 
-### cssPipeline()
 
-```
-string cssPipeline()()
-```
+### cssPipeline
+
+    string cssPipeline()
 
 Minifiy and concatenate CSS files.
 
@@ -426,11 +396,10 @@ Minifiy and concatenate CSS files.
 
 
 
-### jsPipeline()
 
-```
-string jsPipeline()()
-```
+### jsPipeline
+
+    string jsPipeline()
 
 Minifiy and concatenate JavaScript files.
 
@@ -440,11 +409,10 @@ Minifiy and concatenate JavaScript files.
 
 
 
-### pipeline()
 
-```
-string pipeline()(array $assets, string $extension, string $subdirectory, \Closure $minifier)
-```
+### pipeline
+
+    string pipeline(array $assets, string $extension, string $subdirectory, \Closure $minifier)
 
 Minifiy and concatenate files.
 
@@ -452,8 +420,8 @@ Minifiy and concatenate files.
 
 * Visibility: **protected**
 
-#### Arguments
 
+#### Arguments
 * $assets **array**
 * $extension **string**
 * $subdirectory **string**
@@ -461,11 +429,9 @@ Minifiy and concatenate files.
 
 
 
-### gatherLinks()
+### gatherLinks
 
-```
-string gatherLinks()(array $links)
-```
+    string gatherLinks(array $links)
 
 Download and concatenate the content of several links.
 
@@ -473,17 +439,15 @@ Download and concatenate the content of several links.
 
 * Visibility: **protected**
 
-#### Arguments
 
+#### Arguments
 * $links **array**
 
 
 
-### buildLocalLink()
+### buildLocalLink
 
-```
-string buildLocalLink()(string $asset, string $dir)
-```
+    string buildLocalLink(string $asset, string $dir)
 
 Build link to local asset.
 
@@ -491,18 +455,16 @@ Detects packages links.
 
 * Visibility: **protected**
 
-#### Arguments
 
+#### Arguments
 * $asset **string**
 * $dir **string**
 
 
 
-### buildTagAttributes()
+### buildTagAttributes
 
-```
-string buildTagAttributes()(array $attributes)
-```
+    string buildTagAttributes(array $attributes)
 
 Build an HTML attribute string from an array.
 
@@ -510,17 +472,15 @@ Build an HTML attribute string from an array.
 
 * Visibility: **public**
 
-#### Arguments
 
+#### Arguments
 * $attributes **array**
 
 
 
-### assetIsFromPackage()
+### assetIsFromPackage
 
-```
-boolean|array assetIsFromPackage()(string $asset)
-```
+    boolean|array assetIsFromPackage(string $asset)
 
 Determine whether an asset is normal or from a package.
 
@@ -528,17 +488,15 @@ Determine whether an asset is normal or from a package.
 
 * Visibility: **protected**
 
-#### Arguments
 
+#### Arguments
 * $asset **string**
 
 
 
-### isRemoteLink()
+### isRemoteLink
 
-```
-boolean isRemoteLink()(string $link)
-```
+    boolean isRemoteLink(string $link)
 
 Determine whether a link is local or remote.
 
@@ -546,17 +504,15 @@ Undestands both "http://" and "https://" as well as protocol agnostic links "//"
 
 * Visibility: **protected**
 
-#### Arguments
 
+#### Arguments
 * $link **string**
 
 
 
-### getCss()
+### getCss
 
-```
-array getCss()()
-```
+    array getCss()
 
 Get all CSS assets already added.
 
@@ -566,11 +522,10 @@ Get all CSS assets already added.
 
 
 
-### getJs()
 
-```
-array getJs()()
-```
+### getJs
+
+    array getJs()
 
 Get all JavaScript assets already added.
 
@@ -580,11 +535,10 @@ Get all JavaScript assets already added.
 
 
 
-### addDir()
 
-```
-Assets addDir()(string $directory, string $pattern)
-```
+### addDir
+
+    Assets addDir(string $directory, string $pattern)
 
 Add all assets matching $pattern within $directory.
 
@@ -592,18 +546,16 @@ Add all assets matching $pattern within $directory.
 
 * Visibility: **public**
 
-#### Arguments
 
+#### Arguments
 * $directory **string** - &lt;p&gt;Relative to $this-&gt;public_dir&lt;/p&gt;
 * $pattern **string** - &lt;p&gt;(regex)&lt;/p&gt;
 
 
 
-### addDirCss()
+### addDirCss
 
-```
-Assets addDirCss()(string $directory)
-```
+    Assets addDirCss(string $directory)
 
 Add all CSS assets within $directory (relative to public dir).
 
@@ -611,17 +563,15 @@ Add all CSS assets within $directory (relative to public dir).
 
 * Visibility: **public**
 
-#### Arguments
 
+#### Arguments
 * $directory **string** - &lt;p&gt;Relative to $this-&gt;public_dir&lt;/p&gt;
 
 
 
-### addDirJs()
+### addDirJs
 
-```
-Assets addDirJs()(string $directory)
-```
+    Assets addDirJs(string $directory)
 
 Add all JavaScript assets within $directory (relative to public dir).
 
@@ -629,17 +579,15 @@ Add all JavaScript assets within $directory (relative to public dir).
 
 * Visibility: **public**
 
-#### Arguments
 
+#### Arguments
 * $directory **string** - &lt;p&gt;Relative to $this-&gt;public_dir&lt;/p&gt;
 
 
 
-### rglob()
+### rglob
 
-```
-array rglob()(string $directory, string $pattern, string $ltrim)
-```
+    array rglob(string $directory, string $pattern, string $ltrim)
 
 Recursively get files matching $pattern within $directory.
 
@@ -647,8 +595,8 @@ Recursively get files matching $pattern within $directory.
 
 * Visibility: **protected**
 
-#### Arguments
 
+#### Arguments
 * $directory **string**
 * $pattern **string** - &lt;p&gt;(regex)&lt;/p&gt;
 * $ltrim **string** - &lt;p&gt;Will be trimed from the left of the file path&lt;/p&gt;

@@ -11,12 +11,14 @@ class Manager
 {
 	/**
 	 * Regex to match against a filename/url to determine if it is an asset.
+	 *
 	 * @var string
 	 */
 	protected $asset_regex = '/.\.(css|js)$/i';
 
 	/**
 	 * Regex to match against a filename/url to determine if it is a CSS asset.
+	 *
 	 * @var string
 	 */
 
@@ -24,6 +26,7 @@ class Manager
 
 	/**
 	 * Regex to match against a filename/url to determine if it is a JavaScript asset.
+	 *
 	 * @var string
 	 */
 	protected $js_regex = '/.\.js$/i';
@@ -32,6 +35,7 @@ class Manager
 	 * Absolute path to the public directory of your App (WEBROOT).
 	 * Required if you enable the pipeline.
 	 * No trailing slash!.
+	 *
 	 * @var string
 	 */
 	protected $public_dir;
@@ -40,6 +44,7 @@ class Manager
 	 * Directory for local CSS assets.
 	 * Relative to your public directory ('public_dir').
 	 * No trailing slash!.
+	 *
 	 * @var string
 	 */
 	protected $css_dir = 'css';
@@ -48,6 +53,7 @@ class Manager
 	 * Directory for local JavaScript assets.
 	 * Relative to your public directory ('public_dir').
 	 * No trailing slash!.
+	 *
 	 * @var string
 	 */
 	protected $js_dir = 'js';
@@ -56,6 +62,7 @@ class Manager
 	 * Directory for local package assets.
 	 * Relative to your public directory ('public_dir').
 	 * No trailing slash!.
+	 *
 	 * @var string
 	 */
 	protected $packages_dir = 'packages';
@@ -63,6 +70,7 @@ class Manager
 	/**
 	 * Enable assets pipeline (concatenation and minification).
 	 * If you set an integer value greather than 1 it will be used as pipeline timestamp that will be added to the URL.
+	 *
 	 * @var bool|integer
 	 */
 	protected $pipeline = false;
@@ -71,6 +79,7 @@ class Manager
 	 * Directory for storing pipelined assets.
 	 * Relative to your assets directories ('css_dir' and 'js_dir').
 	 * No trailing slash!.
+	 *
 	 * @var string
 	 */
 	protected $pipeline_dir = 'min';
@@ -80,6 +89,7 @@ class Manager
 	 * Useful only if your webserver supports Gzip HTTP_ACCEPT_ENCODING.
 	 * Set to true to use the default compression level.
 	 * Set an integer between 0 (no compression) and 9 (maximum compression) to choose compression level.
+	 *
 	 * @var bool|integer
 	 */
 	protected $pipeline_gzip = false;
@@ -93,14 +103,33 @@ class Manager
 	 *
 	 * The closure will receive as the only parameter a string with the path/URL of the asset and
 	 * it should return the content of the asset file as a string.
+	 *
 	 * @var Closure
 	 */
 	protected $fetch_command;
 
 	/**
+	 * Closure invoked by the pipeline whenever new assets are pipelined for the first time.
+	 *
+	 * Useful if you need to hook to the pipeline event for things such syncing your pipelined
+	 * assets with an external server or CDN.
+	 *
+	 * The closure will receive five parameters:
+	 * - String containing the name of the file that has been created.
+	 * - String containing the relative URL of the file.
+	 * - String containing the absolute path (filesystem) of the file.
+	 * - Array containing the assets included in the file.
+	 * - Boolean indicating whether or not a gziped version of the file was also created.
+	 *
+	 * @var Closure
+	 */
+	protected $notify_command;
+
+	/**
 	 * Available collections.
 	 * Each collection is an array of assets.
 	 * Collections may also contain other collections.
+	 *
 	 * @var array
 	 */
 	protected $collections = array();
@@ -108,6 +137,7 @@ class Manager
 	/**
 	 * CSS files already added.
 	 * Not accepted as an option of config() method.
+	 *
 	 * @var array
 	 */
 	protected $css = array();
@@ -115,6 +145,7 @@ class Manager
 	/**
 	 * JavaScript files already added.
 	 * Not accepted as an option of config() method.
+	 *
 	 * @var array
 	 */
 	protected $js = array();
@@ -159,9 +190,10 @@ class Manager
 		if($this->pipeline and ! is_dir($this->public_dir))
 			throw new Exception('stolz/assets: Public dir not found');
 
-		// Set custom pipeline fetch command
-		if(isset($config['fetch_command']) and ($config['fetch_command'] instanceof Closure))
-			$this->fetch_command = $config['fetch_command'];
+		// Set pipeline commands
+		foreach(array('fetch_command', 'notify_command') as $option)
+			if(isset($config[$option]) and ($config[$option] instanceof Closure))
+				$this->$option = $config[$option];
 
 		// Set collections
 		if(isset($config['collections']) and is_array($config['collections']))
@@ -453,11 +485,15 @@ class Manager
 		file_put_contents($absolute_path, $min);
 
 		// Write gziped file
-		if(function_exists('gzencode') and $this->pipeline_gzip !== false)
+		if($gzip = (function_exists('gzencode') and $this->pipeline_gzip !== false))
 		{
 			$level = ($this->pipeline_gzip === true) ? -1 : intval($this->pipeline_gzip);
 			file_put_contents("$absolute_path.gz", gzencode($min, $level));
 		}
+
+		// Hook for pipeline event
+		if($this->notify_command instanceof Closure)
+			$this->notify_command->__invoke($filename, $relative_path, $absolute_path, $assets, $gzip);
 
 		return $relative_path;
 	}
