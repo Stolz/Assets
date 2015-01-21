@@ -502,11 +502,11 @@ class Manager
 	 * Build Absolute Path
 	 * 
 	 * @param type $subdirectory 
-	 * @param type $file 
+	 * @param type $filename 
 	 * 
 	 * @return string
 	 */
-	protected function buildAbsolutePath($subdirectory, $file) 
+	protected function buildAbsolutePath($subdirectory, $filename) 
 	{
 
 		//initialize
@@ -519,7 +519,7 @@ class Manager
 		}
 		
 		//append file
-		$absolute_path .= $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
+		$absolute_path .= $this->pipeline_dir . DIRECTORY_SEPARATOR . $filename;
 
 		return $absolute_path;
 	}
