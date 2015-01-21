@@ -602,3 +602,16 @@ Recursively get files matching $pattern within $directory.
 * $ltrim **string** - &lt;p&gt;Will be trimed from the left of the file path&lt;/p&gt;
 
 
+
+### checkPublicDir
+
+    Assets checkPublicDir()
+
+Verify public dir exists.
+
+
+
+* Visibility: **protected**
+
+
+

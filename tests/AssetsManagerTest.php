@@ -28,11 +28,12 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException Exception
+	 * @expectedException Stolz\Assets\Exception
 	 */
-	public function testConfigRequirePublicDirWhenPipelineEnabled()
+	public function testPublicDirCheck()
 	{
-		$this->manager->config(array('pipeline' => true, 'public_dir' => '/dev/null'));
+		$this->manager->config(array('public_dir' => '/dev/null'));
+		self::getMethod('checkPublicDir')->invoke($this->manager);
 	}
 
 	public function testRemoteLinkDetection()

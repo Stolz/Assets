@@ -1,7 +1,6 @@
 <?php namespace Stolz\Assets;
 
 use Closure;
-use Exception;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -172,7 +171,6 @@ class Manager
 	 *
 	 * @param  array   $config Configurable options.
 	 * @return Manager
-	 * @throws Exception
 	 */
 	public function config(array $config)
 	{
@@ -185,10 +183,6 @@ class Manager
 		foreach(array('public_dir', 'css_dir', 'js_dir', 'packages_dir', 'pipeline',  'pipeline_dir', 'pipeline_gzip') as $option)
 			if(isset($config[$option]))
 				$this->$option = $config[$option];
-
-		// Pipeline requires public dir
-		if($this->pipeline and ! is_dir($this->public_dir))
-			throw new Exception('stolz/assets: Public dir not found');
 
 		// Set pipeline commands
 		foreach(array('fetch_command', 'notify_command') as $option)
@@ -314,7 +308,7 @@ class Manager
 		$assets = ($this->pipeline) ? array($this->cssPipeline()) : $this->css;
 
 		if($attributes instanceof Closure)
-			return $attributes($assets);
+			return $attributes->__invoke($assets);
 
 		// Build attributes
 		$attributes = (array) $attributes;
@@ -354,7 +348,7 @@ class Manager
 		$assets = ($this->pipeline) ? array($this->jsPipeline()) : $this->js;
 
 		if($attributes instanceof Closure)
-			return $attributes($assets);
+			return $attributes->__invoke($assets);
 
 		// Build attributes
 		$attributes = (array) $attributes;
@@ -453,11 +447,12 @@ class Manager
 	 * @param string  $extension
 	 * @param string  $subdirectory
 	 * @param Closure $minifier
-	 *
 	 * @return string
 	 */
 	protected function pipeline(array $assets, $extension, $subdirectory, Closure $minifier)
 	{
+		$this->checkPublicDir();
+
 		// Add timestamp to extension
 		if(intval($this->pipeline) > 1)
 			$extension = '.' . $this->pipeline . $extension;
@@ -465,7 +460,7 @@ class Manager
 		// Generate paths
 		$filename = md5(implode($assets)) . $extension;
 		$relative_path = "$subdirectory/{$this->pipeline_dir}/$filename";
-		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $subdirectory . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $filename;
+		$absolute_path = realpath(implode(DIRECTORY_SEPARATOR, array($this->public_dir, $subdirectory, $this->pipeline_dir, $filename)));
 
 		// If pipeline already exist return it
 		if(file_exists($absolute_path))
@@ -520,7 +515,7 @@ class Manager
 			}
 			else
 			{
-				$link = $this->public_dir . DIRECTORY_SEPARATOR . $link;
+				$link = realpath($this->public_dir . DIRECTORY_SEPARATOR . $link);
 			}
 
 			$buffer .= ($this->fetch_command instanceof Closure) ? $this->fetch_command->__invoke($link) : file_get_contents($link);
@@ -625,20 +620,18 @@ class Manager
 	 * @param  string $directory Relative to $this->public_dir
 	 * @param  string $pattern (regex)
 	 * @return Manager
-	 * @throws Exception
 	 */
 	public function addDir($directory, $pattern = null)
 	{
-		// Check if public_dir exists
-		if( ! is_dir($this->public_dir))
-			throw new Exception('stolz/assets: Public dir not found');
+		$this->checkPublicDir();
 
 		// By default match all assets
 		if(is_null($pattern))
 			$pattern = $this->asset_regex;
 
 		// Get assets files
-		$files = $this->rglob($this->public_dir . DIRECTORY_SEPARATOR . $directory, $pattern, $this->public_dir);
+		$absolute_path = realpath($this->public_dir . DIRECTORY_SEPARATOR . $directory);
+		$files = $this->rglob($absolute_path, $pattern, $this->public_dir);
 
 		// No luck? Nothing to do
 		if( ! $files)
@@ -699,5 +692,21 @@ class Manager
 			$files[] = substr($file->getPathname(), $offset);
 
 		return $files;
+	}
+
+	/**
+	 * Verify public dir exists.
+	 *
+	 * @return Manager
+	 * @throws Exception
+	 */
+	protected function checkPublicDir()
+	{
+		$this->public_dir = realpath($this->public_dir);
+
+		if($this->public_dir === false or ! is_dir($this->public_dir))
+			throw new Exception("Public dir {$this->public_dir} not found");
+
+		return $this;
 	}
 }
