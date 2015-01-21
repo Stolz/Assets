@@ -465,7 +465,7 @@ class Manager
 		// Generate paths
 		$filename = md5(implode($assets)) . $extension;
 		$relative_path = "$subdirectory/{$this->pipeline_dir}/$filename";
-		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $subdirectory . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $filename;
+		$absolute_path = $this->buildAbsolutePath($subdirectory, $filename);
 
 		// If pipeline already exist return it
 		if(file_exists($absolute_path))
@@ -496,6 +496,32 @@ class Manager
 			$this->notify_command->__invoke($filename, $relative_path, $absolute_path, $assets, $gzip);
 
 		return $relative_path;
+	}
+
+	/**
+	 * Build Absolute Path
+	 * 
+	 * @param type $subdirectory 
+	 * @param type $filename 
+	 * 
+	 * @return string
+	 */
+	protected function buildAbsolutePath($subdirectory, $filename) 
+	{
+
+		//initialize
+		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR;
+		
+		//check for empty subdirectory
+		if( $subdirectory != '')
+		{
+			$absolute_path .= $subdirectory . DIRECTORY_SEPARATOR;	
+		}
+		
+		//append file
+		$absolute_path .= $this->pipeline_dir . DIRECTORY_SEPARATOR . $filename;
+
+		return $absolute_path;
 	}
 
 	/**
