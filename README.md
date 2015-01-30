@@ -48,7 +48,7 @@ The library is framework agnostic and it should work well with any framework or 
 
 In your project base directory run
 
-	composer require "stolz/assets"
+	composer require stolz/assets
 
 Then edit `config/app.php` and add the service provider within the `providers` array. Use the proper provider name depending on your Laravel version.
 
@@ -123,7 +123,7 @@ To bring up the config file run
 	php artisan vendor:publish # For Laravel 5
 	php artisan config:publish # For Laravel 4
 
-This will create the file `config/assets.php` (`app/config/packages/stolz/config.php` for Laravel 4) that you may use to configure the library. With the provided comments all options should be selfexplanatory.
+This will create the file `config/assets.php` (`app/config/packages/stolz/assets/config.php` for Laravel 4) that you may use to configure the library. With the provided comments all options should be selfexplanatory.
 
 If you are using the [non static interface](#nonstatic) just pass an associative array of config settings to the class constructor.
 
