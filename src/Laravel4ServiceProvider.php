@@ -3,7 +3,7 @@
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
 
-class ManagerServiceProvider extends ServiceProvider
+class Laravel4ServiceProvider extends ServiceProvider
 {
 	/**
 	 * Indicates if loading of the provider is deferred.

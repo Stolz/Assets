@@ -10,7 +10,7 @@ OUTPUT_DIR=doc
 # templates that do not generate structure.xml: checkstyle clean responsive-twig
 
 ./vendor/bin/phpdoc  \
-  --filename src/Stolz/Assets/Manager.php \
+  --filename src/Manager.php \
   --target $OUTPUT_DIR \
   --template xml && \
 ./vendor/bin/phpdocmd doc/structure.xml $OUTPUT_DIR && \

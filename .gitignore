@@ -1,11 +1,9 @@
-/vendor
-composer.phar
-composer.lock
-.DS_Store
+*.kate-swp
+*.nfs00*
+*.old
 *~
 .*~
-*.nfs00*
-*.kate-swp
-*.old
-.inotify
 /doc
+/vendor
+composer.lock
+tests/cli.php

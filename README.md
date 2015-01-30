@@ -46,15 +46,15 @@ The library is framework agnostic and it should work well with any framework or 
 <a id="installation"></a>
 ## Installation
 
-In your Laravel base directory run
+In your project base directory run
 
-	composer require "stolz/assets:dev-master"
+	composer require "stolz/assets"
 
-Then edit `config/app.php` and add the service provider within the `providers` array
+Then edit `config/app.php` and add the service provider within the `providers` array. Use the proper provider name depending on your Laravel version.
 
 	'providers' => array(
-		...
-		'Stolz\Assets\ManagerServiceProvider'
+		'Stolz\Assets\LaravelServiceProvider',  // For Laravel 5
+		'Stolz\Assets\Laravel4ServiceProvider', // For Laravel 4
 
 There is no need to add the Facade, the package will bind it to the IoC for you.
 
@@ -78,7 +78,7 @@ Basically all you have to do to add and asset, no matter if it's CSS or JS, is:
 
 	Assets::add('filename');
 
-For more advanced use keep reading ...
+*For more advanced uses keep reading ...*
 
 Add more than one asset at once
 
@@ -102,9 +102,9 @@ If your assets have no extension and autodetection fails, then just use canonica
 
 If at some point you decide you added the wrong assets you can reset them and start over
 
-	Assets::reset();    //Reset both CSS and JS
-	Assets::resetCss(); //Reset only CSS
-	Assets::resetJs();  //Reset only JS
+	Assets::reset();    // Reset both CSS and JS
+	Assets::resetCss(); // Reset only CSS
+	Assets::resetJs();  // Reset only JS
 
 All methods that don't generate output will accept chaining:
 
@@ -120,9 +120,10 @@ There are some methods not documented here. For a **full list of all the availab
 
 To bring up the config file run
 
-	php artisan publish:config stolz/assets
+	php artisan vendor:publish # For Laravel 5
+	php artisan config:publish # For Laravel 4
 
-This will create  `config/packages/stolz/config.php` file that you may use to configure your application assets. With the provided comments all options should be selfexplanatory.
+This will create the file `config/assets.php` (`app/config/packages/stolz/config.php` for Laravel 4) that you may use to configure the library. With the provided comments all options should be selfexplanatory.
 
 If you are using the [non static interface](#nonstatic) just pass an associative array of config settings to the class constructor.
 
@@ -251,17 +252,15 @@ It is possible to **change any config options on the fly** by passing an array o
 
 You can use the library without using static methods. The signature of all methods is the same as described above but using an instance of the class instead.
 
-	// Load the library
-	require 'vendor/autoload.php';
-	// or if you didn't use composer
-	//require '/path/to/Stolz/Assets/Manager.php';
+	// Load the library with composer
+	require __DIR__ . 'vendor/autoload.php';
 
 	// Set config options
 	$config = array(
 		'collections' => array(...),
 		'autoload' => array(...),
 		'pipeline' => true,
-		'public_dir' => '/absolute/path/to/your/webroot/public/dir' // Required only if you enable pipeline!
+		'public_dir' => '/absolute/path/to/your/webroot/public/dir'
 		...
 	);
 
@@ -336,7 +335,7 @@ Then to load the assets you should run:
 <a id="faq_base"></a>
 ### Why assets work for the main page but not for subpages?
 
-If your assets seem to work fine for <http://example.com> but not for <http://example.com/some/other/place> your are likely to be using relative links. If you use links relative to your root URI in an URI that is not your root URI for them to work you must use the [`<base>`  HTML tag](http://www.w3.org/TR/html4/struct/links.html#h-12.4) pointing to your root URI. This behavior is not related to the library or the framework but related to the [HTML standard](http://www.w3.org/TR/html401/struct/links.html#h-12.4.1) itself. Please make sure you understand the [semantics of relative links](http://www.ietf.org/rfc/rfc1808.txt) before reporting a bug.
+If your assets seem to work fine for <http://example.com> but not for <http://example.com/some/other/place> your are likely to be using relative links. If you use links relative to your root URI in an URI that is not your root URI for them to work you must use the [`<base>` HTML tag](http://www.w3.org/TR/html4/struct/links.html#h-12.4) pointing to your root URI. This behavior is not related to the library or the framework but related to the [HTML standard](http://www.w3.org/TR/html401/struct/links.html#h-12.4.1) itself. Please make sure you understand the [semantics of relative links](http://www.ietf.org/rfc/rfc1808.txt) before reporting a bug.
 
 <a id="faq_pipeline"></a>
 ### The pipeline is not working

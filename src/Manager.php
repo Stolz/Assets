@@ -20,7 +20,6 @@ class Manager
 	 *
 	 * @var string
 	 */
-
 	protected $css_regex = '/.\.css$/i';
 
 	/**
@@ -68,7 +67,8 @@ class Manager
 
 	/**
 	 * Enable assets pipeline (concatenation and minification).
-	 * If you set an integer value greather than 1 it will be used as pipeline timestamp that will be added to the URL.
+	 * If you set an integer value greather than 1 it will be used
+	 * as a timestamp that will be added to the pipelined assets name.
 	 *
 	 * @var bool|integer
 	 */
@@ -451,44 +451,44 @@ class Manager
 	 */
 	protected function pipeline(array $assets, $extension, $subdirectory, Closure $minifier)
 	{
-		$this->checkPublicDir();
+		// Make destination dir if it doesn't exist.
+		$pipeline_dir = $this->public_dir . DIRECTORY_SEPARATOR . $subdirectory . DIRECTORY_SEPARATOR . $this->pipeline_dir;
+		if( ! is_dir($pipeline_dir))
+			mkdir($pipeline_dir, 0777, true);
 
 		// Add timestamp to extension
-		if(intval($this->pipeline) > 1)
-			$extension = '.' . $this->pipeline . $extension;
+		$timestamp = intval($this->pipeline);
+		if($timestamp > 1)
+			$extension = '.' . $timestamp . $extension;
 
 		// Generate paths
 		$filename = md5(implode($assets)) . $extension;
 		$relative_path = "$subdirectory/{$this->pipeline_dir}/$filename";
-		$absolute_path = realpath(implode(DIRECTORY_SEPARATOR, array($this->public_dir, $subdirectory, $this->pipeline_dir, $filename)));
+		$absolute_path = realpath($pipeline_dir) . DIRECTORY_SEPARATOR . $filename;
 
-		// If pipeline already exist return it
+		// If pipeline already exists return it
 		if(file_exists($absolute_path))
 			return $relative_path;
-
-		// Create destination directory
-		if( ! is_dir($directory = dirname($absolute_path)))
-			mkdir($directory, 0777, true);
 
 		// Concatenate files
 		$buffer = $this->gatherLinks($assets);
 
 		// Minifiy
-		$min = $minifier->__invoke($buffer);
+		$minified = $minifier->__invoke($buffer);
 
 		// Write minified file
-		file_put_contents($absolute_path, $min);
+		file_put_contents($absolute_path, $minified);
 
 		// Write gziped file
-		if($gzip = (function_exists('gzencode') and $this->pipeline_gzip !== false))
+		if($gzipAvailable = (function_exists('gzencode') and $this->pipeline_gzip !== false))
 		{
 			$level = ($this->pipeline_gzip === true) ? -1 : intval($this->pipeline_gzip);
-			file_put_contents("$absolute_path.gz", gzencode($min, $level));
+			file_put_contents("$absolute_path.gz", gzencode($minified, $level));
 		}
 
 		// Hook for pipeline event
 		if($this->notify_command instanceof Closure)
-			$this->notify_command->__invoke($filename, $relative_path, $absolute_path, $assets, $gzip);
+			$this->notify_command->__invoke($filename, $relative_path, $absolute_path, $assets, $gzipAvailable);
 
 		return $relative_path;
 	}
@@ -516,6 +516,8 @@ class Manager
 			else
 			{
 				$link = realpath($this->public_dir . DIRECTORY_SEPARATOR . $link);
+				if($link === false)
+					continue;
 			}
 
 			$buffer .= ($this->fetch_command instanceof Closure) ? $this->fetch_command->__invoke($link) : file_get_contents($link);
@@ -623,14 +625,16 @@ class Manager
 	 */
 	public function addDir($directory, $pattern = null)
 	{
-		$this->checkPublicDir();
+		// Make sure directory exists
+		$absolute_path = realpath($this->public_dir . DIRECTORY_SEPARATOR . $directory);
+		if($absolute_path === false)
+			return $this;
 
 		// By default match all assets
 		if(is_null($pattern))
 			$pattern = $this->asset_regex;
 
 		// Get assets files
-		$absolute_path = realpath($this->public_dir . DIRECTORY_SEPARATOR . $directory);
 		$files = $this->rglob($absolute_path, $pattern, $this->public_dir);
 
 		// No luck? Nothing to do
@@ -692,21 +696,5 @@ class Manager
 			$files[] = substr($file->getPathname(), $offset);
 
 		return $files;
-	}
-
-	/**
-	 * Verify public dir exists.
-	 *
-	 * @return Manager
-	 * @throws Exception
-	 */
-	protected function checkPublicDir()
-	{
-		$this->public_dir = realpath($this->public_dir);
-
-		if($this->public_dir === false or ! is_dir($this->public_dir))
-			throw new Exception("Public dir {$this->public_dir} not found");
-
-		return $this;
 	}
 }

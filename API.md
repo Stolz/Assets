@@ -104,7 +104,8 @@ No trailing slash!.
 
 Enable assets pipeline (concatenation and minification).
 
-If you set an integer value greather than 1 it will be used as pipeline timestamp that will be added to the URL.
+If you set an integer value greather than 1 it will be used
+as a timestamp that will be added to the pipelined assets name.
 
 * Visibility: **protected**
 
@@ -600,18 +601,5 @@ Recursively get files matching $pattern within $directory.
 * $directory **string**
 * $pattern **string** - &lt;p&gt;(regex)&lt;/p&gt;
 * $ltrim **string** - &lt;p&gt;Will be trimed from the left of the file path&lt;/p&gt;
-
-
-
-### checkPublicDir
-
-    Assets checkPublicDir()
-
-Verify public dir exists.
-
-
-
-* Visibility: **protected**
-
 
 

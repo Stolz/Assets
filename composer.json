@@ -22,8 +22,8 @@
 		"laravel/laravel": "Included ServiceProvider and Facade to work out of the box with Laravel"
 	},
 	"autoload": {
-		"psr-0": {
-			"Stolz\\Assets": "src/"
+		"psr-4": {
+			"Stolz\\Assets\\": "src/"
 		}
 	},
 	"config": {
