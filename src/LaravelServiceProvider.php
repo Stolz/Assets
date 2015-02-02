@@ -42,7 +42,7 @@ class LaravelServiceProvider extends ServiceProvider
 		$this->configFilePath = realpath(__DIR__.'/../config.php');
 
 		// Merge default configuration with user's configuration.
-		$this->mergeConfigFrom('assets', $this->configFilePath);
+		$this->mergeConfigFrom($this->configFilePath, 'assets');
 
 		// Get package config
 		$config = $this->app->config->get('assets', []);
