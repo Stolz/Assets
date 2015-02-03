@@ -1,17 +1,11 @@
-<?php namespace Stolz\Assets;
+<?php namespace Stolz\Assets\Laravel;
 
-use Illuminate\Support\ServiceProvider;
+use Stolz\Assets\Manager as Assets;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 
-class Laravel4ServiceProvider extends ServiceProvider
+class LegacyServiceProvider extends LaravelServiceProvider
 {
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
-
 	/**
 	 * Bootstrap the application events.
 	 *
@@ -24,13 +18,12 @@ class Laravel4ServiceProvider extends ServiceProvider
 
 		// Read settings from config file
 		$config = $this->app->config->get('assets::config', array());
-		$config['public_dir'] = public_path();
 
 		// Apply config settings
 		$this->app['stolz.assets']->config($config);
 
 		// Add 'Assets' facade alias
-		AliasLoader::getInstance()->alias('Assets', 'Stolz\Assets\Facades\Assets');
+		AliasLoader::getInstance()->alias('Assets', 'Stolz\Assets\Laravel\Facade');
 
 		// Add artisan command
 		$this->commands('stolz.assets.command.flush');
@@ -45,22 +38,12 @@ class Laravel4ServiceProvider extends ServiceProvider
 	{
 		// Bind 'stolz.assets' shared component to the IoC container
 		$this->app->singleton('stolz.assets', function ($app) {
-			return new Manager();
+			return new Assets();
 		});
 
 		// Bind 'stolz.assets.command.flush' component to the IoC container
 		$this->app->bind('stolz.assets.command.flush', function ($app) {
-			return new PurgePipelineCommand();
+			return new FlushPipelineCommand();
 		});
-	}
-
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return array
-	 */
-	public function provides()
-	{
-		return array();
 	}
 }

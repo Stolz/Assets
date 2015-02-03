@@ -50,11 +50,11 @@ In your project base directory run
 
 	composer require stolz/assets
 
-Then edit `config/app.php` and add the service provider within the `providers` array. Use the proper provider name depending on your Laravel version.
+Then edit `config/app.php` and add the service provider within the `providers` array.
 
 	'providers' => array(
-		'Stolz\Assets\LaravelServiceProvider',  // For Laravel 5
-		'Stolz\Assets\Laravel4ServiceProvider', // For Laravel 4
+		...
+		'Stolz\Assets\Laravel\ServiceProvider',
 
 There is no need to add the Facade, the package will bind it to the IoC for you.
 
@@ -120,10 +120,9 @@ There are some methods not documented here. For a **full list of all the availab
 
 To bring up the config file run
 
-	php artisan vendor:publish # For Laravel 5
-	php artisan config:publish # For Laravel 4
+	php artisan vendor:publish
 
-This will create the file `config/assets.php` (`app/config/packages/stolz/assets/config.php` for Laravel 4) that you may use to configure the library. With the provided comments all options should be selfexplanatory.
+This will create the file `config/assets.php` that you may use to configure the library. With the provided comments all options should be selfexplanatory.
 
 If you are using the [non static interface](#nonstatic) just pass an associative array of config settings to the class constructor.
 
