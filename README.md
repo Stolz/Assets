@@ -252,7 +252,7 @@ It is possible to **change any config options on the fly** by passing an array o
 You can use the library without using static methods. The signature of all methods is the same as described above but using an instance of the class instead.
 
 	// Load the library with composer
-	require __DIR__ . 'vendor/autoload.php';
+	require __DIR__ . '/vendor/autoload.php';
 
 	// Set config options
 	$config = array(
