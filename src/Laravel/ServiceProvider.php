@@ -11,7 +11,7 @@ class ServiceProvider extends LaravelServiceProvider
 	 *
 	 * @var string
 	 */
-	protected $configFile = __DIR__.'/config.php';
+	protected $configFile = __DIR__ . '/config.php';
 
 	/**
 	 * Register bindings in the container.
@@ -41,7 +41,7 @@ class ServiceProvider extends LaravelServiceProvider
 	 */
 	public function boot()
 	{
-		// Register paths to be published 'vendor:publish' artisan command
+		// Register paths to be published by 'vendor:publish' artisan command
 		$this->publishes([
 			$this->configFile => config_path('assets.php'),
 		]);

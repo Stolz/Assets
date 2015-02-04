@@ -19,6 +19,7 @@ An ultra-simple-to-use assets management PHP library.
 - [Non static interface usage](#nonstatic).
 - [Sample collections](#samples).
 - [Troubleshooting / F.A.Q.](#troubleshooting).
+- [License](#license).
 
 ----
 
@@ -302,6 +303,14 @@ You can use the library without using static methods. The signature of all metho
 		'//cdn.jsdelivr.net/foundation/5.3.3/js/foundation.min.js',
 		'app.js'
 	],
+
+<a id="license"></a>
+## License
+
+MIT License
+(c) [Stolz](https://github.com/Stolz)
+
+Check provided `LICENSE` file for details.
 
 <a id="troubleshooting"></a>
 ## Troubleshooting / F.A.Q.
