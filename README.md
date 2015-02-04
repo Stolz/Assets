@@ -19,6 +19,7 @@ An ultra-simple-to-use assets management PHP library.
 - [Non static interface usage](#nonstatic).
 - [Sample collections](#samples).
 - [Troubleshooting / F.A.Q.](#troubleshooting).
+- [License](#license).
 
 ----
 
@@ -46,15 +47,15 @@ The library is framework agnostic and it should work well with any framework or 
 <a id="installation"></a>
 ## Installation
 
-In your Laravel base directory run
+In your project base directory run
 
-	composer require "stolz/assets:dev-master"
+	composer require stolz/assets
 
-Then edit `app/config/app.php` and add the service provider within the `providers` array
+Then edit `config/app.php` and add the service provider within the `providers` array.
 
 	'providers' => array(
 		...
-		'Stolz\Assets\ManagerServiceProvider'
+		'Stolz\Assets\Laravel\ServiceProvider',
 
 There is no need to add the Facade, the package will bind it to the IoC for you.
 
@@ -78,7 +79,7 @@ Basically all you have to do to add and asset, no matter if it's CSS or JS, is:
 
 	Assets::add('filename');
 
-For more advanced use keep reading ...
+*For more advanced uses keep reading ...*
 
 Add more than one asset at once
 
@@ -102,9 +103,9 @@ If your assets have no extension and autodetection fails, then just use canonica
 
 If at some point you decide you added the wrong assets you can reset them and start over
 
-	Assets::reset();    //Reset both CSS and JS
-	Assets::resetCss(); //Reset only CSS
-	Assets::resetJs();  //Reset only JS
+	Assets::reset();    // Reset both CSS and JS
+	Assets::resetCss(); // Reset only CSS
+	Assets::resetJs();  // Reset only JS
 
 All methods that don't generate output will accept chaining:
 
@@ -120,9 +121,9 @@ There are some methods not documented here. For a **full list of all the availab
 
 To bring up the config file run
 
-	php artisan config:publish stolz/assets
+	php artisan vendor:publish
 
-This will create  `app/config/packages/stolz/config.php` file that you may use to configure your application assets. With the provided comments all options should be selfexplanatory.
+This will create the file `config/assets.php` that you may use to configure the library. With the provided comments all options should be selfexplanatory.
 
 If you are using the [non static interface](#nonstatic) just pass an associative array of config settings to the class constructor.
 
@@ -138,14 +139,14 @@ To register a collection on run time for later use:
 To preconfigure collections using the config file:
 
 	// ... config.php ...
-	'collections' => array(
-		'one'        => 'one.css',
-		'two'        => array('two.css', 'two.js'),
-		'external'   => array('http://example.com/external.css', 'https://secure.example.com/https.css', '//example.com/protocol/agnostic.js'),
-		'mix'        => array('internal.css', 'http://example.com/external.js'],
-		'nested'     => array('one', 'two'),
-		'duplicated' => array('nested', 'one.css','two.css', 'three.js'),
-	),
+	'collections' => [
+		'one'	=> 'one.css',
+		'two'	=> ['two.css', 'two.js'],
+		'external'	=> ['http://example.com/external.css', 'https://secure.example.com/https.css', '//example.com/protocol/agnostic.js'],
+		'mix'	=> ['internal.css', 'http://example.com/external.js'],
+		'nested' => ['one', 'two'],
+		'duplicated' => ['nested', 'one.css','two.css', 'three.js'],
+	],
 
 Let me show you how to use the above collection in different scenarios:
 
@@ -207,7 +208,7 @@ If your assets have changed since they were pipelined use the provided artisan c
 
 	php artisan asset:flush
 
-To deal with cache issues a custom timestamp may be appended to the pipelined assets URL by setting `pipeline` config option to an integer value greather than 1:
+To deal with cache issues a custom timestamp may be appended to the pipelined assets filename by setting `pipeline` config option to an integer value greather than 1:
 
 Example:
 
@@ -215,8 +216,8 @@ Example:
 
 will produce:
 
-	<link type="text/css" rel="stylesheet" href="css/min/135b1a960b9fed4dd65d1597ff593321.css?12345" />
-	<script type="text/javascript" src="js/min/5bfed4dd65d1597ff1a960b913593321.js?12345"></script>
+	<link type="text/css" rel="stylesheet" href="css/min/pipelineHash.12345.css" />
+	<script type="text/javascript" src="js/min/pipelineHash.12345.js"></script>
 
 If you happend to use NGINX with the [gzip_static](http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html) feature enabled, add the following config option to automatically create a suitable gziped version of the pipelined assets:
 
@@ -251,17 +252,15 @@ It is possible to **change any config options on the fly** by passing an array o
 
 You can use the library without using static methods. The signature of all methods is the same as described above but using an instance of the class instead.
 
-	// Load the library
-	require 'vendor/autoload.php';
-	// or if you didn't use composer
-	//require '/path/to/Stolz/Assets/Manager.php';
+	// Load the library with composer
+	require __DIR__ . '/vendor/autoload.php';
 
 	// Set config options
 	$config = array(
 		'collections' => array(...),
 		'autoload' => array(...),
 		'pipeline' => true,
-		'public_dir' => '/absolute/path/to/your/webroot/public/dir' // Required only if you enable pipeline!
+		'public_dir' => '/absolute/path/to/your/webroot/public/dir'
 		...
 	);
 
@@ -280,30 +279,38 @@ You can use the library without using static methods. The signature of all metho
 ## Sample collections
 
 	// jQuery (CDN)
-	'jquery-cdn' => array('//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'),
+	'jquery-cdn' => ['//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'],
 
 	// jQuery UI (CDN)
-	'jquery-ui-cdn' => array(
+	'jquery-ui-cdn' => [
 		'jquery-cdn',
 		'//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js',
 	),
 
 	// Twitter Bootstrap (CDN)
-	'bootstrap-cdn' => array(
+	'bootstrap-cdn' => [
 		'jquery-cdn',
 		'//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css',
 		'//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css',
 		'//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'
-	),
+	],
 
 	// Zurb Foundation (CDN)
-	'foundation-cdn' => array(
+	'foundation-cdn' => [
 		'jquery-cdn',
 		'//cdn.jsdelivr.net/foundation/5.4.7/css/normalize.css',
 		'//cdn.jsdelivr.net/foundation/5.4.7/css/foundation.min.css',
 		'//cdn.jsdelivr.net/foundation/5.4.7/js/foundation.min.js',
 		'app.js'
-	),
+	],
+
+<a id="license"></a>
+## License
+
+MIT License
+(c) [Stolz](https://github.com/Stolz)
+
+Check provided `LICENSE` file for details.
 
 <a id="troubleshooting"></a>
 ## Troubleshooting / F.A.Q.
@@ -336,7 +343,7 @@ Then to load the assets you should run:
 <a id="faq_base"></a>
 ### Why assets work for the main page but not for subpages?
 
-If your assets seem to work fine for <http://example.com> but not for <http://example.com/some/other/place> your are likely to be using relative links. If you use links relative to your root URI in an URI that is not your root URI for them to work you must use the [`<base>`  HTML tag](http://www.w3.org/TR/html4/struct/links.html#h-12.4) pointing to your root URI. This behavior is not related to the library or the framework but related to the [HTML standard](http://www.w3.org/TR/html401/struct/links.html#h-12.4.1) itself. Please make sure you understand the [semantics of relative links](http://www.ietf.org/rfc/rfc1808.txt) before reporting a bug.
+If your assets seem to work fine for <http://example.com> but not for <http://example.com/some/other/place> your are likely to be using relative links. If you use links relative to your root URI in an URI that is not your root URI for them to work you must use the [`<base>` HTML tag](http://www.w3.org/TR/html4/struct/links.html#h-12.4) pointing to your root URI. This behavior is not related to the library or the framework but related to the [HTML standard](http://www.w3.org/TR/html401/struct/links.html#h-12.4.1) itself. Please make sure you understand the [semantics of relative links](http://www.ietf.org/rfc/rfc1808.txt) before reporting a bug.
 
 <a id="faq_pipeline"></a>
 ### The pipeline is not working

@@ -1,8 +1,8 @@
-<?php namespace Stolz\Assets\Facades;
+<?php namespace Stolz\Assets\Laravel;
 
-use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Facade as LaravelFacade;
 
-class Assets extends Facade
+class Facade extends LaravelFacade
 {
 	/**
 	 * Get the registered name of the component.

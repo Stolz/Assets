@@ -1,7 +1,6 @@
 <?php namespace Stolz\Assets;
 
 use Closure;
-use Exception;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -11,19 +10,21 @@ class Manager
 {
 	/**
 	 * Regex to match against a filename/url to determine if it is an asset.
+	 *
 	 * @var string
 	 */
 	protected $asset_regex = '/.\.(css|js)$/i';
 
 	/**
 	 * Regex to match against a filename/url to determine if it is a CSS asset.
+	 *
 	 * @var string
 	 */
-
 	protected $css_regex = '/.\.css$/i';
 
 	/**
 	 * Regex to match against a filename/url to determine if it is a JavaScript asset.
+	 *
 	 * @var string
 	 */
 	protected $js_regex = '/.\.js$/i';
@@ -32,6 +33,7 @@ class Manager
 	 * Absolute path to the public directory of your App (WEBROOT).
 	 * Required if you enable the pipeline.
 	 * No trailing slash!.
+	 *
 	 * @var string
 	 */
 	protected $public_dir;
@@ -40,6 +42,7 @@ class Manager
 	 * Directory for local CSS assets.
 	 * Relative to your public directory ('public_dir').
 	 * No trailing slash!.
+	 *
 	 * @var string
 	 */
 	protected $css_dir = 'css';
@@ -48,6 +51,7 @@ class Manager
 	 * Directory for local JavaScript assets.
 	 * Relative to your public directory ('public_dir').
 	 * No trailing slash!.
+	 *
 	 * @var string
 	 */
 	protected $js_dir = 'js';
@@ -56,13 +60,16 @@ class Manager
 	 * Directory for local package assets.
 	 * Relative to your public directory ('public_dir').
 	 * No trailing slash!.
+	 *
 	 * @var string
 	 */
 	protected $packages_dir = 'packages';
 
 	/**
 	 * Enable assets pipeline (concatenation and minification).
-	 * If you set an integer value greather than 1 it will be used as pipeline timestamp that will be added to the URL.
+	 * If you set an integer value greather than 1 it will be used
+	 * as a timestamp that will be added to the pipelined assets name.
+	 *
 	 * @var bool|integer
 	 */
 	protected $pipeline = false;
@@ -71,6 +78,7 @@ class Manager
 	 * Directory for storing pipelined assets.
 	 * Relative to your assets directories ('css_dir' and 'js_dir').
 	 * No trailing slash!.
+	 *
 	 * @var string
 	 */
 	protected $pipeline_dir = 'min';
@@ -80,6 +88,7 @@ class Manager
 	 * Useful only if your webserver supports Gzip HTTP_ACCEPT_ENCODING.
 	 * Set to true to use the default compression level.
 	 * Set an integer between 0 (no compression) and 9 (maximum compression) to choose compression level.
+	 *
 	 * @var bool|integer
 	 */
 	protected $pipeline_gzip = false;
@@ -93,14 +102,33 @@ class Manager
 	 *
 	 * The closure will receive as the only parameter a string with the path/URL of the asset and
 	 * it should return the content of the asset file as a string.
+	 *
 	 * @var Closure
 	 */
 	protected $fetch_command;
 
 	/**
+	 * Closure invoked by the pipeline whenever new assets are pipelined for the first time.
+	 *
+	 * Useful if you need to hook to the pipeline event for things such syncing your pipelined
+	 * assets with an external server or CDN.
+	 *
+	 * The closure will receive five parameters:
+	 * - String containing the name of the file that has been created.
+	 * - String containing the relative URL of the file.
+	 * - String containing the absolute path (filesystem) of the file.
+	 * - Array containing the assets included in the file.
+	 * - Boolean indicating whether or not a gziped version of the file was also created.
+	 *
+	 * @var Closure
+	 */
+	protected $notify_command;
+
+	/**
 	 * Available collections.
 	 * Each collection is an array of assets.
 	 * Collections may also contain other collections.
+	 *
 	 * @var array
 	 */
 	protected $collections = array();
@@ -108,6 +136,7 @@ class Manager
 	/**
 	 * CSS files already added.
 	 * Not accepted as an option of config() method.
+	 *
 	 * @var array
 	 */
 	protected $css = array();
@@ -115,6 +144,7 @@ class Manager
 	/**
 	 * JavaScript files already added.
 	 * Not accepted as an option of config() method.
+	 *
 	 * @var array
 	 */
 	protected $js = array();
@@ -141,7 +171,6 @@ class Manager
 	 *
 	 * @param  array   $config Configurable options.
 	 * @return Manager
-	 * @throws Exception
 	 */
 	public function config(array $config)
 	{
@@ -155,13 +184,10 @@ class Manager
 			if(isset($config[$option]))
 				$this->$option = $config[$option];
 
-		// Pipeline requires public dir
-		if($this->pipeline and ! is_dir($this->public_dir))
-			throw new Exception('stolz/assets: Public dir not found');
-
-		// Set custom pipeline fetch command
-		if(isset($config['fetch_command']) and ($config['fetch_command'] instanceof Closure))
-			$this->fetch_command = $config['fetch_command'];
+		// Set pipeline commands
+		foreach(array('fetch_command', 'notify_command') as $option)
+			if(isset($config[$option]) and ($config[$option] instanceof Closure))
+				$this->$option = $config[$option];
 
 		// Set collections
 		if(isset($config['collections']) and is_array($config['collections']))
@@ -282,7 +308,7 @@ class Manager
 		$assets = ($this->pipeline) ? array($this->cssPipeline()) : $this->css;
 
 		if($attributes instanceof Closure)
-			return $attributes($assets);
+			return $attributes->__invoke($assets);
 
 		// Build attributes
 		$attributes = (array) $attributes;
@@ -322,7 +348,7 @@ class Manager
 		$assets = ($this->pipeline) ? array($this->jsPipeline()) : $this->js;
 
 		if($attributes instanceof Closure)
-			return $attributes($assets);
+			return $attributes->__invoke($assets);
 
 		// Build attributes
 		$attributes = (array) $attributes;
@@ -421,41 +447,50 @@ class Manager
 	 * @param string  $extension
 	 * @param string  $subdirectory
 	 * @param Closure $minifier
-	 *
 	 * @return string
 	 */
 	protected function pipeline(array $assets, $extension, $subdirectory, Closure $minifier)
 	{
-		$timestamp = (intval($this->pipeline) > 1) ? '?' . $this->pipeline : null;
-		$file = md5($timestamp . implode($assets)) . $extension;
-		$relative_path = "$subdirectory/{$this->pipeline_dir}/$file";
-		$absolute_path = $this->public_dir . DIRECTORY_SEPARATOR . $subdirectory . DIRECTORY_SEPARATOR . $this->pipeline_dir . DIRECTORY_SEPARATOR . $file;
+		// Make destination dir if it doesn't exist.
+		$pipeline_dir = $this->public_dir . DIRECTORY_SEPARATOR . $subdirectory . DIRECTORY_SEPARATOR . $this->pipeline_dir;
+		if( ! is_dir($pipeline_dir))
+			mkdir($pipeline_dir, 0777, true);
 
-		// If pipeline exist return it
+		// Add timestamp to extension
+		$timestamp = intval($this->pipeline);
+		if($timestamp > 1)
+			$extension = '.' . $timestamp . $extension;
+
+		// Generate paths
+		$filename = md5(implode($assets)) . $extension;
+		$relative_path = "$subdirectory/{$this->pipeline_dir}/$filename";
+		$absolute_path = realpath($pipeline_dir) . DIRECTORY_SEPARATOR . $filename;
+
+		// If pipeline already exists return it
 		if(file_exists($absolute_path))
-			return $relative_path . $timestamp;
-
-		// Create destination directory
-		if( ! is_dir($directory = dirname($absolute_path)))
-			mkdir($directory, 0777, true);
+			return $relative_path;
 
 		// Concatenate files
 		$buffer = $this->gatherLinks($assets);
 
 		// Minifiy
-		$min = $minifier->__invoke($buffer);
+		$minified = $minifier->__invoke($buffer);
 
 		// Write minified file
-		file_put_contents($absolute_path, $min);
+		file_put_contents($absolute_path, $minified);
 
 		// Write gziped file
-		if(function_exists('gzencode') and $this->pipeline_gzip !== false)
+		if($gzipAvailable = (function_exists('gzencode') and $this->pipeline_gzip !== false))
 		{
 			$level = ($this->pipeline_gzip === true) ? -1 : intval($this->pipeline_gzip);
-			file_put_contents("$absolute_path.gz", gzencode($min, $level));
+			file_put_contents("$absolute_path.gz", gzencode($minified, $level));
 		}
 
-		return $relative_path . $timestamp;
+		// Hook for pipeline event
+		if($this->notify_command instanceof Closure)
+			$this->notify_command->__invoke($filename, $relative_path, $absolute_path, $assets, $gzipAvailable);
+
+		return $relative_path;
 	}
 
 	/**
@@ -480,7 +515,9 @@ class Manager
 			}
 			else
 			{
-				$link = $this->public_dir . DIRECTORY_SEPARATOR . $link;
+				$link = realpath($this->public_dir . DIRECTORY_SEPARATOR . $link);
+				if($link === false)
+					continue;
 			}
 
 			$buffer .= ($this->fetch_command instanceof Closure) ? $this->fetch_command->__invoke($link) : file_get_contents($link);
@@ -585,20 +622,20 @@ class Manager
 	 * @param  string $directory Relative to $this->public_dir
 	 * @param  string $pattern (regex)
 	 * @return Manager
-	 * @throws Exception
 	 */
 	public function addDir($directory, $pattern = null)
 	{
-		// Check if public_dir exists
-		if( ! is_dir($this->public_dir))
-			throw new Exception('stolz/assets: Public dir not found');
+		// Make sure directory exists
+		$absolute_path = realpath($this->public_dir . DIRECTORY_SEPARATOR . $directory);
+		if($absolute_path === false)
+			return $this;
 
 		// By default match all assets
 		if(is_null($pattern))
 			$pattern = $this->asset_regex;
 
 		// Get assets files
-		$files = $this->rglob($this->public_dir . DIRECTORY_SEPARATOR . $directory, $pattern, $this->public_dir);
+		$files = $this->rglob($absolute_path, $pattern, $this->public_dir);
 
 		// No luck? Nothing to do
 		if( ! $files)
