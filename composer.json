@@ -16,14 +16,14 @@
 	"require-dev": {
 		"squizlabs/php_codesniffer": "2.*",
 		"phpdocumentor/phpdocumentor": "2.*",
-		"evert/phpdoc-md" : "0.0.*"
+		"evert/phpdoc-md" : "0.*"
 	},
 	"suggest": {
 		"laravel/laravel": "Included ServiceProvider and Facade to work out of the box with Laravel"
 	},
 	"autoload": {
-		"psr-0": {
-			"Stolz\\Assets": "src/"
+		"psr-4": {
+			"Stolz\\Assets\\": "src/"
 		}
 	},
 	"config": {

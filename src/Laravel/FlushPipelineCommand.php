@@ -1,11 +1,11 @@
-<?php namespace Stolz\Assets;
+<?php namespace Stolz\Assets\Laravel;
 
 use Config;
 use File;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
-class PurgePipelineCommand extends Command
+class FlushPipelineCommand extends Command
 {
 	/**
 	 * The console command name.
@@ -76,8 +76,8 @@ class PurgePipelineCommand extends Command
 	 */
 	protected function getOptions()
 	{
-		return array(
-			array('force', 'f', InputOption::VALUE_NONE, 'Do not prompt for confirmation'),
-		);
+		return [
+			['force', 'f', InputOption::VALUE_NONE, 'Do not prompt for confirmation'],
+		];
 	}
 }

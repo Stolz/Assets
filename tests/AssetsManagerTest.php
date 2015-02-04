@@ -27,14 +27,6 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		}
 	}
 
-	/**
-	 * @expectedException Exception
-	 */
-	public function testConfigRequirePublicDirWhenPipelineEnabled()
-	{
-		$this->manager->config(array('pipeline' => true, 'public_dir' => '/dev/null'));
-	}
-
 	public function testRemoteLinkDetection()
 	{
 		$method = self::getMethod('isRemoteLink');

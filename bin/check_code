@@ -31,4 +31,8 @@ fi
 cd "$DIR"
 ./vendor/bin/phpcs --report-width=100 --tab-width=4 --standard=phpcodesniffer.xml,PHPCompatibility src/ -as --runtime-set testVersion 5.3
 
-exit 0
+# Run PHP Unit
+
+phpunit
+
+exit $?
