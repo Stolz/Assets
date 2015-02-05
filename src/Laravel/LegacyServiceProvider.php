@@ -14,10 +14,11 @@ class LegacyServiceProvider extends LaravelServiceProvider
 	public function boot()
 	{
 		// Register the package namespace
-		$this->package('stolz/assets');
+		//$this->package('stolz/assets'); // Only valid if config file is at src/config/config.php
+		$this->app->config->package('stolz/assets', __DIR__, 'assets');
 
 		// Read settings from config file
-		$config = $this->app->config->get('assets::config', array());
+		$config = $this->app->config->get('assets::config', []);
 
 		// Apply config settings
 		$this->app['stolz.assets']->config($config);
