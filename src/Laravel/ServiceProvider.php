@@ -7,26 +7,6 @@ use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 class ServiceProvider extends LaravelServiceProvider
 {
 	/**
-	 * Path to the default config file.
-	 *
-	 * @var string
-	 */
-	protected $configFile;
-
-	/**
-	 * Create a new service provider instance.
-	 *
-	 * @param  \Illuminate\Contracts\Foundation\Application  $app
-	 * @return void
-	 */
-	public function __construct($app)
-	{
-		parent::__construct($app);
-
-		$this->configFile = __DIR__ . '/config.php';
-	}
-
-	/**
 	 * Register bindings in the container.
 	 *
 	 * @return void
@@ -34,7 +14,7 @@ class ServiceProvider extends LaravelServiceProvider
 	public function register()
 	{
 		// Merge user's configuration
-		$this->mergeConfigFrom($this->configFile, 'assets');
+		$this->mergeConfigFrom(__DIR__ . '/config.php', 'assets');
 
 		// Bind 'stolz.assets' shared component to the IoC container
 		$this->app->singleton('stolz.assets', function ($app) {
@@ -56,7 +36,7 @@ class ServiceProvider extends LaravelServiceProvider
 	{
 		// Register paths to be published by 'vendor:publish' artisan command
 		$this->publishes([
-			$this->configFile => config_path('assets.php'),
+			__DIR__ . '/config.php' => config_path('assets.php'),
 		]);
 
 		// Add 'Assets' facade alias
