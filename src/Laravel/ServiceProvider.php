@@ -11,7 +11,20 @@ class ServiceProvider extends LaravelServiceProvider
 	 *
 	 * @var string
 	 */
-	protected $configFile = __DIR__ . '/config.php';
+	protected $configFile;
+
+	/**
+	 * Create a new service provider instance.
+	 *
+	 * @param  \Illuminate\Contracts\Foundation\Application  $app
+	 * @return void
+	 */
+	public function __construct($app)
+	{
+		parent::__construct($app);
+
+		$this->configFile = __DIR__ . '/config.php';
+	}
 
 	/**
 	 * Register bindings in the container.
