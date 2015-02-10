@@ -28,10 +28,13 @@ class FlushPipelineCommand extends Command
 	 */
 	public function fire()
 	{
+		// Determine the config namespace sepatator
+		$glue = (file_exists(app_path('config/packages/stolz/assets/config.php'))) ? '::' : '.';
+
 		// Get directory paths
-		$pipeDir = Config::get('assets::pipeline_dir', 'min');
-		$cssDir = public_path(Config::get('assets::css_dir', 'css') . DIRECTORY_SEPARATOR . $pipeDir);
-		$jsDir = public_path(Config::get('assets::js_dir', 'js') . DIRECTORY_SEPARATOR . $pipeDir);
+		$pipeDir = Config::get("assets{$glue}pipeline_dir", 'min');
+		$cssDir = public_path(Config::get("assets{$glue}css_dir", 'css') . DIRECTORY_SEPARATOR . $pipeDir);
+		$jsDir = public_path(Config::get("assets{$glue}js_dir", 'js') . DIRECTORY_SEPARATOR . $pipeDir);
 
 		// Ask for confirmation
 		if( ! $this->option('force'))
