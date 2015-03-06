@@ -650,8 +650,19 @@ class Manager
 			$this->css = array_unique(array_merge($this->css, $files));
 
 		// Unknown pattern. We must poll to know the asset type :(
-		else foreach($files as $asset)
-			$this->add($asset);
+		else
+		{
+			foreach($files as $asset)
+			{
+				if(preg_match($this->js_regex, $asset))
+					$this->js[] = $asset;
+
+				elseif(preg_match($this->css_regex, $asset))
+					$this->css[] = $asset;
+			}
+			$this->js = array_unique($this->js);
+			$this->css = array_unique($this->css);
+		}
 
 		return $this;
 	}
