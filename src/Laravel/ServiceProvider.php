@@ -18,7 +18,12 @@ class ServiceProvider extends LaravelServiceProvider
 
 		// Bind 'stolz.assets' shared component to the IoC container
 		$this->app->singleton('stolz.assets', function ($app) {
-			return new Assets($app['config']['assets']);
+
+			$config = $app['config']['assets'];
+			if( ! isset($config['public_dir']))
+				$config['public_dir'] = public_path();
+
+			return new Assets($config);
 		});
 
 		// Bind 'stolz.assets.command.flush' component to the IoC container
