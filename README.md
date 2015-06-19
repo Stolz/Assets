@@ -75,7 +75,7 @@ To generate the JavaScript `<script>` tags
 <a id="controllers"></a>
 ### In your routes/controllers
 
-Basically all you have to do to add and asset, no matter if it's CSS or JS, is:
+Basically all you have to do to add and asset, no matter if it's CSS or JS or a collection of both, is:
 
 	Assets::add('filename');
 

@@ -33,6 +33,6 @@ cd "$DIR"
 
 # Run PHP Unit
 
-phpunit
+./vendor/bin/phpunit
 
 exit $?
