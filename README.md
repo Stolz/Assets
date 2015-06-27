@@ -279,30 +279,37 @@ You can use the library without using static methods. The signature of all metho
 ## Sample collections
 
 	// jQuery (CDN)
-	'jquery-cdn' => ['//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'],
+	'jquery-cdn' => ['//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'],
 
 	// jQuery UI (CDN)
 	'jquery-ui-cdn' => [
 		'jquery-cdn',
-		'//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js',
-	),
-
-	// Twitter Bootstrap (CDN)
-	'bootstrap-cdn' => [
-		'jquery-cdn',
-		'//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css',
-		'//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css',
-		'//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'
+		'//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js',
+		// Uncomment to load all languages '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/i18n/jquery-ui-i18n.min.js',
+		// Uncomment to load a single language '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/i18n/jquery.ui.datepicker-es.min.js',
+		// Uncomment to load a theme' //ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css',
 	],
 
 	// Zurb Foundation (CDN)
 	'foundation-cdn' => [
 		'jquery-cdn',
-		'//cdn.jsdelivr.net/foundation/5.4.7/css/normalize.css',
-		'//cdn.jsdelivr.net/foundation/5.4.7/css/foundation.min.css',
-		'//cdn.jsdelivr.net/foundation/5.4.7/js/foundation.min.js',
+		'//cdn.jsdelivr.net/foundation/5.5.1/css/normalize.css',
+		'//cdn.jsdelivr.net/foundation/5.5.1/css/foundation.min.css',
+		'//cdn.jsdelivr.net/foundation/5.5.1/js/foundation.min.js',
 		'app.js'
 	],
+
+	// Twitter Bootstrap (CDN)
+	'bootstrap-cdn' => [
+		'jquery-cdn',
+		'//netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css',
+		'//netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css',
+		'//netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'
+	],
+
+	// Flags of all countries in one sprite (CDN)
+	'flags-16px' => ['//cloud.github.com/downloads/lafeber/world-flags-sprite/flags16.css'],
+	'flags-32px' => ['//cloud.github.com/downloads/lafeber/world-flags-sprite/flags32.css'],
 
 <a id="license"></a>
 ## License
