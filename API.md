@@ -104,8 +104,10 @@ No trailing slash!.
 
 Enable assets pipeline (concatenation and minification).
 
-If you set an integer value greather than 1 it will be used
+If you set an integer value greater than 1 it will be used
 as a timestamp that will be added to the pipelined assets name.
+If you set it to -1, the pipelined assets name will be
+generated using filemtime() for each asset.
 
 * Visibility: **protected**
 

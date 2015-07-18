@@ -458,11 +458,22 @@ class Manager
 
 		// Add timestamp to extension
 		$timestamp = intval($this->pipeline);
-		if($timestamp > 1)
-			$extension = '.' . $timestamp . $extension;
+		if($timestamp > 1) {
+			// Explicit timestamp
+			$filename = md5(implode($assets)) . '.' . $timestamp . $extension;
+		} elseif($timestamp === -1) {
+			// Automatic timestamp
+			$public_dir = $this->public_dir; // PHP5.3 cannot use $this in closures
+			$filemtime = array_map(function($f) use ($public_dir) {
+				return filemtime(realpath($public_dir . DIRECTORY_SEPARATOR . $f)); // realpath() because $f may contain ".."
+			}, $assets);
+			$filename = md5(implode($assets) . implode($filemtime)) . $extension;
+		} else {
+			// No timestamp
+			$filename = md5(implode($assets)) . $extension;
+		}
 
 		// Generate paths
-		$filename = md5(implode($assets)) . $extension;
 		$relative_path = "$subdirectory/{$this->pipeline_dir}/$filename";
 		$absolute_path = realpath($pipeline_dir) . DIRECTORY_SEPARATOR . $filename;
 
