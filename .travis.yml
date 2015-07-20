@@ -9,8 +9,12 @@ php:
 
 before_script:
   - curl -sS http://getcomposer.org/installer | php -d hhvm.resource_limit.socket_default_timeout=120
-  - php composer.phar install --dev
+  - php composer.phar install --dev --no-interaction
 
 script: phpunit
 
 sudo: false
+
+cache:
+  directories:
+  - $HOME/.composer/cache/
