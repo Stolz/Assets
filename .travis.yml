@@ -7,11 +7,15 @@ php:
   - 5.6
   - hhvm
 
+matrix:
+    allow_failures:
+        - php: hhvm
+
 before_script:
   - composer self-update
   - composer install --no-interaction
 
-script: phpunit
+script: php vendor/bin/phpunit
 
 cache:
   directories:
@@ -20,4 +24,4 @@ cache:
 sudo: false
 
 git:
-  depth: 5
+  depth: 1
