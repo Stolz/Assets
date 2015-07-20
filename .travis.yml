@@ -8,13 +8,16 @@ php:
   - hhvm
 
 before_script:
-  - curl -sS http://getcomposer.org/installer | php -d hhvm.resource_limit.socket_default_timeout=120
-  - php composer.phar install --dev --no-interaction
+  - composer self-update
+  - composer install --no-interaction
 
 script: phpunit
-
-sudo: false
 
 cache:
   directories:
   - $HOME/.composer/cache/
+
+sudo: false
+
+git:
+  depth: 5
