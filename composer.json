@@ -12,7 +12,6 @@
 	"require": {
 		"php": ">=5.3.0",
 		"mrclay/minify": "~2.1"
-
 	},
 	"require-dev": {
 		"evert/phpdoc-md" : "0.*",
