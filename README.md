@@ -89,7 +89,7 @@ Add an asset from a local package
 
 	Assets::add('twitter/bootstrap:bootstrap.min.css');
 
-Note all local assets filenames are considered to be relative to you assets directory (configurable via `css_dir` and `js_dir` options) so you don't need to provide it every time with `js/file.js` or `css/file.css`, using just `file.js` or `file.css` will be enought.
+Note all local assets filenames are considered to be relative to you assets directory (configurable via `css_dir` and `js_dir` options) so you don't need to provide it every time with `js/file.js` or `css/file.css`, using just `file.js` or `file.css` will be enough.
 
 You may add remote assets in the same fashion
 
@@ -114,7 +114,7 @@ All methods that don't generate output will accept chaining:
 <a id="api"></a>
 ### API
 
-There are some methods not documented here. For a **full list of all the availabe methods** please read the provided [`API.md`](https://github.com/Stolz/Assets/blob/master/API.md) file.
+There are some methods not documented here. For a **full list of all the available methods** please read the provided [`API.md`](https://github.com/Stolz/Assets/blob/master/API.md) file.
 
 <a id="configuration"></a>
 ## Configuration
@@ -123,7 +123,7 @@ To bring up the config file run
 
 	php artisan vendor:publish
 
-This will create the file `config/assets.php` that you may use to configure the library. With the provided comments all options should be selfexplanatory.
+This will create the file `config/assets.php` that you may use to configure the library. With the provided comments all options should be self explanatory.
 
 If you are using the [non static interface](#nonstatic) just pass an associative array of config settings to the class constructor.
 
@@ -221,7 +221,7 @@ Finally, if you happen to use NGINX with the [gzip_static](http://nginx.org/en/d
 <a id="options"></a>
 ### Other configurable options
 
-For a **full list of all the availabe config options** please read the provided [`API.md`](https://github.com/Stolz/Assets/blob/master/API.md) file.
+For a **full list of all the available config options** please read the provided [`API.md`](https://github.com/Stolz/Assets/blob/master/API.md) file.
 
 - `'autoload' => array(),`
 
@@ -235,7 +235,7 @@ For a **full list of all the availabe config options** please read the provided 
 
 	Override default folder for pipelined assets. Don't use trailing slash!.
 
-It is possible to **change any config options on the fly** by passing an array of settings to the `config()` method. Usefull if some assets use a different base directory or if you want to pipeline some assets and skip others from the pipeline. i.e:
+It is possible to **change any config options on the fly** by passing an array of settings to the `config()` method. Useful if some assets use a different base directory or if you want to pipeline some assets and skip others from the pipeline. i.e:
 
 	echo Assets::reset()->add('do-not-pipeline-this.js')->js(),
 	     Assets::reset()->add('please-pipeline-this.js')->config(array('pipeline' => true))->js();
