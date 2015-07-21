@@ -1,6 +1,8 @@
 Assets
 ======
 
+[![Join the chat at https://gitter.im/Stolz/Assets](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Stolz/Assets?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 An ultra-simple-to-use assets management PHP library.
 
 [![Build Status](https://travis-ci.org/Stolz/Assets.png?branch=master)](https://travis-ci.org/Stolz/Assets) [![Join the chat at https://gitter.im/Stolz/Assets](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Stolz/Assets?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
