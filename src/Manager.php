@@ -67,10 +67,10 @@ class Manager
 
 	/**
 	 * Enable assets pipeline (concatenation and minification).
-	 * If you set an integer value greather than 1 it will be used
-	 * as a timestamp that will be added to the pipelined assets name.
+	 * Use a string that evaluates to `true` to provide the salt of the pipeline hash.
+	 * Use 'auto' to automatically calculated the salt from your assets last modification time.
 	 *
-	 * @var bool|integer
+	 * @var bool|string
 	 */
 	protected $pipeline = false;
 
@@ -451,29 +451,13 @@ class Manager
 	 */
 	protected function pipeline(array $assets, $extension, $subdirectory, Closure $minifier)
 	{
-		// Make destination dir if it doesn't exist.
+		// Create destination dir if it doesn't exist.
 		$pipeline_dir = $this->public_dir . DIRECTORY_SEPARATOR . $subdirectory . DIRECTORY_SEPARATOR . $this->pipeline_dir;
 		if( ! is_dir($pipeline_dir))
 			mkdir($pipeline_dir, 0777, true);
 
-		// Add timestamp to extension
-		$timestamp = intval($this->pipeline);
-		if($timestamp > 1) {
-			// Explicit timestamp
-			$filename = md5(implode($assets)) . '.' . $timestamp . $extension;
-		} elseif($timestamp === -1) {
-			// Automatic timestamp
-			$public_dir = $this->public_dir; // PHP5.3 cannot use $this in closures
-			$filemtime = array_map(function($f) use ($public_dir) {
-				return filemtime(realpath($public_dir . DIRECTORY_SEPARATOR . $f)); // realpath() because $f may contain ".."
-			}, $assets);
-			$filename = md5(implode($assets) . implode($filemtime)) . $extension;
-		} else {
-			// No timestamp
-			$filename = md5(implode($assets)) . $extension;
-		}
-
 		// Generate paths
+		$filename = $this->calculatePipelineHash($assets) . $extension;
 		$relative_path = "$subdirectory/{$this->pipeline_dir}/$filename";
 		$absolute_path = realpath($pipeline_dir) . DIRECTORY_SEPARATOR . $filename;
 
@@ -502,6 +486,41 @@ class Manager
 			$this->notify_command->__invoke($filename, $relative_path, $absolute_path, $assets, $gzipAvailable);
 
 		return $relative_path;
+	}
+
+	/**
+	 * Calculate the pipeline hash.
+	 *
+	 * @param  array  $assets
+	 * @return string
+	 */
+	protected function calculatePipelineHash(array $assets)
+	{
+		$salt = $this->pipeline;
+
+		// Pipeline disabled. Do not salt hash
+		if( ! $salt)
+			return md5(implode($assets));
+
+		// Custom salt
+		if($salt !== 'auto')
+			return md5(implode($assets) . $salt);
+
+		// Automatic salt based on the last modification time of the assets
+		$timestamps = [];
+		foreach($assets as $asset)
+		{
+			if($this->isRemoteLink($asset))
+				continue;
+
+			$file = realpath($this->public_dir . DIRECTORY_SEPARATOR . $asset);
+			if($file === false)
+				continue;
+
+			$timestamps[] = filemtime($file);
+		}
+
+		return md5(implode($assets) . implode($timestamps));
 	}
 
 	/**
