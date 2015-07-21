@@ -3,7 +3,7 @@ Assets
 
 An ultra-simple-to-use assets management PHP library.
 
-[![Build Status](https://travis-ci.org/Stolz/Assets.png?branch=master)](https://travis-ci.org/Stolz/Assets)
+[![Build Status](https://travis-ci.org/Stolz/Assets.png?branch=master)](https://travis-ci.org/Stolz/Assets) [![Join the chat at https://gitter.im/Stolz/Assets](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Stolz/Assets?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 1. [Features](#features).
 - [Supported frameworks](#frameworks).
@@ -208,18 +208,13 @@ If your assets have changed since they were pipelined use the provided artisan c
 
 	php artisan asset:flush
 
-To deal with cache issues a custom timestamp may be appended to the pipelined assets filename by setting `pipeline` config option to an integer value greather than 1:
+Alternatively, you may set the `pipeline` config option to a string value that evaluates to `true`. That value will be used as the salt of the pipeline hash. If you use `'auto'` as value the salt will be automatically calculated based on your assets last modification time.
 
 Example:
 
-	'pipeline' => 12345,
+	'pipeline' => 'version 1.0',
 
-will produce:
-
-	<link type="text/css" rel="stylesheet" href="css/min/pipelineHash.12345.css" />
-	<script type="text/javascript" src="js/min/pipelineHash.12345.js"></script>
-
-If you happend to use NGINX with the [gzip_static](http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html) feature enabled, add the following config option to automatically create a suitable gziped version of the pipelined assets:
+Finally, if you happen to use NGINX with the [gzip_static](http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html) feature enabled, add the following config option to automatically create a suitable gziped version of the pipelined assets:
 
 	'pipeline_gzip' => true,
 
@@ -325,7 +320,7 @@ Read the provided `LICENSE` file for details.
 <a id="faq_support"></a>
 ### Where can I ask for help/support?
 
-First make sure you read this [F.A.Q.](#troubleshooting) and if you still need help [open an issue on GitHub](https://github.com/Stolz/Assets/issues/new) or use your GitHub account to [ask for support here](http://laravel.io/forum/02-17-2014-package-an-ultra-simple-to-use-assets-managementpipeline-package).
+First please make sure you have read the [F.A.Q.](#troubleshooting) and [API docs](https://github.com/Stolz/Assets/blob/master/API.md) and if you still need help explain your problem in our [Gitter chat](https://gitter.im/Stolz/Assets).
 
 <a id="faq_folders"></a>
 ### Where should I copy my assets files?

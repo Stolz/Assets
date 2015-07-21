@@ -104,8 +104,8 @@ No trailing slash!.
 
 Enable assets pipeline (concatenation and minification).
 
-If you set an integer value greather than 1 it will be used
-as a timestamp that will be added to the pipelined assets name.
+Use a string that evaluates to `true` to provide the salt of the pipeline hash.
+Use 'auto' to automatically calculated the salt from your assets last modification time.
 
 * Visibility: **protected**
 
@@ -427,6 +427,22 @@ Minifiy and concatenate files.
 * $extension **string**
 * $subdirectory **string**
 * $minifier **Closure**
+
+
+
+### calculatePipelineHash
+
+    string calculatePipelineHash(array $assets)
+
+Calculate the pipeline hash.
+
+
+
+* Visibility: **protected**
+
+
+#### Arguments
+* $assets **array**
 
 
 
