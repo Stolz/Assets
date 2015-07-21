@@ -507,7 +507,7 @@ class Manager
 			return md5(implode($assets) . $salt);
 
 		// Automatic salt based on the last modification time of the assets
-		$timestamps = [];
+		$timestamps = array();
 		foreach($assets as $asset)
 		{
 			if($this->isRemoteLink($asset))
