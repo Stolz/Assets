@@ -484,7 +484,7 @@ class Manager
 			}
 			else
 			{
-				$minified .= $minifier->__invoke($this->gatherLinks([$asset]));
+				$minified .= $minifier->__invoke($this->gatherLinks(array($asset)));
 			}
 
 			// Be sure no one forgets to add a ; at the end of file in js files
