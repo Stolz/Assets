@@ -89,7 +89,7 @@ class Manager
 	 *
 	 * @var array
 	 */
-	protected $extensions_to_exclude_minification = ['.min.js','-min.js'];
+	protected $extensions_to_exclude_minification = array('.min.js','-min.js');
 
 	/**
 	 * Enable pipelined assets compression with Gzip. Do not enable unless you know what you are doing!.
@@ -480,7 +480,7 @@ class Manager
 		foreach($assets as $asset){
 			if($this->stringContains($asset,$this->extensions_to_exclude_minification))
 			{
-				$minified .= $this->gatherLinks([$asset]);
+				$minified .= $this->gatherLinks(array($asset));
 			}
 			else
 			{
