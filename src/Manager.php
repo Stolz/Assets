@@ -489,7 +489,7 @@ class Manager
 
 			// Be sure no one forgets to add a ; at the end of file in js files
 			// Because we will get TypeError's
-			if($this->stringContains($extension,['.js']))
+			if($this->stringContains($extension,array('.js')))
 				$minified .= ';' . PHP_EOL;
 		}
 
