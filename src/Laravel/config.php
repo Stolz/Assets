@@ -87,6 +87,14 @@ return array(
 	//'pipeline_dir' => 'min',
 
 	/**
+	 * Which files extensions should be excluded from minification
+	 * They will be just concatenated
+	 *
+	 * @var array
+	 */
+	//'extensions_to_exclude_minification' => ['.min.js','-min.js'];
+
+	/**
 	 * Enable pipelined assets compression with Gzip.
 	 * Use only if your webserver supports Gzip HTTP_ACCEPT_ENCODING.
 	 * Set to true to use the default compression level.
@@ -155,5 +163,4 @@ return array(
 	 * @var array
 	 */
 	//'autoload' => array('jquery-cdn'),
-
 );

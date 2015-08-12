@@ -84,6 +84,14 @@ class Manager
 	protected $pipeline_dir = 'min';
 
 	/**
+	 * Which files extensions should be excluded from minification
+	 * They will be just concatenated
+	 *
+	 * @var array
+	 */
+	protected $extensions_to_exclude_minification = ['.min.js','-min.js'];
+
+	/**
 	 * Enable pipelined assets compression with Gzip. Do not enable unless you know what you are doing!.
 	 * Useful only if your webserver supports Gzip HTTP_ACCEPT_ENCODING.
 	 * Set to true to use the default compression level.
@@ -180,7 +188,7 @@ class Manager
 				$this->$option = $config[$option];
 
 		// Set common options
-		foreach(array('public_dir', 'css_dir', 'js_dir', 'packages_dir', 'pipeline',  'pipeline_dir', 'pipeline_gzip') as $option)
+		foreach(array('public_dir', 'css_dir', 'js_dir', 'packages_dir', 'pipeline',  'pipeline_dir', 'pipeline_gzip', 'extensions_to_exclude_minification') as $option)
 			if(isset($config[$option]))
 				$this->$option = $config[$option];
 
@@ -465,11 +473,25 @@ class Manager
 		if(file_exists($absolute_path))
 			return $relative_path;
 
-		// Concatenate files
-		$buffer = $this->gatherLinks($assets);
+		// Do not minify already minified files, just concat them
+		// JSMin sometimes will throw "Unterminated set in RegExp at byte" exception
+		// See more: http://www.mrclay.org/2013/11/27/jsmins-classic-delimma-division-or-regexp-literal/
+		$minified = '';
+		foreach($assets as $asset){
+			if($this->stringContains($asset,$this->extensions_to_exclude_minification))
+			{
+				$minified .= $this->gatherLinks([$asset]);
+			}
+			else
+			{
+				$minified .= $minifier->__invoke($this->gatherLinks([$asset]));
+			}
 
-		// Minifiy
-		$minified = $minifier->__invoke($buffer);
+			// Be sure no one forgets to add a ; at the end of file in js files
+			// Because we will get TypeError's
+			if($this->stringContains($extension,['.js']))
+				$minified .= ';' . PHP_EOL;
+		}
 
 		// Write minified file
 		file_put_contents($absolute_path, $minified);
@@ -737,5 +759,24 @@ class Manager
 			$files[] = substr($file->getPathname(), $offset);
 
 		return $files;
+	}
+
+	/**
+	 * Determine if a given string contains a given substring.
+	 * laravel/framework/src/Illuminate/Support/Str.php
+	 *
+	 * @param  string  $haystack
+	 * @param  string|array  $needles
+	 * @return bool
+	 */
+	protected function stringContains($haystack, $needles)
+	{
+		foreach ((array) $needles as $needle) {
+			if ($needle != '' && strpos($haystack, $needle) !== false) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
