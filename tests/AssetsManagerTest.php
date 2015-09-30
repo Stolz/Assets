@@ -162,6 +162,23 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertStringEndsWith($asset2, array_pop($assets2));
 	}
 
+	public function testCanExcludeFilesFromMinificationDefaultRegexp(){
+
+		$asset1 = 'foo.min.js';
+		$asset2 = 'foo-min.js';
+		$asset3 = 'foo.js';
+		$asset4 = 'foo.css';
+
+		//Test default Regexp
+		$pattern = PHPUnit_Framework_Assert::readAttribute($this->manager, 'exclude_minification_regex');
+
+		$this->assertEquals(1, preg_match($pattern,$asset1));
+		$this->assertEquals(1, preg_match($pattern,$asset2));
+
+		$this->assertEquals(0, preg_match($pattern,$asset3));
+		$this->assertEquals(0, preg_match($pattern,$asset4));
+	}
+
 	protected static function getMethod($name) {
 		$class = new ReflectionClass('Stolz\Assets\Manager');
 		$method = $class->getMethod($name);
