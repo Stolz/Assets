@@ -92,7 +92,7 @@ return array(
 	 *
 	 * @var array
 	 */
-	//'extensions_to_exclude_minification' => ['.min.js','-min.js'];
+	//'exclude_minification_regex' => '/(.min.js|-min.js)$/i';
 
 	/**
 	 * Enable pipelined assets compression with Gzip.

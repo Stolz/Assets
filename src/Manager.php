@@ -89,7 +89,7 @@ class Manager
 	 *
 	 * @var array
 	 */
-	protected $extensions_to_exclude_minification = array('.min.js','-min.js');
+	protected $exclude_minification_regex = '/(.min.js|-min.js)$/i';
 
 	/**
 	 * Enable pipelined assets compression with Gzip. Do not enable unless you know what you are doing!.
@@ -188,7 +188,7 @@ class Manager
 				$this->$option = $config[$option];
 
 		// Set common options
-		foreach(array('public_dir', 'css_dir', 'js_dir', 'packages_dir', 'pipeline',  'pipeline_dir', 'pipeline_gzip', 'extensions_to_exclude_minification') as $option)
+		foreach(array('public_dir', 'css_dir', 'js_dir', 'packages_dir', 'pipeline',  'pipeline_dir', 'pipeline_gzip', 'exclude_minification_regex') as $option)
 			if(isset($config[$option]))
 				$this->$option = $config[$option];
 
@@ -478,7 +478,7 @@ class Manager
 		// See more: http://www.mrclay.org/2013/11/27/jsmins-classic-delimma-division-or-regexp-literal/
 		$minified = '';
 		foreach($assets as $asset){
-			if($this->stringContains($asset,$this->extensions_to_exclude_minification))
+			if(preg_match($this->exclude_minification_regex, $asset))
 			{
 				$minified .= $this->gatherLinks(array($asset));
 			}
@@ -489,7 +489,7 @@ class Manager
 
 			// Be sure no one forgets to add a ; at the end of file in js files
 			// Because we will get TypeError's
-			if($this->stringContains($extension,array('.js')))
+			if(preg_match($this->js_regex, $extension))
 				$minified .= ';' . PHP_EOL;
 		}
 
@@ -759,24 +759,5 @@ class Manager
 			$files[] = substr($file->getPathname(), $offset);
 
 		return $files;
-	}
-
-	/**
-	 * Determine if a given string contains a given substring.
-	 * laravel/framework/src/Illuminate/Support/Str.php
-	 *
-	 * @param  string  $haystack
-	 * @param  string|array  $needles
-	 * @return bool
-	 */
-	protected function stringContains($haystack, $needles)
-	{
-		foreach ((array) $needles as $needle) {
-			if ($needle != '' && strpos($haystack, $needle) !== false) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 }
