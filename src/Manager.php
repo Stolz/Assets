@@ -550,7 +550,11 @@ class Manager
 					continue;
 			}
 
+			// Fetch link content
 			$buffer .= ($this->fetch_command instanceof Closure) ? $this->fetch_command->__invoke($link) : file_get_contents($link);
+
+			// Avoid JavaScript minification problems
+			$buffer .= PHP_EOL;
 		}
 
 		return $buffer;
