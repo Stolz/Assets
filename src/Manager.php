@@ -89,7 +89,7 @@ class Manager
 	 *
 	 * @var array
 	 */
-	protected $exclude_minification_regex = '/(.min.js|-min.js)$/i';
+	protected $exclude_minification_regex = '/[-.]min\.js$/i';
 
 	/**
 	 * Enable pipelined assets compression with Gzip. Do not enable unless you know what you are doing!.
