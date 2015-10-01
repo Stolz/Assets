@@ -33,6 +33,13 @@ return array(
 	//'js_regex' => '/.\.js$/i',
 
 	/**
+	 * Regex to match against a filename/url to determine if it should not be minified by pipeline.
+	 *
+	 * @var string
+	 */
+	//'no_minification_regex' => '/.[-.]min\.(css|js)$/i',
+
+	/**
 	 * Absolute path to the public directory of your App (WEBROOT).
 	 * Required if you enable the pipeline.
 	 * No trailing slash!.

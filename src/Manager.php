@@ -30,6 +30,13 @@ class Manager
 	protected $js_regex = '/.\.js$/i';
 
 	/**
+	 * Regex to match against a filename/url to determine if it should not be minified by pipeline.
+	 *
+	 * @var string
+	 */
+	protected $no_minification_regex = '/.[-.]min\.(css|js)$/i';
+
+	/**
 	 * Absolute path to the public directory of your App (WEBROOT).
 	 * Required if you enable the pipeline.
 	 * No trailing slash!.
@@ -175,7 +182,7 @@ class Manager
 	public function config(array $config)
 	{
 		// Set regex options
-		foreach(array('asset_regex', 'css_regex', 'js_regex') as $option)
+		foreach(array('asset_regex', 'css_regex', 'js_regex', 'no_minification_regex') as $option)
 			if(isset($config[$option]) and (@preg_match($config[$option], null) !== false))
 				$this->$option = $config[$option];
 
@@ -465,20 +472,17 @@ class Manager
 		if(file_exists($absolute_path))
 			return $relative_path;
 
-		// Concatenate files
-		$buffer = $this->gatherLinks($assets);
-
-		// Minifiy
-		$minified = $minifier->__invoke($buffer);
+		// Download, concatenate and minifiy files
+		$buffer = $this->packLinks($assets, $minifier);
 
 		// Write minified file
-		file_put_contents($absolute_path, $minified);
+		file_put_contents($absolute_path, $buffer);
 
 		// Write gziped file
 		if($gzipAvailable = (function_exists('gzencode') and $this->pipeline_gzip !== false))
 		{
 			$level = ($this->pipeline_gzip === true) ? -1 : intval($this->pipeline_gzip);
-			file_put_contents("$absolute_path.gz", gzencode($minified, $level));
+			file_put_contents("$absolute_path.gz", gzencode($buffer, $level));
 		}
 
 		// Hook for pipeline event
@@ -524,16 +528,20 @@ class Manager
 	}
 
 	/**
-	 * Download and concatenate the content of several links.
+	 * Download, concatenate and minifiy the content of several links.
 	 *
-	 * @param  array  $links
+	 * @param  array   $links
+	 * @param  Closure $minifier
 	 * @return string
 	 */
-	protected function gatherLinks(array $links)
+	protected function packLinks(array $links, Closure $minifier)
 	{
 		$buffer = '';
 		foreach($links as $link)
 		{
+			$originalLink = $link;
+
+			// Get real link path
 			if($this->isRemoteLink($link))
 			{
 				// Add current protocol to agnostic links
@@ -551,7 +559,10 @@ class Manager
 			}
 
 			// Fetch link content
-			$buffer .= ($this->fetch_command instanceof Closure) ? $this->fetch_command->__invoke($link) : file_get_contents($link);
+			$content = ($this->fetch_command instanceof Closure) ? $this->fetch_command->__invoke($link) : file_get_contents($link);
+
+			// Minify
+			$buffer .= (preg_match($this->no_minification_regex, $originalLink)) ? $content : $minifier->__invoke($content);
 
 			// Avoid JavaScript minification problems
 			$buffer .= PHP_EOL;

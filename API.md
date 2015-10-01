@@ -50,6 +50,17 @@ Regex to match against a filename/url to determine if it is a JavaScript asset.
 * Visibility: **protected**
 
 
+### $no_minification_regex
+
+    protected string $no_minification_regex = '/.[-.]min\.(css|js)$/i'
+
+Regex to match against a filename/url to determine if it should not be minified by pipeline.
+
+
+
+* Visibility: **protected**
+
+
 ### $public_dir
 
     protected string $public_dir
@@ -446,11 +457,11 @@ Calculate the pipeline hash.
 
 
 
-### gatherLinks
+### packLinks
 
-    string gatherLinks(array $links)
+    string packLinks(array $links, \Closure $minifier)
 
-Download and concatenate the content of several links.
+Download, concatenate and minifiy the content of several links.
 
 
 
@@ -459,6 +470,7 @@ Download and concatenate the content of several links.
 
 #### Arguments
 * $links **array**
+* $minifier **Closure**
 
 
 
