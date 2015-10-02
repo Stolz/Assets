@@ -164,7 +164,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 
 	public function testRegexOptions(){
 
-		$files = [
+		$files = array(
 			'.css',        // Not an asset
 			'foo.CSS',
 			'foomin.css',
@@ -176,7 +176,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 			'foomin.js',
 			'foo.min.js', // Skip from minification
 			'foo-MIN.js', // Skip from minification
-		];
+		);
 
 		// Test asset detection
 		$regex = PHPUnit_Framework_Assert::readAttribute($this->manager, 'asset_regex');
