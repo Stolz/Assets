@@ -217,26 +217,26 @@ class Manager
 	 * @param  mixed   $asset
 	 * @return Manager
 	 */
-	public function add($asset)
+	public function add($asset, $group = 'default')
 	{
 		// More than one asset
 		if(is_array($asset))
 		{
 			foreach($asset as $a)
-				$this->add($a);
+				$this->add($a, $group);
 		}
 
 		// Collection
 		elseif(isset($this->collections[$asset]))
-			$this->add($this->collections[$asset]);
+			$this->add($this->collections[$asset], $group);
 
 		// JavaScript asset
 		elseif(preg_match($this->js_regex, $asset))
-			$this->addJs($asset);
+			$this->addJs($asset, $group);
 
 		// CSS asset
 		elseif(preg_match($this->css_regex, $asset))
-			$this->addCss($asset);
+			$this->addCss($asset, $group);
 
 		return $this;
 	}
@@ -250,12 +250,12 @@ class Manager
 	 * @param  mixed   $asset
 	 * @return Manager
 	 */
-	public function addCss($asset)
+	public function addCss($asset, $group='default')
 	{
 		if(is_array($asset))
 		{
 			foreach($asset as $a)
-				$this->addCss($a);
+				$this->addCss($a,$group);
 
 			return $this;
 		}
@@ -264,7 +264,7 @@ class Manager
 			$asset = $this->buildLocalLink($asset, $this->css_dir);
 
 		if( ! in_array($asset, $this->css))
-			$this->css[] = $asset;
+			$this->css[$group][] = $asset;
 
 		return $this;
 	}
@@ -278,12 +278,12 @@ class Manager
 	 * @param  mixed   $asset
 	 * @return Manager
 	 */
-	public function addJs($asset)
+	public function addJs($asset,$group='default')
 	{
 		if(is_array($asset))
 		{
 			foreach($asset as $a)
-				$this->addJs($a);
+				$this->addJs($a,$group);
 
 			return $this;
 		}
@@ -292,7 +292,7 @@ class Manager
 			$asset = $this->buildLocalLink($asset, $this->js_dir);
 
 		if( ! in_array($asset, $this->js))
-			$this->js[] = $asset;
+			$this->js[$group][] = $asset;
 
 		return $this;
 	}
@@ -307,12 +307,12 @@ class Manager
 	 * @param  array|Closure $attributes
 	 * @return string
 	 */
-	public function css($attributes = null)
+	public function css($attributes = null, $group='default')
 	{
-		if( ! $this->css)
+		if( ! isset($this->css[$group]) )
 			return '';
 
-		$assets = ($this->pipeline) ? array($this->cssPipeline()) : $this->css;
+		$assets = ($this->pipeline) ? (array)$this->cssPipeline($group) : $this->css[$group];
 
 		if($attributes instanceof Closure)
 			return $attributes->__invoke($assets);
@@ -347,12 +347,13 @@ class Manager
 	 * @param  array|Closure $attributes
 	 * @return string
 	 */
-	public function js($attributes = null)
+	public function js($attributes = null, $group='default')
 	{
-		if( ! $this->js)
+
+		if( ! isset($this->js[$group]) )
 			return '';
 
-		$assets = ($this->pipeline) ? array($this->jsPipeline()) : $this->js;
+		$assets = ($this->pipeline) ? (array)$this->jsPipeline($group) : $this->js[$group];
 
 		if($attributes instanceof Closure)
 			return $attributes->__invoke($assets);
@@ -427,9 +428,9 @@ class Manager
 	 *
 	 * @return string
 	 */
-	protected function cssPipeline()
+	protected function cssPipeline($group='default')
 	{
-		return $this->pipeline($this->css, '.css', $this->css_dir, function ($buffer) {
+		return $this->pipeline($this->css[$group], '.css', $this->css_dir, function ($buffer) {
 			$min = new \CSSmin();
 			return $min->run($buffer);
 		});
@@ -440,9 +441,9 @@ class Manager
 	 *
 	 * @return string
 	 */
-	protected function jsPipeline()
+	protected function jsPipeline($group='default')
 	{
-		return $this->pipeline($this->js, '.js', $this->js_dir, function ($buffer) {
+		return $this->pipeline($this->js[$group], '.js', $this->js_dir, function ($buffer) {
 			return \JSMin::minify($buffer);
 		});
 	}
@@ -668,7 +669,7 @@ class Manager
 	 * @param  string $pattern (regex)
 	 * @return Manager
 	 */
-	public function addDir($directory, $pattern = null)
+	public function addDir($directory, $pattern = null, $group='default')
 	{
 		// Make sure directory exists
 		$absolute_path = realpath($this->public_dir . DIRECTORY_SEPARATOR . $directory);
@@ -688,11 +689,11 @@ class Manager
 
 		// Avoid polling if the pattern is our old friend JavaScript
 		if($pattern === $this->js_regex)
-			$this->js = array_unique(array_merge($this->js, $files));
+			$this->js[$group] = array_unique(array_merge($this->js[$group], $files));
 
 		// Avoid polling if the pattern is our old friend CSS
 		elseif($pattern === $this->css_regex)
-			$this->css = array_unique(array_merge($this->css, $files));
+			$this->css[$group] = array_unique(array_merge($this->css[$group], $files));
 
 		// Unknown pattern. We must poll to know the asset type :(
 		else
@@ -700,13 +701,13 @@ class Manager
 			foreach($files as $asset)
 			{
 				if(preg_match($this->js_regex, $asset))
-					$this->js[] = $asset;
+					$this->js[$group][] = $asset;
 
 				elseif(preg_match($this->css_regex, $asset))
-					$this->css[] = $asset;
+					$this->css[$group][] = $asset;
 			}
-			$this->js = array_unique($this->js);
-			$this->css = array_unique($this->css);
+			$this->js[$group] = array_unique($this->js[$group]);
+			$this->css[$group] = array_unique($this->css[$group]);
 		}
 
 		return $this;
@@ -718,9 +719,9 @@ class Manager
 	 * @param  string $directory Relative to $this->public_dir
 	 * @return Manager
 	 */
-	public function addDirCss($directory)
+	public function addDirCss($directory, $group='default')
 	{
-		return $this->addDir($directory, $this->css_regex);
+		return $this->addDir($directory, $this->css_regex, $group);
 	}
 
 	/**
@@ -729,9 +730,9 @@ class Manager
 	 * @param  string $directory Relative to $this->public_dir
 	 * @return Manager
 	 */
-	public function addDirJs($directory)
+	public function addDirJs($directory, $group='default')
 	{
-		return $this->addDir($directory, $this->js_regex);
+		return $this->addDir($directory, $this->js_regex, $group);
 	}
 
 	/**
