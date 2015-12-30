@@ -11,11 +11,11 @@ An ultra-simple-to-use assets management PHP library.
 - [Usage](#usage).
  - [Views](#views).
  - [Controllers](#controllers).
- - [API](#api).
 - [Configuration](#configuration).
  - [Collections](#collections).
  - [Pipeline](#pipeline).
  - [More options](#options).
+ - [Multitenancy](#multitenancy).
 - [Non static interface usage](#nonstatic).
 - [Sample collections](#samples).
 - [Troubleshooting / F.A.Q.](#troubleshooting).
@@ -28,21 +28,21 @@ An ultra-simple-to-use assets management PHP library.
 
 - **Very easy to use**.
 - Autogenerates HTML tags for including your JavaScript and CSS files.
+- Automatically detects type of asset (CSS, JavaScript or collection).
 - Supports programmatically adding assets on the fly.
 - Supports local (**including packages**) or remote assets.
 - Prevents from loading duplicated assets.
 - Included assets **pipeline** (*concatenate and minify all your assets to a single file*) with URL **timestamps** and **gzip** support.
 - Automatically prefixes local assets with a configurable folder name or url.
 - Supports secure (*https*) and protocol agnostic (*//*) links.
-- Supports **collections** (*named groups of assets*) that can be nested, allowing assets dependencies definitions.
-- Automatically detects type of asset (CSS, JavaScript or collection).
+- Supports **collections** (*named sets of assets*) that can be nested, allowing assets dependencies definitions.
+- Supports **multitenancy** (multiple independent configurations) for different groups of assets (*this feature is only available for Laravel >= 5.0*).
 - Allows autoloading by default preconfigured assets and collections.
-
 
 <a id="frameworks"></a>
 ## Supported frameworks
 
-The library is framework agnostic and it should work well with any framework or naked PHP application. Nevertheless, the following instructions have been tailored for **Laravel 5** framework ([still on Laravel 4?](https://github.com/Stolz/Assets/issues/55#issuecomment-73024822)). If you want to use the library in any other scenario please read the [non static interface](#nonstatic) instructions.
+The library is framework agnostic and it should work well with any framework or naked PHP application. Nevertheless, sice the library is most popular between Laravel users the following instructions have been tailored for **Laravel 5** framework ([still on Laravel 4?](https://github.com/Stolz/Assets/issues/55#issuecomment-73024822)). If you want to use the library in any other scenario please read the [non static interface](#nonstatic) instructions.
 
 <a id="installation"></a>
 ## Installation
@@ -79,7 +79,8 @@ Basically all you have to do to add and asset, no matter if it's CSS or JS or a 
 
 	Assets::add('filename');
 
-*For more advanced uses keep reading ...*
+>For more advanced uses keep reading but please note that there are some more methods not documented here. For a **full list of all the available methods** please read the provided [`API.md`](https://github.com/Stolz/Assets/blob/master/API.md) file.
+
 
 Add more than one asset at once
 
@@ -98,8 +99,8 @@ You may add remote assets in the same fashion
 
 If your assets have no extension and autodetection fails, then just use canonical functions *(they accept an array of assets too)*
 
-	Assets::addCss('asset.css');
-	Assets::addJs('asset.js');
+	Assets::addCss('CSSfile.foo');
+	Assets::addJs('JavaScriptFile.bar');
 
 If at some point you decide you added the wrong assets you can reset them and start over
 
@@ -110,11 +111,6 @@ If at some point you decide you added the wrong assets you can reset them and st
 All methods that don't generate output will accept chaining:
 
 	Assets::reset()->add('collection')->addJs('file.js')->css();
-
-<a id="api"></a>
-### API
-
-There are some methods not documented here. For a **full list of all the available methods** please read the provided [`API.md`](https://github.com/Stolz/Assets/blob/master/API.md) file.
 
 <a id="configuration"></a>
 ## Configuration
@@ -130,7 +126,7 @@ If you are using the [non static interface](#nonstatic) just pass an associative
 <a id="collections"></a>
 ### Collections
 
-A collection is a named group of assets, that is, a set of JavaScript and CSS files. Any collection may include more collections, allowing dependencies definition and collection nesting. Collections can be created on run time or via config file.
+A collection is a named set of assets, that is, a set of JavaScript and CSS files. Any collection may include more collections, allowing dependencies definition and collection nesting. Collections can be created on run time or via config file.
 
 To register a collection on run time for later use:
 
@@ -138,7 +134,7 @@ To register a collection on run time for later use:
 
 To preconfigure collections using the config file:
 
-	// ... config.php ...
+	// ... File: config/assets.php ...
 	'collections' => [
 		'one'	=> 'one.css',
 		'two'	=> ['two.css', 'two.js'],
@@ -239,6 +235,46 @@ It is possible to **change any config options on the fly** by passing an array o
 
 	echo Assets::reset()->add('do-not-pipeline-this.js')->js(),
 	     Assets::reset()->add('please-pipeline-this.js')->config(array('pipeline' => true))->js();
+
+<a id="multitenancy"></a>
+### Multitenancy
+
+**Note:** *This feature is only available for Laravel >= 5.0*.
+
+Multitenancy is achieved using groups. A group is an isolated container of the library. Each group is totally independent of other groups so it uses its own settings and assets flow. This is useful if you need different approaches for different types of assets (for instance, you may need some assets to be pipelined but some others no). Therefore, when using multiple groups is your responsability to make sure the assets of different groups that depend on eachother are loaded in ther right order.
+
+By default if no groups are defined the default group is used. To define a group just nest your normal settings within an array in the config file. The array key will be the group name. For instance:
+
+
+	// ... File: config/assets.php ...
+
+	// Default group
+	'default' => [
+		'pipeline' => true,
+		'js_dir' => 'js',
+		// ... more options for default group
+	],
+
+	// Other group
+	'group1' => [
+		'pipeline' => false,
+		'public_dir' => '/foo',
+		// ... more options for group1
+	],
+
+	// Another group
+	'group2' => [
+		'pipeline' => false,
+		'css_dir' => 'css/admin',
+		// ... more options for group2
+	],
+
+For choosing which group you want to interact with, use the `group()` method. If no group is specified the 'default' group will be used.
+
+	Assets::add('foo.js')->js(); // Uses default group
+	Assets::group('group1')->add('bar.css')->css(); // Uses the 'group1' group.
+
+Please note the `group()` method is part of the Facade, so it does not accept chaining and it always has to be used at the beginning of each interaction with the library.
 
 ----
 
@@ -357,7 +393,7 @@ If you use a massive amount of assets make sure your connection is fast enough a
 <a id="faq_config_on_the_fly"></a>
 ### Can I use multiple instances of the library?
 
-Yes you can but there is no need. Read next question. If you still want to use multiple instances, [read how](https://github.com/Stolz/Assets/issues/37#issuecomment-57676554).
+Yes you can but there is no need. You better use the [multitenancy feature](#multitenancy) (*only available for Laravel >= 5.0*).
 
 <a id="faq_instances"></a>
 ### Can I change settings on the fly?
@@ -366,6 +402,8 @@ Yes you can. There is a `config()` public method to change settings on the fly. 
 
 	echo Assets::add('jquery-cdn')->js();
 	echo Assets::reset()->add(array('custom.js', 'main.js'))->config(array('pipeline' => true))->js();
+
+If you want the different settings to be permanent, then use the [multitenancy feature](#multitenancy).
 
 <a id="faq_filter"></a>
 ### Can I filter/preprocess my assets?
