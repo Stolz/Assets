@@ -40,7 +40,6 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse($method->invokeArgs($this->manager, array('foo')));
 	}
 
-
 	public function testPackageAssetDetection()
 	{
 		$vendor = '_This-Is-Vendor.0';
@@ -162,9 +161,9 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertStringEndsWith($asset2, array_pop($assets2));
 	}
 
-	public function testRegexOptions(){
-
-		$files = [
+	public function testRegexOptions()
+	{
+		$files = array(
 			'.css',        // Not an asset
 			'foo.CSS',
 			'foomin.css',
@@ -176,7 +175,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 			'foomin.js',
 			'foo.min.js', // Skip from minification
 			'foo-MIN.js', // Skip from minification
-		];
+		);
 
 		// Test asset detection
 		$regex = PHPUnit_Framework_Assert::readAttribute($this->manager, 'asset_regex');
@@ -207,7 +206,8 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(4, count($matching));
 	}
 
-	protected static function getMethod($name) {
+	protected static function getMethod($name)
+	{
 		$class = new ReflectionClass('Stolz\Assets\Manager');
 		$method = $class->getMethod($name);
 		$method->setAccessible(true);
