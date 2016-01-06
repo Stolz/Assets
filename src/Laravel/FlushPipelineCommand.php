@@ -28,30 +28,64 @@ class FlushPipelineCommand extends Command
 	 */
 	public function fire()
 	{
-		// Determine the config namespace sepatator
-		$glue = (file_exists(app_path('config/packages/stolz/assets/config.php'))) ? '::' : '.';
-
-		// Get directory paths
-		$pipeDir = Config::get("assets{$glue}pipeline_dir", 'min');
-		$cssDir = public_path(Config::get("assets{$glue}css_dir", 'css') . DIRECTORY_SEPARATOR . $pipeDir);
-		$jsDir = public_path(Config::get("assets{$glue}js_dir", 'js') . DIRECTORY_SEPARATOR . $pipeDir);
+		// Get directories to purge
+		if( ! $directories = $this->getPipelineDirectories())
+			return $this->error('The provided group does not exist');
 
 		// Ask for confirmation
 		if( ! $this->option('force'))
 		{
-			$this->info(sprintf('All content of %s and %s will be deleted.', $cssDir, $jsDir));
+			$this->info('All content of the following directories will be deleted:');
+			foreach($directories as $dir)
+				$this->comment($dir);
+
 			if( ! $this->confirm('Do you wish to continue? [yes|no]'))
 				return;
 		}
 
-		// Purge assets
-		$purgeCss = $this->purgeDir($cssDir);
-		$purgeJs = $this->purgeDir($jsDir);
+		// Purge directories
+		$this->comment('Flushing pipeline directories...');
+		foreach($directories as $dir)
+		{
+			$this->output->write("$dir ");
 
-		if( ! $purgeCss or ! $purgeJs)
-			return $this->error('Something went wrong');
+			if($this->purgeDir($dir))
+				$this->info('Ok');
+			else
+				$this->error('Error');
+		}
 
-		$this->info('Done!');
+		$this->comment('Done!');
+	}
+
+	/**
+	 * Get the pipeline directories of the groups.
+	 *
+	 * @return array
+	 */
+	protected function getPipelineDirectories()
+	{
+		// Parse configured groups
+		$config = config('assets', []);
+		$groups = (isset($config['default'])) ? $config : ['default' => $config];
+		if( ! is_null($group = $this->option('group')))
+			$groups = array_only($groups, $group);
+
+		// Parse pipeline directories of each group
+		$directories = [];
+		foreach($groups as $group => $config)
+		{
+			$pipelineDir = (isset($config['pipeline_dir'])) ? $config['pipeline_dir'] : 'min';
+
+			$cssDir = (isset($config['css_dir'])) ? $config['css_dir'] : 'css';
+			$directories[] = public_path($cssDir . DIRECTORY_SEPARATOR . $pipelineDir);
+
+
+			$jsDir = (isset($config['js_dir'])) ? $config['js_dir'] : 'js';
+			$directories[] = public_path($jsDir . DIRECTORY_SEPARATOR . $pipelineDir);
+		}
+
+		return array_unique($directories);
 	}
 
 	/**
@@ -80,6 +114,7 @@ class FlushPipelineCommand extends Command
 	protected function getOptions()
 	{
 		return [
+			['group', 'g', InputOption::VALUE_REQUIRED, 'Only flush the provided group'],
 			['force', 'f', InputOption::VALUE_NONE, 'Do not prompt for confirmation'],
 		];
 	}
