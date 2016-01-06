@@ -53,9 +53,11 @@ In your project base directory run
 
 Then edit `config/app.php` and add the service provider within the `providers` array.
 
-	'providers' => array(
-		...
+	'providers' => [
+		//...
 		'Stolz\Assets\Laravel\ServiceProvider',
+		//...
+	],
 
 There is no need to add the Facade, the package will bind it to the IoC for you.
 
@@ -84,7 +86,7 @@ Basically all you have to do to add and asset, no matter if it's CSS or JS or a 
 
 Add more than one asset at once
 
-	Assets::add(array('another/file.js', 'one/more.css'));
+	Assets::add(['another/file.js', 'one/more.css']);
 
 Add an asset from a local package
 
@@ -130,7 +132,7 @@ A collection is a named set of assets, that is, a set of JavaScript and CSS file
 
 To register a collection on run time for later use:
 
-	Assets::registerCollection($collectionName, array('some', 'awesome', 'assets'));
+	Assets::registerCollection($collectionName, ['some', 'awesome', 'assets']);
 
 To preconfigure collections using the config file:
 
@@ -219,7 +221,7 @@ Finally, if you happen to use NGINX with the [gzip_static](http://nginx.org/en/d
 
 For a **full list of all the available config options** please read the provided [`API.md`](https://github.com/Stolz/Assets/blob/master/API.md) file.
 
-- `'autoload' => array(),`
+- `'autoload' => [],`
 
 	Here you may set which assets (CSS files, JavaScript files or collections) should be loaded by default.
 - `'css_dir' => 'css',`
@@ -234,7 +236,7 @@ For a **full list of all the available config options** please read the provided
 It is possible to **change any config options on the fly** by passing an array of settings to the `config()` method. Useful if some assets use a different base directory or if you want to pipeline some assets and skip others from the pipeline. i.e:
 
 	echo Assets::reset()->add('do-not-pipeline-this.js')->js(),
-	     Assets::reset()->add('please-pipeline-this.js')->config(array('pipeline' => true))->js();
+	     Assets::reset()->add('please-pipeline-this.js')->config(['pipeline' => true])->js();
 
 <a id="multitenancy"></a>
 ### Multitenancy
@@ -287,13 +289,13 @@ You can use the library without using static methods. The signature of all metho
 	require __DIR__ . '/vendor/autoload.php';
 
 	// Set config options
-	$config = array(
-		'collections' => array(...),
-		'autoload' => array(...),
+	$config = [
+		'collections' => [...],
+		'autoload' => [...],
 		'pipeline' => true,
 		'public_dir' => '/absolute/path/to/your/webroot/public/dir'
 		...
-	);
+	];
 
 	// Instantiate the library
 	$assets = new \Stolz\Assets\Manager($config);
@@ -375,8 +377,12 @@ i.e: Assuming the next scenario:
 
 Then to load the assets you should run:
 
-	Assets::add(['foo.css', 'bar.js', 'somevendor/somepackage:lorem.css', 'anothervendor/anotherpackage:ipsum.js']);
-
+	Assets::add([
+		'foo.css',
+		'bar.js',
+		'somevendor/somepackage:lorem.css',
+		'anothervendor/anotherpackage:ipsum.js'
+	]);
 
 <a id="faq_base"></a>
 ### Why assets work for the main page but not for subpages?
@@ -401,7 +407,7 @@ Yes you can but there is no need. You better use the [multitenancy feature](#mul
 Yes you can. There is a `config()` public method to change settings on the fly. This allows you to use same instance of the library with different settings. i.e:
 
 	echo Assets::add('jquery-cdn')->js();
-	echo Assets::reset()->add(array('custom.js', 'main.js'))->config(array('pipeline' => true))->js();
+	echo Assets::reset()->add(['custom.js', 'main.js'])->config(['pipeline' => true])->js();
 
 If you want the different settings to be permanent, then use the [multitenancy feature](#multitenancy).
 

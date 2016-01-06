@@ -9,11 +9,11 @@
 |---------------------------------------------------------------------------
 */
 
-return array(
+return [
 
 	// Configuration for the default group. Feel free to add more groups.
 	// Each group can have different settings.
-	'default' => array(
+	'default' => [
 
 		/**
 		 * Regex to match against a filename/url to determine if it is an asset.
@@ -167,5 +167,5 @@ return array(
 		 */
 		//'autoload' => array('jquery-cdn'),
 
-	), // End of default group
-);
+	], // End of default group
+];

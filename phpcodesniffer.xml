@@ -23,6 +23,11 @@
 
 	<rule ref="Internal.NoCodeFound"/>
 
+	<rule ref="PHPCompatibility.PHP.ShortArray">
+		<!--Since Laravel requires PHP > 5.4 allow sort array syntax for Laravel stuff-->
+		<exclude-pattern>/src/Laravel/</exclude-pattern>
+	</rule>
+
 	<rule ref="PSR2">
 		<!--Allow one line control structures to have no curly braces-->
 		<exclude name="Generic.ControlStructures.InlineControlStructure.NotAllowed"/>
