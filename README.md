@@ -42,7 +42,7 @@ An ultra-simple-to-use assets management PHP library.
 <a id="frameworks"></a>
 ## Supported frameworks
 
-The library is framework agnostic and it should work well with any framework or naked PHP application. Nevertheless, sice the library is most popular between Laravel users the following instructions have been tailored for **Laravel 5** framework ([still on Laravel 4?](https://github.com/Stolz/Assets/issues/55#issuecomment-73024822)). If you want to use the library in any other scenario please read the [non static interface](#nonstatic) instructions.
+The library is framework agnostic and it should work well with any framework or naked PHP application. Nevertheless, since the library is most popular between Laravel users the following instructions have been tailored for **Laravel 5** framework ([still on Laravel 4?](https://github.com/Stolz/Assets/issues/55#issuecomment-73024822)). If you want to use the library in any other scenario please read the [non static interface](#nonstatic) instructions.
 
 <a id="installation"></a>
 ## Installation
