@@ -21,7 +21,7 @@ class LegacyServiceProvider extends LaravelServiceProvider
 		$config = $this->app->config->get('assets::config', []);
 
 		// Apply config settings
-		$this->app['stolz.assets']->config($config);
+		$this->app['stolz.assets.group.default']->config($config);
 
 		// Add 'Assets' facade alias
 		AliasLoader::getInstance()->alias('Assets', 'Stolz\Assets\Laravel\Facade');
@@ -37,8 +37,8 @@ class LegacyServiceProvider extends LaravelServiceProvider
 	 */
 	public function register()
 	{
-		// Bind 'stolz.assets' shared component to the IoC container
-		$this->app->singleton('stolz.assets', function ($app) {
+		// Bind 'stolz.assets.group.default' shared component to the IoC container
+		$this->app->singleton('stolz.assets.group.default', function ($app) {
 			return new Assets();
 		});
 
