@@ -1,8 +1,8 @@
 <?php namespace Stolz\Assets\Laravel;
 
-use Config;
-use File;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Config\Repository as Config;
+use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
 
 class FlushPipelineCommand extends Command
@@ -22,6 +22,28 @@ class FlushPipelineCommand extends Command
 	protected $description = 'Flush assets pipeline files.';
 
 	/**
+	 * Class constructor.
+	 *
+	 * @param \Illuminate\Contracts\Config\Repository $config
+	 * @param \Illuminate\Filesystem\Filesystem $filesystem
+	 *
+	 * @return void
+	 */
+	public function __construct()//Config $config, Filesystem $filesystem (See NOTE below)
+	{
+		parent::__construct();
+
+		// NOTE: Dependency injection for Artisan commands constructor was not introduced until Laravel 5.1 (LST).
+		// In order to keep compatibility with Laravel 5.0 we manually resolve the dependencies
+
+		//$this->config = $config;
+		//$this->filesystem = $filesystem;
+
+		$this->config = app(Config::class);
+		$this->filesystem = app(Filesystem::class);
+	}
+
+	/**
 	 * Execute the console command.
 	 *
 	 * @return void
@@ -39,7 +61,7 @@ class FlushPipelineCommand extends Command
 			foreach($directories as $dir)
 				$this->comment($dir);
 
-			if( ! $this->confirm('Do you wish to continue? [yes|no]'))
+			if( ! $this->confirm('Do you want to continue?'))
 				return;
 		}
 
@@ -50,9 +72,9 @@ class FlushPipelineCommand extends Command
 			$this->output->write("$dir ");
 
 			if($this->purgeDir($dir))
-				$this->info('Ok');
+				$this->info('OK');
 			else
-				$this->error('Error');
+				$this->error('ERROR');
 		}
 
 		$this->comment('Done!');
@@ -66,7 +88,7 @@ class FlushPipelineCommand extends Command
 	protected function getPipelineDirectories()
 	{
 		// Parse configured groups
-		$config = config('assets', []);
+		$config = $this->config->get('assets', []);
 		$groups = (isset($config['default'])) ? $config : ['default' => $config];
 		if( ! is_null($group = $this->option('group')))
 			$groups = array_only($groups, $group);
@@ -76,33 +98,40 @@ class FlushPipelineCommand extends Command
 		foreach($groups as $group => $config)
 		{
 			$pipelineDir = (isset($config['pipeline_dir'])) ? $config['pipeline_dir'] : 'min';
+			$publicDir = (isset($config['public_dir'])) ? $config['public_dir'] : public_path();
+			$publicDir = rtrim($publicDir, DIRECTORY_SEPARATOR);
 
 			$cssDir = (isset($config['css_dir'])) ? $config['css_dir'] : 'css';
-			$directories[] = public_path($cssDir . DIRECTORY_SEPARATOR . $pipelineDir);
-
+			$directories[] = implode(DIRECTORY_SEPARATOR, [$publicDir, $cssDir, $pipelineDir]);
 
 			$jsDir = (isset($config['js_dir'])) ? $config['js_dir'] : 'js';
-			$directories[] = public_path($jsDir . DIRECTORY_SEPARATOR . $pipelineDir);
+			$directories[] = implode(DIRECTORY_SEPARATOR, [$publicDir, $jsDir, $pipelineDir]);
 		}
 
-		return array_unique($directories);
+		// Clean results
+		$directories = array_unique($directories);
+		sort($directories);
+
+		return $directories;
 	}
 
 	/**
-	 * Purge directory.
+	 * Remove the contents of a given directory.
 	 *
 	 * @param  string $directory
+	 *
 	 * @return boolean
 	 */
 	protected function purgeDir($directory)
 	{
-		if( ! File::isDirectory($directory))
+		if( ! $this->filesystem->isDirectory($directory))
 			return true;
 
-		if(File::isWritable($directory))
-			return File::cleanDirectory($directory);
+		if($this->filesystem->isWritable($directory))
+			return $this->filesystem->cleanDirectory($directory);
 
 		$this->error($directory . ' is not writable');
+
 		return false;
 	}
 

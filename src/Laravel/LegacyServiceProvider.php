@@ -44,7 +44,7 @@ class LegacyServiceProvider extends LaravelServiceProvider
 
 		// Bind 'stolz.assets.command.flush' component to the IoC container
 		$this->app->bind('stolz.assets.command.flush', function ($app) {
-			return new FlushPipelineCommand();
+			return new LegacyFlushPipelineCommand();
 		});
 	}
 }
