@@ -5,10 +5,16 @@
 	"authors": [
 		{
 			"name": "Stolz",
-			"homepage": "https://github.com/Stolz/Assets",
+			"homepage": "http://500px.com/Stolz",
 			"role": "developer"
 		}
 	],
+	"support": {
+		"source": "https://github.com/Stolz/Assets",
+		"issues": "https://github.com/Stolz/Assets/issues",
+		"irc": "https://gitter.im/Stolz/Assets",
+		"docs": "https://github.com/Stolz/Assets/blob/master/API.md"
+	},
 	"require": {
 		"php": ">=5.3.0",
 		"mrclay/minify": "~2.1"
