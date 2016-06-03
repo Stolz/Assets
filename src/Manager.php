@@ -308,7 +308,7 @@ class Manager
 	 * You can implement cache-busting, etc by appending a query string value.
 	 *
 	 * @param  array|Closure $attributes
-	 * @param  array|Closure $queryArgs
+	 * @param  array $queryArgs
 	 * @return string
 	 */
 	public function css($attributes = null, $queryArgs = null)
@@ -361,7 +361,7 @@ class Manager
 	 * You can implement cache-busting, etc by appending a query string value.
 	 *
 	 * @param  array|Closure $attributes
-	 * @param  array|Closure $queryArgs
+	 * @param  array $queryArgs
 	 * @return string
 	 */
 	public function js($attributes = null, $queryArgs = null)
@@ -373,8 +373,6 @@ class Manager
 
 		if($attributes instanceof Closure)
 			return $attributes->__invoke($assets);
-		if($queryArgs instanceof Closure)
-			return $queryArgs->__invoke($assets);
 
 		// Build attributes
 		$attributes = (array) $attributes;
