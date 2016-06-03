@@ -12,7 +12,7 @@
 	"support": {
 		"source": "https://github.com/Stolz/Assets",
 		"issues": "https://github.com/Stolz/Assets/issues",
-		"irc": "https://gitter.im/Stolz/Assets",
+		"chat": "https://gitter.im/Stolz/Assets",
 		"docs": "https://github.com/Stolz/Assets/blob/master/API.md"
 	},
 	"require": {
