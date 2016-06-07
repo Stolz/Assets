@@ -132,6 +132,20 @@ class Manager
 	protected $notify_command;
 
 	/**
+	 * Closure used by the pipeline to minify CSS assets.
+	 *
+	 * @var Closure
+	 */
+	protected $css_minifier;
+
+	/**
+	 * Closure used by the pipeline to minify JavaScript assets.
+	 *
+	 * @var Closure
+	 */
+	protected $js_minifier;
+
+	/**
 	 * Available collections.
 	 * Each collection is an array of assets.
 	 * Collections may also contain other collections.
@@ -191,8 +205,8 @@ class Manager
 			if(isset($config[$option]))
 				$this->$option = $config[$option];
 
-		// Set pipeline commands
-		foreach(array('fetch_command', 'notify_command') as $option)
+		// Set pipeline options
+		foreach(array('fetch_command', 'notify_command', 'css_minifier', 'js_minifier') as $option)
 			if(isset($config[$option]) and ($config[$option] instanceof Closure))
 				$this->$option = $config[$option];
 
@@ -429,10 +443,13 @@ class Manager
 	 */
 	protected function cssPipeline()
 	{
-		return $this->pipeline($this->css, '.css', $this->css_dir, function ($buffer) {
+		// If a custom minifier has been set use it, otherwise fallback to default
+		$minifier = (isset($this->css_minifier)) ? $this->css_minifier : function ($buffer) {
 			$min = new \CSSmin();
 			return $min->run($buffer);
-		});
+		};
+
+		return $this->pipeline($this->css, '.css', $this->css_dir, $minifier);
 	}
 
 	/**
@@ -442,9 +459,12 @@ class Manager
 	 */
 	protected function jsPipeline()
 	{
-		return $this->pipeline($this->js, '.js', $this->js_dir, function ($buffer) {
+		// If a custom minifier has been set use it, otherwise fallback to default
+		$minifier = (isset($this->js_minifier)) ? $this->js_minifier : function ($buffer) {
 			return \JSMin::minify($buffer);
-		});
+		};
+
+		return $this->pipeline($this->js, '.js', $this->js_dir, $minifier);
 	}
 
 	/**
