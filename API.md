@@ -181,6 +181,28 @@ The closure will receive five parameters:
 * Visibility: **protected**
 
 
+### $css_minifier
+
+    protected \Closure $css_minifier
+
+Closure used by the pipeline to minify CSS assets.
+
+
+
+* Visibility: **protected**
+
+
+### $js_minifier
+
+    protected \Closure $js_minifier
+
+Closure used by the pipeline to minify JavaScript assets.
+
+
+
+* Visibility: **protected**
+
+
 ### $collections
 
     protected array $collections = array()
