@@ -480,7 +480,7 @@ class Manager
 	{
 		// Create destination dir if it doesn't exist.
 		$pipeline_dir = $this->public_dir . DIRECTORY_SEPARATOR . $subdirectory . DIRECTORY_SEPARATOR . $this->pipeline_dir;
-		if( ! is_dir($pipeline_dir))
+		if(is_dir($pipeline_dir) && !file_exists($pipeline_dir))
 			mkdir($pipeline_dir, 0777, true);
 
 		// Generate paths
