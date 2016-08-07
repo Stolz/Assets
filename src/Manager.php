@@ -318,10 +318,14 @@ class Manager
 	 * You can take control of the tag rendering by
 	 * providing a closure that will receive an array of assets.
 	 *
+	 * Accepts an query string arguments to add to each asset.
+	 * You can implement cache-busting, etc by appending a query string value.
+	 *
 	 * @param  array|Closure $attributes
+	 * @param  array $queryArgs
 	 * @return string
 	 */
-	public function css($attributes = null)
+	public function css($attributes = null, $queryArgs = null)
 	{
 		if( ! $this->css)
 			return '';
@@ -343,10 +347,19 @@ class Manager
 
 		$attributes = $this->buildTagAttributes($attributes);
 
+		// Build query string
+		$queryArgs = (array) $queryArgs;
+		$queryString = $this->buildQueryString($queryArgs);
+
 		// Build tags
 		$output = '';
-		foreach($assets as $asset)
+		foreach($assets as $asset) {
+			// if we have a query string to add, prefix it so that we can concatenate it with the asset
+			if (!empty($queryString)) {
+				$asset .= (strpos($asset, '?') === false ? '?' : '&') . $queryString;
+			}
 			$output .= '<link href="' . $asset . '"' . $attributes . " />\n";
+		}
 
 		return $output;
 	}
@@ -358,10 +371,14 @@ class Manager
 	 * You can take control of the tag rendering by
 	 * providing a closure that will receive an array of assets.
 	 *
+	 * Accepts an query string arguments to add to each asset.
+	 * You can implement cache-busting, etc by appending a query string value.
+	 *
 	 * @param  array|Closure $attributes
+	 * @param  array $queryArgs
 	 * @return string
 	 */
-	public function js($attributes = null)
+	public function js($attributes = null, $queryArgs = null)
 	{
 		if( ! $this->js)
 			return '';
@@ -380,10 +397,19 @@ class Manager
 
 		$attributes = $this->buildTagAttributes($attributes);
 
+		// Build query string
+		$queryArgs = (array) $queryArgs;
+		$queryString = $this->buildQueryString($queryArgs);
+
 		// Build tags
 		$output = '';
-		foreach($assets as $asset)
+		foreach($assets as $asset) {
+			// if we have a query string to add, prefix it so that we can concatenate it with the asset
+			if (!empty($queryString)) {
+				$asset .= (strpos($asset, '?') === false ? '?' : '&') . $queryString;
+			}
 			$output .= '<script src="' . $asset . '"' . $attributes . "></script>\n";
+		}
 
 		return $output;
 	}
@@ -632,6 +658,24 @@ class Manager
 		}
 
 		return (count($html) > 0) ? ' ' . implode(' ', $html) : '';
+	}
+
+	/**
+	 * Build an query string from an array of query args
+	 *
+	 * @param array $queryArgs
+	 * @return string
+	 */
+	public function buildQueryString(array $queryArgs)
+	{
+		$queryStringParts = array();
+
+		foreach ($queryArgs as $key => $value)
+		{
+			$queryStringParts[] = $key . '=' . htmlentities($value, ENT_QUOTES, 'UTF-8', false);
+		}
+
+		return (count($queryStringParts) > 0) ? implode('&', $queryStringParts) : '';
 	}
 
 	/**
