@@ -2,6 +2,7 @@
 	"name": "stolz/assets",
 	"description": "An ultra-simple-to-use assets management library",
 	"keywords": ["assets", "asset", "css", "js", "javascript", "pipeline", "minify", "laravel", "agnostic"],
+	"license": "MIT",
 	"authors": [
 		{
 			"name": "Stolz",
@@ -38,5 +39,11 @@
 		"optimize-autoloader": true,
 		"preferred-install": "dist"
 	},
-	"license": "MIT"
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Stolz\\Assets\\Laravel\\ServiceProvider"
+			]
+		}
+	}
 }

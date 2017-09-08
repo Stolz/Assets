@@ -5,17 +5,17 @@ An ultra-simple-to-use assets management PHP library.
 
 [![Build Status](https://travis-ci.org/Stolz/Assets.png?branch=master)](https://travis-ci.org/Stolz/Assets) [![Join the chat at https://gitter.im/Stolz/Assets](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Stolz/Assets?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-1. [Features](#features).
+- [Features](#features).
 - [Supported frameworks](#frameworks).
 - [Installation](#installation).
 - [Usage](#usage).
- - [Views](#views).
- - [Controllers](#controllers).
+	- [Views](#views).
+	- [Controllers](#controllers).
 - [Configuration](#configuration).
- - [Collections](#collections).
- - [Pipeline](#pipeline).
- - [More options](#options).
- - [Multitenancy](#multitenancy).
+	- [Collections](#collections).
+	- [Pipeline](#pipeline).
+	- [More options](#options).
+	- [Multitenancy](#multitenancy).
 - [Non static interface usage](#nonstatic).
 - [Sample collections](#samples).
 - [Troubleshooting / F.A.Q.](#troubleshooting).
@@ -51,7 +51,9 @@ In your project base directory run
 
 	composer require stolz/assets
 
-Then edit `config/app.php` and add the service provider within the `providers` array.
+If you are using Laravel version 5.5 or later there is nothing else you need to do. The service provider will be automatically loaded for you.
+
+If you are using an older version of Laravel or you disabled the package discovery feature, then you have to manually edit `config/app.php` file and add the service provider within the `providers` array.
 
 	'providers' => [
 		//...
