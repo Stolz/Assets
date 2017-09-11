@@ -48,7 +48,7 @@ class FlushPipelineCommand extends Command
 	 *
 	 * @return void
 	 */
-	public function fire()
+	public function handle()
 	{
 		// Get directories to purge
 		if( ! $directories = $this->getPipelineDirectories())
