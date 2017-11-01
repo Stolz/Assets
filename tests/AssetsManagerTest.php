@@ -73,6 +73,21 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertCount(0, $assets);
 	}
 
+	public function testPrependOneCss()
+    {
+		$this->assertCount(0, $this->manager->getCss());
+
+		$asset1 = uniqid('asset1');
+		$asset2 = uniqid('asset2');
+		$this->manager->addCss($asset2);
+		$this->manager->prependCss($asset1);
+
+		$assets = $this->manager->getCss();
+		$this->assertStringEndsWith($asset2, array_pop($assets));
+		$this->assertStringEndsWith($asset1, array_pop($assets));
+		$this->assertCount(0, $assets);
+    }
+
 	public function testAddOneJs()
 	{
 		$this->assertCount(0, $this->manager->getJs());
@@ -83,6 +98,21 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 
 		$this->assertCount(1, $assets);
 		$this->assertStringEndsWith($asset, array_pop($assets));
+		$this->assertCount(0, $assets);
+	}
+
+	public function testPrependOneJs()
+	{
+		$this->assertCount(0, $this->manager->getJs());
+
+		$asset1 = uniqid('asset1');
+		$asset2 = uniqid('asset2');
+		$this->manager->addJs($asset2);
+		$this->manager->prependJs($asset1);
+
+		$assets = $this->manager->getJs();
+		$this->assertStringEndsWith($asset2, array_pop($assets));
+		$this->assertStringEndsWith($asset1, array_pop($assets));
 		$this->assertCount(0, $assets);
 	}
 
@@ -101,6 +131,24 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$this->assertCount(0, $assets);
 	}
 
+	public function testPrependMultipleCss()
+	{
+		$this->assertCount(0, $this->manager->getCss());
+
+		$asset1 = uniqid('asset1');
+		$asset2 = uniqid('asset2');
+		$asset3 = uniqid('asset3');
+		$this->manager->addCss($asset3);
+		$this->manager->prependCss(array($asset1, $asset2));
+		$assets = $this->manager->getCss();
+
+		$this->assertCount(3, $assets);
+		$this->assertStringEndsWith($asset3, array_pop($assets));
+		$this->assertStringEndsWith($asset2, array_pop($assets));
+		$this->assertStringEndsWith($asset1, array_pop($assets));
+		$this->assertCount(0, $assets);
+	}
+
 	public function testAddMultipleJs()
 	{
 		$this->assertCount(0, $this->manager->getJs());
@@ -111,6 +159,24 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		$assets = $this->manager->getJs();
 
 		$this->assertCount(2, $assets);
+		$this->assertStringEndsWith($asset2, array_pop($assets));
+		$this->assertStringEndsWith($asset1, array_pop($assets));
+		$this->assertCount(0, $assets);
+	}
+
+	public function testPrependMultipleJs()
+	{
+		$this->assertCount(0, $this->manager->getJs());
+
+		$asset1 = uniqid('asset1');
+		$asset2 = uniqid('asset2');
+		$asset3 = uniqid('asset3');
+		$this->manager->addJs($asset3);
+		$this->manager->prependJs(array($asset1, $asset2));
+		$assets = $this->manager->getJs();
+
+		$this->assertCount(3, $assets);
+		$this->assertStringEndsWith($asset3, array_pop($assets));
 		$this->assertStringEndsWith($asset2, array_pop($assets));
 		$this->assertStringEndsWith($asset1, array_pop($assets));
 		$this->assertCount(0, $assets);

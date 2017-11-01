@@ -256,6 +256,39 @@ class Manager
 	}
 
 	/**
+	 * Add an asset or a collection of assets to the beginning of the queue.
+	 *
+	 * It automatically detects the asset type (JavaScript, CSS or collection).
+	 * You may prepend more than one asset passing an array as argument.
+	 *
+	 * @param  mixed   $asset
+	 * @return Manager
+	 */
+	public function prepend($asset)
+	{
+		// More than one asset
+		if(is_array($asset))
+		{
+			foreach(array_reverse($asset) as $a)
+				$this->prepend($a);
+		}
+
+		// Collection
+		elseif(isset($this->collections[$asset]))
+			$this->prepend($this->collections[$asset]);
+
+		// JavaScript asset
+		elseif(preg_match($this->js_regex, $asset))
+			$this->prependJs($asset);
+
+		// CSS asset
+		elseif(preg_match($this->css_regex, $asset))
+			$this->prependCss($asset);
+
+		return $this;
+	}
+
+	/**
 	 * Add a CSS asset.
 	 *
 	 * It checks for duplicates.
@@ -284,6 +317,34 @@ class Manager
 	}
 
 	/**
+	 * Add a CSS asset to the beginning of the queue.
+	 *
+	 * It checks for duplicates.
+	 * You may prepend more than one asset passing an array as argument.
+	 *
+	 * @param  mixed   $asset
+	 * @return Manager
+	 */
+	public function prependCss($asset)
+	{
+		if(is_array($asset))
+		{
+			foreach(array_reverse($asset) as $a)
+				$this->prependCss($a);
+
+			return $this;
+		}
+
+		if( ! $this->isRemoteLink($asset))
+			$asset = $this->buildLocalLink($asset, $this->css_dir);
+
+		if( ! in_array($asset, $this->css))
+			array_unshift($this->css, $asset);
+
+		return $this;
+	}
+
+	/**
 	 * Add a JavaScript asset.
 	 *
 	 * It checks for duplicates.
@@ -307,6 +368,34 @@ class Manager
 
 		if( ! in_array($asset, $this->js))
 			$this->js[] = $asset;
+
+		return $this;
+	}
+
+	/**
+	 * Add a JavaScript asset to the beginning of the queue.
+	 *
+	 * It checks for duplicates.
+	 * You may prepend more than one asset passing an array as argument.
+	 *
+	 * @param  mixed   $asset
+	 * @return Manager
+	 */
+	public function prependJs($asset)
+	{
+		if(is_array($asset))
+		{
+			foreach(array_reverse($asset) as $a)
+				$this->prependJs($a);
+
+			return $this;
+		}
+
+		if( ! $this->isRemoteLink($asset))
+			$asset = $this->buildLocalLink($asset, $this->js_dir);
+
+		if( ! in_array($asset, $this->js))
+			array_unshift($this->js, $asset);
 
 		return $this;
 	}

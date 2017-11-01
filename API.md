@@ -292,6 +292,23 @@ You may add more than one asset passing an array as argument.
 
 
 
+### prepend
+
+    Assets prepend(mixed $asset)
+
+Add an asset or a collection of assets to the beginning of the queue.
+
+It automatically detects the asset type (JavaScript, CSS or collection).
+You may prepend more than one asset passing an array as argument.
+
+* Visibility: **public**
+
+
+#### Arguments
+* $asset **mixed**
+
+
+
 ### addCss
 
     Assets addCss(mixed $asset)
@@ -309,6 +326,23 @@ You may add more than one asset passing an array as argument.
 
 
 
+### prependCss
+
+    Assets prependCss(mixed $asset)
+
+Add a CSS asset to the beginning of the queue.
+
+It checks for duplicates.
+You may prepend more than one asset passing an array as argument.
+
+* Visibility: **public**
+
+
+#### Arguments
+* $asset **mixed**
+
+
+
 ### addJs
 
     Assets addJs(mixed $asset)
@@ -317,6 +351,23 @@ Add a JavaScript asset.
 
 It checks for duplicates.
 You may add more than one asset passing an array as argument.
+
+* Visibility: **public**
+
+
+#### Arguments
+* $asset **mixed**
+
+
+
+### prependJs
+
+    Assets prependJs(mixed $asset)
+
+Add a JavaScript asset to the beginning of the queue.
+
+It checks for duplicates.
+You may prepend more than one asset passing an array as argument.
 
 * Visibility: **public**
 
