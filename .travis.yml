@@ -1,24 +1,30 @@
 language: php
 
+dist: trusty
+
 php:
-  - 5.3
   - 5.4
   - 5.5
   - 5.6
   - 7.0
-  - hhvm
+  - 7.1
+  - 7.2
+  - 7.3
+
+# PHP 5.3 not available in 'trusty' but in older 'precise'
+matrix:
+  include:
+  - php: 5.3
+    dist: precise
 
 before_script:
-  - composer self-update
   - composer install --no-interaction
 
-script: php -d hhvm.resource_limit.socket_default_timeout=12 vendor/bin/phpunit
+script: vendor/bin/phpunit --coverage-text
 
 cache:
   directories:
-  - $HOME/.composer/cache/
-
-sudo: false
+  - $HOME/.composer/cache/files
 
 git:
   depth: 1
