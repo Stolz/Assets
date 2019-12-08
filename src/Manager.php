@@ -96,7 +96,7 @@ class Manager
 	 * Set to true to use the default compression level.
 	 * Set an integer between 0 (no compression) and 9 (maximum compression) to choose compression level.
 	 *
-	 * @var bool|integer
+	 * @var bool|int
 	 */
 	protected $pipeline_gzip = false;
 
@@ -654,7 +654,7 @@ class Manager
 			if($this->isRemoteLink($link))
 			{
 				// Add current protocol to agnostic links
-				if('//' === substr($link, 0, 2))
+				if(substr($link, 0, 2) === '//')
 				{
 					$protocol = (isset($_SERVER['HTTPS']) and ! empty($_SERVER['HTTPS']) and $_SERVER['HTTPS'] !== 'off') ? 'https:' : 'http:';
 					$link = $protocol . $link;
@@ -747,7 +747,7 @@ class Manager
 	 */
 	protected function isRemoteLink($link)
 	{
-		return ('http://' === substr($link, 0, 7) or 'https://' === substr($link, 0, 8) or '//' === substr($link, 0, 2));
+		return (substr($link, 0, 7) === 'http://' or substr($link, 0, 8) === 'https://' or substr($link, 0, 2) === '//');
 	}
 
 	/**

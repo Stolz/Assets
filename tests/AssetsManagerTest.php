@@ -1,10 +1,13 @@
 <?php
 
-class AssetsManagerTest extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\TestCase;
+
+class AssetsManagerTest extends TestCase
 {
 	protected $manager;
 
-	protected function setUp()
+	protected function setUp(): void
 	{
 		$this->manager = new Stolz\Assets\Manager();
 	}
@@ -23,7 +26,7 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 
 		foreach($config as $key => $value)
 		{
-			$this->assertEquals($value, PHPUnit_Framework_Assert::readAttribute($this->manager, $key));
+			$this->assertEquals($value, Assert::readAttribute($this->manager, $key));
 		}
 	}
 
@@ -244,28 +247,28 @@ class AssetsManagerTest extends PHPUnit_Framework_TestCase
 		);
 
 		// Test asset detection
-		$regex = PHPUnit_Framework_Assert::readAttribute($this->manager, 'asset_regex');
+		$regex = Assert::readAttribute($this->manager, 'asset_regex');
 		$matching = array_filter($files, function ($file) use ($regex) {
 			return 1 === preg_match($regex, $file);
 		});
 		$this->assertEquals(8, count($matching));
 
 		// Test CSS asset detection
-		$regex = PHPUnit_Framework_Assert::readAttribute($this->manager, 'css_regex');
+		$regex = Assert::readAttribute($this->manager, 'css_regex');
 		$matching = array_filter($files, function ($file) use ($regex) {
 			return 1 === preg_match($regex, $file);
 		});
 		$this->assertEquals(4, count($matching));
 
 		// Test JS asset detection
-		$regex = PHPUnit_Framework_Assert::readAttribute($this->manager, 'js_regex');
+		$regex = Assert::readAttribute($this->manager, 'js_regex');
 		$matching = array_filter($files, function ($file) use ($regex) {
 			return 1 === preg_match($regex, $file);
 		});
 		$this->assertEquals(4, count($matching));
 
 		// Test minification skip detection
-		$regex = PHPUnit_Framework_Assert::readAttribute($this->manager, 'no_minification_regex');
+		$regex = Assert::readAttribute($this->manager, 'no_minification_regex');
 		$matching = array_filter($files, function ($file) use ($regex) {
 			return 1 === preg_match($regex, $file);
 		});

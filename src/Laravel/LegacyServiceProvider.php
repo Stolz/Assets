@@ -1,8 +1,8 @@
 <?php namespace Stolz\Assets\Laravel;
 
-use Stolz\Assets\Manager as Assets;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
+use Stolz\Assets\Manager as Assets;
 
 class LegacyServiceProvider extends LaravelServiceProvider
 {

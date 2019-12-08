@@ -4,7 +4,16 @@
 
 	<description>Stolz's custom PSR-2 rules</description>
 
+	<exclude-pattern>/vendor/</exclude-pattern>
+
+	<!-- Load and configure external standars -->
+	<config name="installed_paths" value="vendor/phpcompatibility/php-compatibility,vendor/slevomat/coding-standard" />
+	<config name="testVersion" value="5.3-"/><!--Used by PHPCompatibility-->
+
 	<!--RULES ARE IN ALPHABETICAL ORDER-->
+
+	<!--Only one statemet per line -->
+	<rule ref="Generic.Formatting.DisallowMultipleStatements.SameLine"/>
 
 	<!--Use space after cast-->
 	<rule ref="Generic.Formatting.SpaceAfterCast"/>
@@ -15,19 +24,44 @@
 	<!--PHP5 constructor syntax "function __construct()"-->
 	<rule ref="Generic.NamingConventions.ConstructorName"/>
 
+	<!--Make sure functions are not too complex-->
+	<rule ref="Generic.Metrics.CyclomaticComplexity"/>
+	<rule ref="Generic.Metrics.NestingLevel"/>
+
 	<!--Check for deprecated functions-->
 	<rule ref="Generic.PHP.DeprecatedFunctions"/>
+
+	<!--Avoid unnecessary string concatenations-->
+	<rule ref="Generic.Strings.UnnecessaryStringConcat"/>
 
 	<!--Force tabs identation-->
 	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
 
+	<!--Ensure files have code-->
 	<rule ref="Internal.NoCodeFound"/>
 
-	<rule ref="PHPCompatibility.PHP.ShortArray">
-		<!--Since Laravel requires PHP > 5.4 allow sort array syntax for Laravel stuff-->
+	<!--Ensure all functions have comment with proper format (A description and both @param and @return tags-->
+	<rule ref="PEAR.Commenting.FunctionComment">
+		<!--But allow @param without description-->
+		<exclude name="PEAR.Commenting.FunctionComment.MissingParamComment"/>
+
+		<!--And do not enforce proper parameter alignment-->
+		<exclude name="PEAR.Commenting.FunctionComment.SpacingAfterParamType"/>
+		<exclude name="PEAR.Commenting.FunctionComment.SpacingAfterParamName"/>
+	</rule>
+
+	<!--Ensure our code is compatible with the desired PHP version-->
+	<rule ref="PHPCompatibility">
 		<exclude-pattern>/src/Laravel/</exclude-pattern>
 	</rule>
 
+	<!--Single responsability files-->
+	<rule ref="PSR1.Files.SideEffects.FoundWithSymbols"/>
+
+	<!--Ensure clases have a namespace-->
+	<rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+
+	<!--Use PSR2 standard with a few exceptions-->
 	<rule ref="PSR2">
 		<!--Allow one line control structures to have no curly braces-->
 		<exclude name="Generic.ControlStructures.InlineControlStructure.NotAllowed"/>
@@ -45,6 +79,58 @@
 		<exclude name="Squiz.ControlStructures.ControlSignature"/>
 	</rule>
 
+	<!-- Enforces short array syntax and trailing commas in multi-line arrays-->
+	<rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma"/>
+
+	<!--Disallow unnatural Yoda Comparison-->
+	<rule ref="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison"/>
+
+	<!-- Requires use of null coalesce operator when possible-->
+	<rule ref="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceOperator"/>
+
+	<!-- Find unreachable catch blocks-->
+	<rule ref="SlevomatCodingStandard.Exceptions.DeadCatch"/>
+
+	<!--Looks for unused inherited variables passed to closure via `use ()`-->
+	<rule ref="SlevomatCodingStandard.Functions.UnusedInheritedVariablePassedToClosure"/>
+
+	<!--Checks use statements at the top of a file are alphabetically sorted.-->
+	<rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses"/>
+
+	<!--Disallow grouped use declarations-->
+	<rule ref="SlevomatCodingStandard.Namespaces.DisallowGroupUse"/>
+
+	<!--Enforces fully qualified names of classes and interfaces in phpDocs-->
+	<!--<rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation"/>-->
+
+	<!--Enforces one space after namespace, disallows content between namespace name and semicolon and disallows use of bracketed syntax-->
+	<rule ref="SlevomatCodingStandard.Namespaces.NamespaceDeclaration"/>
+
+	<!--Looks for unused imports from other namespaces-->
+	<rule ref="SlevomatCodingStandard.Namespaces.UnusedUses"/>
+
+	<!-- Disallows leading backslash in use statement-->
+	<rule ref="SlevomatCodingStandard.Namespaces.UseDoesNotStartWithBackslash"/>
+
+	<!-- Prohibits uses from the same namespace-->
+	<rule ref="SlevomatCodingStandard.Namespaces.UseFromSameNamespace"/>
+
+	<!-- Detect `use` class aliasese that are same as unqualified name-->
+	<rule ref="SlevomatCodingStandard.Namespaces.UselessAlias"/>
+
+	<!-- Enforces using shorthand cast operators, i.e: (int) instead of (integer)-->
+	<rule ref="SlevomatCodingStandard.PHP.TypeCast"/>
+
+	<!-- Enforces using shorthand scalar typehint in phpDocs (i.e: int instead of integer)-->
+	<rule ref="SlevomatCodingStandard.TypeHints.LongTypeHints"/>
+
+	<!-- Checks that there's a single space between a typehint and a parameter name: Foo $foo.
+	Checks that there's no whitespace between a nullability symbol and a typehint: ?Foo-->
+	<rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHintSpacing"/>
+
+	<!-- Enforces space before return typehints-->
+	<rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHintSpacing"/>
+
 	<!--Do not use spaces gaps for array brakets-->
 	<rule ref="Squiz.Arrays.ArrayBracketSpacing"/>
 
@@ -54,11 +140,17 @@
 	<!--No duplicated class properties-->
 	<rule ref="Squiz.Classes.DuplicateProperty"/>
 
+	<!--Function opening brace should be on a new line-->
+	<rule ref="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine"/>
+
 	<!--Disallow size functions in loops"/>-->
 	<rule ref="Squiz.PHP.DisallowSizeFunctionsInLoops"/>
 
 	<!--PHP functions in lowecase-->
 	<rule ref="Squiz.PHP.LowercasePHPFunctions"/>
+
+	<!--Ensure cast statements don't contain whitespace-->
+	<rule ref="Squiz.WhiteSpace.CastSpacing"/>
 
 	<!--Force only one space at both sides of logical operators-->
 	<rule ref="Squiz.WhiteSpace.LogicalOperatorSpacing"/>
@@ -66,7 +158,16 @@
 	<!--Force space at both sides of operatos-->
 	<rule ref="Squiz.WhiteSpace.OperatorSpacing"/>
 
+	<!--Ensure there is a single space after scope keywords-->
+	<rule ref="Squiz.WhiteSpace.ScopeKeywordSpacing"/>
+
 	<!--No whitespace before a semicolon-->
 	<rule ref="Squiz.WhiteSpace.SemicolonSpacing"/>
+
+	<!--No superfluous whitespace-->
+	<rule ref="Squiz.WhiteSpace.SuperfluousWhitespace"/>
+
+	<!--Do not use close tags-->
+	<rule ref="Zend.Files.ClosingTag.NotAllowed"/>
 
 </ruleset>

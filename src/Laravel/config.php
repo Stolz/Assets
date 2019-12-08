@@ -103,7 +103,7 @@ return [
 		 * Set to true to use the default compression level.
 		 * Set an integer between 0 (no compression) and 9 (maximum compression) to choose compression level.
 		 *
-		 * @var bool|integer
+		 * @var bool|int
 		 */
 		//'pipeline_gzip' => false,
 

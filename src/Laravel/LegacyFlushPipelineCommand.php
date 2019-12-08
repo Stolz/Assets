@@ -55,7 +55,7 @@ class LegacyFlushPipelineCommand extends Command
 	 * Purge directory.
 	 *
 	 * @param  string $directory
-	 * @return boolean
+	 * @return bool
 	 */
 	protected function purgeDir($directory)
 	{

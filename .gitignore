@@ -1,9 +1,10 @@
 *.kate-swp
-*.nfs00*
+*.log
 *.old
 *.orig
 *~
 .*~
+.phpunit.result.cache
 /doc
 /vendor
 composer.lock

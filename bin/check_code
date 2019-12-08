@@ -1,7 +1,6 @@
 #!/bin/sh
 
 cd "$( cd "$( dirname "$0" )" && pwd )/.." || exit 1
-DIR="`pwd`"
 
 function exit_error
 {
@@ -10,29 +9,15 @@ function exit_error
 }
 
 # Run PHP linter
-
 find src -type f -name "*.php" -print0 | while IFS= read -r -d $'\0' file; do
 	php -lf $file > /dev/null
 	[ $? -eq 0 ] || exit_error "$file needs to be fixed to continue"
 done
 
-# Install/update https://github.com/wimg/PHPCompatibility
-
-cd vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/ || exit_error "PHP_CodeSniffer not installed"
-if [ -d PHPCompatibility ]; then
-	cd PHPCompatibility
-	git pull -q
-else
-	git clone http://github.com/wimg/PHPCompatibility.git -q
-fi
-
 # Run PHP_CodeSniffer
-
-cd "$DIR"
-./vendor/bin/phpcs --report-width=100 --tab-width=4 --standard=phpcodesniffer.xml,PHPCompatibility src/ -as --runtime-set testVersion 5.3
+./vendor/bin/phpcs -as --standard=phpcodesniffer.xml --runtime-set testVersion 5.3- --report-width=100 --tab-width=4 "$@" src/
 
 # Run PHP Unit
-
 ./vendor/bin/phpunit
 
 exit $?
