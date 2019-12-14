@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit colors="true">
 	<testsuites>
-		<testsuite name="Package Test Suite">
-			<directory suffix=".php">./tests/</directory>
+		<testsuite name="All">
+			<directory suffix="Test.php">./tests</directory>
 		</testsuite>
 	</testsuites>
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">./src</directory>
+			<exclude>
+				<directory suffix=".php">./src/Laravel</directory>
+			</exclude>
+		</whitelist>
+	</filter>
 </phpunit>
