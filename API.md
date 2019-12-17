@@ -72,6 +72,20 @@ No trailing slash!.
 
 * Visibility: **protected**
 
+### $docroot_dir
+
+    protected string $docroot_dir = __DIR__
+
+Absolute path to the public directory of your App (from PHP directory).
+
+Required if you enable the pipeline.
+No trailing slash!.
+
+
+ By default is the \_\_DIR__ variable, you may want to set this in your root
+
+* Visibility: **protected**
+* Developed by [maicol07](https://github.com/maicol07)
 
 ### $css_dir
 
@@ -213,6 +227,19 @@ Each collection is an array of assets.
 Collections may also contain other collections.
 
 * Visibility: **protected**
+
+### $npm_dir
+
+    protected string $npm_dir = 'node_modules'
+
+Directory (relative to public_dir) where NPM/Yarn packages are installed.
+
+By default, npm_dir is set to the 'node_modules' folder
+
+**WRITE THE PATH WITHOUT SLASHES AT THE BEGINNING AND AT THE END**
+
+* Visibility: **protected**
+* Developed by [maicol07](https://github.com/maicol07)
 
 
 ### $css
@@ -587,8 +614,36 @@ Build an HTML attribute string from an array.
 Determine whether an asset is normal or from a package.
 
 
+#### Arguments
+* $asset **string**
+
+
 
 * Visibility: **protected**
+
+### assetIsFromNpm
+
+    boolean|array assetIsFromNpm(string $asset)
+
+Determine whether an asset is normal or from a NPM package.
+
+* Visibility: **protected**
+* Developed by [maicol07](https://github.com/maicol07)
+
+
+#### Arguments
+* $asset **string**
+
+
+
+### findNpmPackage
+
+    boolean|array findNpmPackage(string $asset)
+
+Get all assets of a NPM package
+
+* Visibility: **protected**
+* Developed by [maicol07](https://github.com/maicol07)
 
 
 #### Arguments

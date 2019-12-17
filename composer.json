@@ -1,20 +1,24 @@
 {
-	"name": "stolz/assets",
+	"name": "maicol07/assets",
 	"description": "An ultra-simple-to-use assets management library",
 	"keywords": ["assets", "asset", "css", "js", "javascript", "pipeline", "minify", "laravel", "agnostic"],
 	"license": "MIT",
 	"authors": [
 		{
 			"name": "Stolz",
-			"homepage": "http://500px.com/Stolz",
+			"homepage": "http://github.com/Stolz",
+			"role": "developer"
+		},
+		{
+			"name": "Maicol07",
+			"homepage": "https://maicol07.it",
 			"role": "developer"
 		}
 	],
 	"support": {
-		"source": "https://github.com/Stolz/Assets",
-		"issues": "https://github.com/Stolz/Assets/issues",
-		"chat": "https://gitter.im/Stolz/Assets",
-		"docs": "https://github.com/Stolz/Assets/blob/master/API.md"
+		"source": "https://github.com/maicol07/Assets",
+		"issues": "https://github.com/maicol07/Assets/issues",
+		"docs": "https://github.com/maicol07/Assets/blob/master/API.md"
 	},
 	"require": {
 		"php": ">=5.4",
