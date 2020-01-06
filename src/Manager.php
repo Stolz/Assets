@@ -1,5 +1,5 @@
 <?php
-namespace Maicol07\Assets;
+namespace Stolz\Assets;
 
 use Closure;
 use FilesystemIterator;

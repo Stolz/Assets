@@ -16,9 +16,10 @@
 		}
 	],
 	"support": {
-		"source": "https://github.com/maicol07/Assets",
-		"issues": "https://github.com/maicol07/Assets/issues",
-		"docs": "https://github.com/maicol07/Assets/blob/master/API.md"
+		"source": "https://github.com/Stolz/Assets",
+		"issues": "https://github.com/Stolz/Assets/issues",
+		"chat": "https://gitter.im/Stolz/Assets",
+		"docs": "https://github.com/Stolz/Assets/blob/master/API.md"
 	},
 	"require": {
 		"php": ">=5.4",
@@ -36,7 +37,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Maicol07\\Assets\\": "src/"
+			"Stolz\\Assets\\": "src/"
 		}
 	},
 	"config": {
@@ -47,7 +48,7 @@
 	"extra": {
 		"laravel": {
 			"providers": [
-				"Maicol07\\Assets\\Laravel\\ServiceProvider"
+				"Stolz\\Assets\\Laravel\\ServiceProvider"
 			]
 		}
 	}
