@@ -818,13 +818,24 @@ class Manager
         if (!$json = json_decode(file_get_contents($dir. '/package.json')))
             return false;
         $assets = array();
-        $main_exists = property_exists($json, 'main');
-        if ($main_exists)
-            array_push($assets, $asset . '/' . $json->main);
+
+        // Search for JS file
+        $js_props = array(
+            'unpkg',
+            'main'
+        );
+        foreach ($js_props as $js_prop) {
+            $js_exists = property_exists($json, $js_prop);
+            if ($js_exists) {
+                break;
+            }
+        }
+        if ($js_exists)
+            array_push($assets, $asset . '/' . $json->$js_prop);
         $style_exists = property_exists($json, 'style');
         if ($style_exists)
             array_push($assets, $asset . '/' . $json->style);
-        elseif ($main_exists) {
+        elseif ($js_exists) {
             $style = dirname($json->main) . '/' . pathinfo($json->main)['filename'] . ".css";
             array_push($assets, $asset . '/' . $style);
         } else {
