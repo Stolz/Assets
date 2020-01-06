@@ -837,7 +837,7 @@ class Manager
         if ($style_exists)
             array_push($assets, $asset . '/' . $json->style);
         elseif ($js_exists) {
-            $style = dirname($json->main) . '/' . pathinfo($json->main)['filename'] . ".css";
+            $style = dirname($json->$js_prop) . '/' . pathinfo($json->$js_prop)['filename'] . ".css";
             array_push($assets, $asset . '/' . $style);
         } else {
             foreach (array('css', 'js') as $ext) {
