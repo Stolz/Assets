@@ -534,8 +534,7 @@ class Manager
 	{
 		// If a custom minifier has been set use it, otherwise fallback to default
 		$minifier = (isset($this->css_minifier)) ? $this->css_minifier : function ($buffer) {
-			$min = new \CSSmin();
-			return $min->run($buffer);
+			return \Minify_CSSmin::minify($buffer);
 		};
 
 		return $this->pipeline($this->css, '.css', $this->css_dir, $minifier);
@@ -550,7 +549,7 @@ class Manager
 	{
 		// If a custom minifier has been set use it, otherwise fallback to default
 		$minifier = (isset($this->js_minifier)) ? $this->js_minifier : function ($buffer) {
-			return \JSMin::minify($buffer);
+			return \JSMin\JSMin::minify($buffer);
 		};
 
 		return $this->pipeline($this->js, '.js', $this->js_dir, $minifier);
