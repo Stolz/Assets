@@ -11,12 +11,6 @@ php:
   - 7.2
   - 7.3
 
-# PHP 5.3 not available in 'trusty' but in older 'precise'
-matrix:
-  include:
-  - php: 5.3
-    dist: precise
-
 before_script:
   - composer install --no-interaction
 
